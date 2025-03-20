@@ -27,3 +27,6 @@ Entre os principais benefícios do sistema estão:
 - A simplificação do processo de compra e venda;
 - A otimização da gestão de estoque e pedidos para as lojas;
 - A oferta de um marketplace acessível e intuitivo para os consumidores.
+
+## 2. Vídeo do Protótipo
+- Link: https://www.youtube.com/watch?v=hvMrhY5PkJQ
