@@ -64,7 +64,7 @@ create table pedido(
     status enum('Em Processamento', 'Enviado', 'Entregue', 'Cancelado'),
     fk_idCliente int not null,
     fk_idLoja int not null,
-    foreign key(fk_idCliente) references produto(idCliente),
+    foreign key(fk_idCliente) references cliente(idCliente),
     foreign key (fk_idLoja) references loja(idLoja)
 );
 
