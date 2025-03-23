@@ -1,16 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from './database';
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('./database');
 
-class Endereco extends Model {
-    public idEndereco!: number;
-    public estado!: string;
-    public cidade!: string;
-    public bairro!: string;
-    public logradouro!: string;
-    public cep?: string;
-    public numero?: string;
-    public fk_idLoja!: number;
-}
+class Endereco extends Model {}
 
 Endereco.init({
     idEndereco: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -23,4 +14,4 @@ Endereco.init({
     fk_idLoja: { type: DataTypes.INTEGER, allowNull: false, references: { model: Loja, key: 'idLoja' } },
 }, { sequelize, modelName: 'Endereco' });
 
-export { Endereco };
+module.exports =  Endereco ;

@@ -1,14 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from './database';
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('./database');
 
-class Cliente extends Model {
-    public idCliente!: number;
-    public nomeCliente!: string;
-    public email!: string;
-    public cpf!: string;
-    public telefone!: string;
-    public dataNascimento!: Date;
-}
+class Cliente extends Model {}
 
 Cliente.init({
     idCliente: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -19,4 +12,4 @@ Cliente.init({
     dataNascimento: { type: DataTypes.DATE, allowNull: false },
 }, { sequelize, modelName: 'Cliente' });
 
-export { Cliente };
+module.exports = Cliente ;

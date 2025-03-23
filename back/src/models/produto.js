@@ -1,14 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from './database';
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('./database');
 
-class Produto extends Model {
-    public idProduto!: number;
-    public nomeProduto!: string;
-    public categoria!: string;
-    public preco!: number;
-    public estoque!: number;
-    public fk_idLoja!: number;
-}
+class Produto extends Model {}
 
 Produto.init({
     idProduto: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -19,4 +12,4 @@ Produto.init({
     fk_idLoja: { type: DataTypes.INTEGER, allowNull: false, references: { model: Loja, key: 'idLoja' } },
 }, { sequelize, modelName: 'Produto' });
 
-export { Produto };
+module.exports = Produto;

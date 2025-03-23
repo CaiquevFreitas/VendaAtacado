@@ -1,20 +1,7 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from './database';
+const { DataTypes, Model } = require('sequelize');
+const sequelize = require('./database');
 
-class Loja extends Model {
-    public idLoja!: number;
-    public nomeVendedor!: string;
-    public nomeLoja!: string;
-    public logo?: string;
-    public email!: string;
-    public telefone!: string;
-    public cpf!: string;
-    public senha!: string;
-    public horarioAbertura!: string;
-    public horarioFechamento!: string;
-    public dataNascimento!: Date;
-    public nota?: number;
-}
+class Loja extends Model {}
 
 Loja.init({
     idLoja: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
@@ -29,6 +16,7 @@ Loja.init({
     horarioFechamento: { type: DataTypes.TIME, allowNull: false },
     dataNascimento: { type: DataTypes.DATE, allowNull: false },
     nota: { type: DataTypes.DOUBLE },
-}, { sequelize, modelName: 'Loja' });
+}, 
+{ sequelize, modelName: 'Loja' });
 
-export { Loja };
+module.exports =   Loja ;
