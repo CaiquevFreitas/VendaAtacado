@@ -1,10 +1,12 @@
 import { themes } from "@/assets/colors/themes";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Button } from "@/components/button";
 
 export default function Perfil(){
     return (
         <View style={styles.container}>
-
+            <Button />
+            <Button />
         </View>
     )
 }
