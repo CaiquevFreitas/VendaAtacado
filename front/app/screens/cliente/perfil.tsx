@@ -5,8 +5,8 @@ import { Button } from "@/components/button";
 export default function Perfil(){
     return (
         <View style={styles.container}>
-            <Button />
-            <Button />
+            <Button title="Entrar como Cliente"/>
+            <Button  title="Entrar como Loja"/>
         </View>
     )
 }
@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: themes.colors.primary
+        backgroundColor: themes.colors.primary,
+        gap: 20
     }
 })
