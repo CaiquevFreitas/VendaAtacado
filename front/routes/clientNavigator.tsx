@@ -1,6 +1,5 @@
 import React from 'react'
 import { createBottomTabNavigator } from  '@react-navigation/bottom-tabs'
-import { NavigationContainer } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 
 import Perfil from '@/app/screens/cliente/perfil'
@@ -18,10 +17,10 @@ export default function ClientNavigator(){
       let iconName: keyof typeof Ionicons.glyphMap; 
 
       switch (route.name) {
-        case 'Início':
+        case 'Home':
           iconName = 'home-outline';
           break;
-        case 'Busca':
+        case 'Buscar':
           iconName = 'search-outline';
           break;
         case 'Carrinho':
@@ -35,7 +34,7 @@ export default function ClientNavigator(){
       }
       return <Ionicons name={iconName} size={size} color={color} />;
     },
-  })}>;
+  })}>
         <Tab.Screen name='Home' component={Home} />
         <Tab.Screen name="Perfil" component={Perfil} />
         <Tab.Screen name='Buscar' component={Buscar} />

@@ -7,7 +7,8 @@ export const styles = StyleSheet.create({
         height: 52,
         backgroundColor: themes.colors.secondary,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        borderRadius: 20
     },
     title: {
         fontSize: 16,

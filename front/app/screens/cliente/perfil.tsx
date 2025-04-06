@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: themes.colors.primary,
-        gap: 20
+        gap: 30,
+        padding: 30
     }
 })
