@@ -1,6 +1,6 @@
-import { themes } from "@/assets/colors/themes";
+import { themes } from "../../assets/colors/themes";
 import { View, StyleSheet } from "react-native";
-import { Button } from "@/components/button";
+import { Button } from "../../components/button";
 
 export default function Perfil(){
     return (

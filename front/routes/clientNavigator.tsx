@@ -2,17 +2,17 @@ import React from 'react'
 import { createBottomTabNavigator } from  '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 
-import Perfil from '@/app/screens/cliente/perfil'
-import Carrinho from '@/app/screens/cliente/carrinho'
-import Buscar from '@/app/screens/cliente/buscar'
-import Home from '@/app/screens/cliente/home'
+import Perfil from '../screens/cliente/perfil'
+import Carrinho from '../screens/cliente/carrinho'
+import Buscar from '../screens/cliente/buscar'
+import Home from '../screens/cliente/home'
 
 const Tab = createBottomTabNavigator();
 
 export default function ClientNavigator(){
   return (
     <Tab.Navigator
-  screenOptions={({ route }) => ({
+  screenOptions={({ route }) => ({ headerShown: false,
     tabBarIcon: ({ color, size }) => {
       let iconName: keyof typeof Ionicons.glyphMap; 
 
@@ -36,9 +36,9 @@ export default function ClientNavigator(){
     },
   })}>
         <Tab.Screen name='Home' component={Home} />
-        <Tab.Screen name="Perfil" component={Perfil} />
         <Tab.Screen name='Buscar' component={Buscar} />
         <Tab.Screen name='Carrinho' component={Carrinho} />
+        <Tab.Screen name="Perfil" component={Perfil} />
     </Tab.Navigator>
   )
 }
