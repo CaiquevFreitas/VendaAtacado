@@ -1,10 +1,11 @@
 import { themes } from "../../../assets/colors/themes";
-import { View, StyleSheet } from "react-native";
+import { Image, View, StyleSheet } from "react-native";
 import { Button } from "../../components/button";
 
 export default function Perfil(){
     return (
         <View style={styles.container}>
+            <Image style={styles.img} source={require('../../../assets/icon.png')} />
             <Button title="Entrar como Cliente"/>
             <Button  title="Entrar como Loja"/>
         </View>
@@ -19,5 +20,9 @@ const styles = StyleSheet.create({
         backgroundColor: themes.colors.primary,
         gap: 30,
         padding: 30
+    },
+    img: {
+        height: 82,
+        width: 168
     }
 })
