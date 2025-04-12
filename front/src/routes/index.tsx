@@ -19,7 +19,7 @@ export default function Routes() {
       checkUserType();
     }, []);
   
-    if (loading) return null; // Evita erro ao carregar o AsyncStorage
+    if (loading) return null; 
   
     return (
       <NavigationContainer>

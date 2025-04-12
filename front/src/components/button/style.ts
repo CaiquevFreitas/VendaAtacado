@@ -1,4 +1,4 @@
-import { themes } from "../../assets/colors/themes";
+import { themes } from "../../../assets/colors/themes";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
