@@ -15,7 +15,10 @@ export default function Login(){
                 <Textinput tipo="Email"/>
                 <Textinput tipo="Senha"/>
                 <Button title="Acessar" />
-                <TextLink texto="Esqueceu a senha?" />
+                <View style={styles.viewLinks}>
+                    <TextLink texto="Esqueceu a senha?" />
+                    <TextLink texto="Cadastre-se" />
+                </View>
             </View>
         </KeyboardAvoidingView>
     )
@@ -43,7 +46,9 @@ const styles = StyleSheet.create({
         width: '90%',
         gap: 10
     },
-    btn: {
-        
+    viewLinks: {
+        width: "90%",
+        flexDirection: "row",
+        justifyContent: "space-between"
     }
 })
