@@ -8,7 +8,7 @@ export default function Login(){
     return(
         <KeyboardAvoidingView style={styles.background}>
             <View style={styles.viewLogo}>
-                <Image source={require('../../../assets/icon.png')} />
+                <Image style={styles.img} source={require('../../../assets/icon.png')} />
             </View>
 
             <View style={styles.container}>
@@ -32,11 +32,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center"
     },
+    img:{
+        height: 123,
+        width: 252
+    },
     container:{
         flex: 1,
         alignItems: "center",
-        justifyContent: "center",
-        width: '90%'
+        justifyContent: "flex-start",
+        width: '90%',
+        gap: 10
     },
     btn: {
         
