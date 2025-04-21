@@ -12,8 +12,8 @@ export default function Login(){
             </View>
 
             <View style={styles.container}>
-                <Textinput tipo="Email"/>
-                <Textinput tipo="Senha"/>
+                <Textinput tipo='email-address' descricao="Email"/>
+                <Textinput tipo='default' descricao="Senha" isSenha={true}/>
                 <Button title="Acessar" />
                 <View style={styles.viewLinks}>
                     <TextLink texto="Esqueceu a senha?" />

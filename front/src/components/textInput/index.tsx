@@ -1,15 +1,19 @@
-import { TextInput } from "react-native";
+import { TextInput, KeyboardTypeOptions} from "react-native";
 import { styles } from "./style";
 
 type Props = {
-    tipo: string
+    tipo: KeyboardTypeOptions,
+    descricao: string,
+    isSenha?: boolean
 }
 
-export function Textinput({tipo}: Props){
+export function Textinput({tipo, descricao, isSenha}: Props){
     return(
         <TextInput style={styles.input}
-        placeholder= {tipo}
+        placeholder= {descricao}
+        keyboardType= {tipo}
         autoCorrect={false}
+        secureTextEntry= {isSenha}
         />
     )
 }
