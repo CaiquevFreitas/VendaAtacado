@@ -4,7 +4,15 @@ import { Textinput } from '../../components/textInput';
 import { Button } from '../../components/button';
 import { TextLink } from '../../components/textLink';
 
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from "../../../types";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 export default function Login(){
+    const navigation = useNavigation<NavigationProp>();
+
     return(
         <KeyboardAvoidingView style={styles.background}>
             <View style={styles.viewLogo}>
@@ -17,7 +25,7 @@ export default function Login(){
                 <Button title="Acessar" />
                 <View style={styles.viewLinks}>
                     <TextLink texto="Esqueceu a senha?" />
-                    <TextLink texto="Cadastre-se" />
+                    <TextLink texto="Cadastre-se" onPress={() => navigation.navigate("Cadastro")}/>
                 </View>
             </View>
         </KeyboardAvoidingView>
