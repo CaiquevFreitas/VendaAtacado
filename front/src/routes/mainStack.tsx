@@ -4,6 +4,7 @@ import type { RootStackParamList } from '../../types';
 import ClientNavigator from './clientNavigator';
 import LojaNavigator from './lojaNavigator';
 import Login from '../screens/cliente/login';
+import Cadastro from '../screens/cliente/cadastro';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -19,8 +20,9 @@ export default function MainStackNavigator({ userType }: { userType: string | nu
         <Stack.Screen name="ClienteTabs" component={ClientNavigator} />
       )}
 
-      {/* Tela de Login acessível de qualquer lugar */}
+      {/* Telas acessível de qualquer lugar */}
       <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name='Cadastro' component={Cadastro} />
     </Stack.Navigator>
   );
 }
