@@ -2,12 +2,13 @@ import { TouchableOpacity, Text } from "react-native";
 import { styles } from "./style";
 
 type Props ={
-    texto: string
+    texto: string,
+    onPress?: () => void;
 }
 
-export function TextLink({texto}: Props){
+export function TextLink({texto, onPress}: Props){
     return(
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onPress}>
             <Text style={styles.textLink}>{texto}</Text>
         </TouchableOpacity>
     )
