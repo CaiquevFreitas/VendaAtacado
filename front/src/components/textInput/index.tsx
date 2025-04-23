@@ -1,5 +1,6 @@
 import { TextInput, KeyboardTypeOptions} from "react-native";
 import { styles } from "./style";
+import { themes } from "../../../assets/colors/themes";
 
 type Props = {
     tipo: KeyboardTypeOptions,
@@ -14,6 +15,7 @@ export function Textinput({tipo, descricao, isSenha}: Props){
         keyboardType= {tipo}
         autoCorrect={false}
         secureTextEntry= {isSenha}
+        placeholderTextColor={themes.colors.secondary}
         />
     )
 }
