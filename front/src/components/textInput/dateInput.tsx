@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextInput, TouchableOpacity, View, Modal, Platform, StyleSheet } from "react-native";
+import { TextInput, TouchableOpacity, View, Modal, Platform, StyleSheet} from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { themes } from "../../../assets/colors/themes";
 
@@ -11,13 +11,13 @@ type Props = {
 
 export function DateInput({ descricao, value, onChange }: Props) {
     const [showPicker, setShowPicker] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<Date>(value || new Date());
+    const [selectedDate, setSelectedDate] = useState<Date | undefined>(value);
 
     const handleChange = (event: any, date?: Date) => {
-        setShowPicker(Platform.OS === 'ios'); // Se for Android, fecha o picker depois da escolha
+        setShowPicker(Platform.OS === 'ios');
         if (date) {
             setSelectedDate(date);
-            onChange?.(date); // Chama a função passada para o pai, se existir
+            onChange?.(date);
         }
     };
 
@@ -26,12 +26,12 @@ export function DateInput({ descricao, value, onChange }: Props) {
     };
 
     return (
-        <View>
+        <View style={styles.container}>
             <TouchableOpacity onPress={() => setShowPicker(true)}>
                 <TextInput
                     style={styles.inputDate}
                     placeholder={descricao}
-                    value={formatDate(selectedDate)}
+                    value={selectedDate ? formatDate(selectedDate) : ""}
                     editable={false}
                     placeholderTextColor={themes.colors.secondary}
                 />
@@ -39,7 +39,7 @@ export function DateInput({ descricao, value, onChange }: Props) {
 
             {showPicker && (
                 <DateTimePicker
-                    value={selectedDate}
+                    value={selectedDate || new Date()}
                     mode="date"
                     display="default"
                     onChange={handleChange}
@@ -49,12 +49,17 @@ export function DateInput({ descricao, value, onChange }: Props) {
     );
 }
 
+
 const styles = StyleSheet.create({
     inputDate:{
         width: "100%",
         backgroundColor: themes.colors.white,
-        marginBottom: 15,
         borderRadius: 7,
         padding: 10
+    },
+    container:{
+        flex: 1,
+        marginBottom: 15,
+        width: '90%'
     }
 })

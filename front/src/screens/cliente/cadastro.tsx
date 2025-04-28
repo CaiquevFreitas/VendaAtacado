@@ -1,6 +1,6 @@
 import { View, KeyboardAvoidingView, StyleSheet, ScrollView, Text } from 'react-native';
 import { themes } from "../../../assets/colors/themes";
-import { Textinput } from '../../components/textInput';
+import { Textinput } from '../../components/textInput/index';
 import { Button } from '../../components/button';
 import { TextLink } from '../../components/textLink';
 import { DateInput } from '../../components/textInput/dateInput';
@@ -33,7 +33,7 @@ export default function Cadastro(){
                     <Text style={styles.titulo}>Cadastro</Text>
 
                     <Textinput tipo="default" descricao="Nome Completo" onChangeText={setNome} />
-                    <DateInput descricao='data de nascimento' />
+                    <DateInput descricao='Data de Nascimento' />
                     <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} />
                     <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
                     <Textinput tipo="default" descricao="Senha" isSenha={true} onChangeText={setSenha} />
