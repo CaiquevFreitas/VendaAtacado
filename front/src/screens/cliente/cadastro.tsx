@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, KeyboardAvoidingView, StyleSheet, ScrollView, Text, Alert } from 'react-native';
 import { themes } from "../../../assets/colors/themes";
 import { Textinput } from '../../components/textInput/index';
 import { Button } from '../../components/button';
@@ -16,13 +16,18 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function Cadastro(){
     const navigation = useNavigation<NavigationProp>();
     const [nome, setNome] = useState('');
-    const [data, setData] = useState('');
+    const [data, setData] = useState<Date | undefined>(undefined);
+
     const [cpf, setCpf] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
 
     function handleCadastro(){
-        /*cadastrar(nome,data,cpf,email,senha) */
+        if(!data || !nome || !cpf || !email || !senha){
+            Alert.alert("Atenção","Preencha todos os campos")
+        }else{
+            cadastrar(nome,data,cpf,email,senha)
+        }
     }
 
     return(
@@ -33,12 +38,12 @@ export default function Cadastro(){
                     <Text style={styles.titulo}>Cadastro</Text>
 
                     <Textinput tipo="default" descricao="Nome Completo" onChangeText={setNome} />
-                    <DateInput descricao='Data de Nascimento' />
+                    <DateInput descricao='Data de Nascimento' onChange={setData} />
                     <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} />
                     <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
                     <Textinput tipo="default" descricao="Senha" isSenha={true} onChangeText={setSenha} />
 
-                    <Button title="Cadastrar" />
+                    <Button title="Cadastrar" onPress={handleCadastro} />
 
                     <View style={styles.viewLinks}>
                     <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("Login")} />
