@@ -2,7 +2,7 @@ import { Alert } from "react-native";
 
 export async function cadastrar(nome:string, data:Date, cpf:string, email:string, senha:string){
     try {
-        const response = await fetch('', {
+        const response = await fetch('http://localhost:3000/cadastroCliente', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
