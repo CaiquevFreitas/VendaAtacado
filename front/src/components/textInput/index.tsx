@@ -7,9 +7,10 @@ type Props = {
     isSenha?: boolean;
     value?: string;
     onChangeText?: (text: string) => void;
+    maxSenha?: number
 }
 
-export function Textinput({ tipo, descricao, isSenha = false, value, onChangeText }: Props) {
+export function Textinput({ tipo, descricao, isSenha = false, value, onChangeText, maxSenha = 100 }: Props) {
     return (
         <TextInput
             style={styles.input}
@@ -20,6 +21,7 @@ export function Textinput({ tipo, descricao, isSenha = false, value, onChangeTex
             placeholderTextColor={themes.colors.secondary}
             value={value}
             onChangeText={onChangeText}
+            maxLength={maxSenha}
         />
     );
 }
