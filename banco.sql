@@ -35,7 +35,8 @@ create table cliente(
     email varchar(100) not null,
     cpf char(11) not null unique,
     telefone char(11) not null unique,
-    dataNascimento date not null
+    dataNascimento date not null,
+    senha char(8) not null
 );
 
 create table produto(
