@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
     res.send('API funcionando!');
 });
 
-app.post('/cadastroCliente', (req,res) =>{
+app.post('/cadastroCliente', async(req,res) =>{
     console.log("Dados recebidos: ", req.body)
 })
 

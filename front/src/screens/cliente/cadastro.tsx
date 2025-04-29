@@ -28,10 +28,8 @@ export default function Cadastro(){
     function handleCadastro(){
         if(!data || !nome || !cpf || !email || !senha){
             Alert.alert("Atenção","Preencha todos os campos")
-        }else{
-            /*verificarEmail(email)
-            calcularIdade(data);
-            cadastrar(nome,data,cpf,email,senha)*/
+        }else if(verificarEmail(email) && calcularIdade(data)){
+            cadastrar(nome,data,cpf,email,senha)
         }
     }
 
