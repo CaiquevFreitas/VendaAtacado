@@ -19,9 +19,6 @@ app.get('/', (req, res) => {
     res.send('API funcionando!');
 });
 
-app.post('/cadastroCliente', async(req,res) =>{
-    console.log("Dados recebidos: ", req.body)
-})
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);
