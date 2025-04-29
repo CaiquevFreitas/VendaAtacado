@@ -10,6 +10,7 @@ Cliente.init({
     cpf: { type: DataTypes.CHAR(11), allowNull: false, unique: true },
     telefone: { type: DataTypes.CHAR(11), allowNull: false, unique: true },
     dataNascimento: { type: DataTypes.DATE, allowNull: false },
+    senha: { type: DataTypes.CHAR(8), allowNull: false }
 }, { sequelize, modelName: 'Cliente' });
 
 module.exports = Cliente ;
