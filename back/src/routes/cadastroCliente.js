@@ -33,7 +33,7 @@ router.post('/cadastroCliente', async (req, res) => {
 
         
         const novoCliente = await Cliente.create({
-            nome,
+            nomeCliente: nome,
             dataNascimento: dataFormatada,
             cpf,
             email,
