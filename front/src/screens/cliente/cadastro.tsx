@@ -20,16 +20,16 @@ export default function Cadastro(){
     const navigation = useNavigation<NavigationProp>();
     const [nome, setNome] = useState('');
     const [data, setData] = useState<Date | undefined>(undefined);
-
     const [cpf, setCpf] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [telefone, setTelefone] = useState('');
 
     function handleCadastro(){
-        if(!data || !nome || !cpf || !email || !senha){
+        if(!data || !nome || !cpf || !email || !senha || !telefone){
             Alert.alert("Atenção","Preencha todos os campos")
         }else if(verificarEmail(email) && calcularIdade(data)){
-            cadastrar(nome,data,cpf,email,senha)
+            cadastrar(nome,data,cpf,email,senha, telefone)
         }
     }
 
@@ -42,9 +42,10 @@ export default function Cadastro(){
 
                     <Textinput tipo="default" descricao="Nome Completo" onChangeText={setNome} />
                     <DateInput descricao='Data de Nascimento' onChange={setData} />
-                    <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} />
+                    <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} max={11} />
+                    <Textinput tipo="phone-pad" descricao="Telefone" onChangeText={setTelefone} max={11} />
                     <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
-                    <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} maxSenha={8} />
+                    <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} max={8} />
 
                     <Button title="Cadastrar" onPress={handleCadastro} />
 
