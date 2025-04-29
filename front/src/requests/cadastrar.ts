@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
 
-export async function cadastrar(nome:string, data:Date, cpf:string, email:string, senha:string){
+export async function cadastrar(nome:string, data:Date, cpf:string, email:string, senha:string, telefone:string){
   const dataFormatada = data ? data.toISOString().split('T')[0] : '';
     try {
         const response = await fetch('http://localhost:3000/cadastroCliente', {
@@ -13,7 +13,8 @@ export async function cadastrar(nome:string, data:Date, cpf:string, email:string
             dataFormatada,
             cpf,
             email,
-            senha
+            senha,
+            telefone
           }),
         });
   
