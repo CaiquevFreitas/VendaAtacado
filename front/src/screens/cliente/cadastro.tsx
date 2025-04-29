@@ -9,7 +9,9 @@ import { useState } from 'react';
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
+
 import { cadastrar } from '../../requests/cadastrar';
+import { calcularIdade } from '../../../controllers/validations/idade18';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -26,7 +28,8 @@ export default function Cadastro(){
         if(!data || !nome || !cpf || !email || !senha){
             Alert.alert("Atenção","Preencha todos os campos")
         }else{
-            cadastrar(nome,data,cpf,email,senha)
+            calcularIdade(data);
+            /*cadastrar(nome,data,cpf,email,senha)*/
         }
     }
 
