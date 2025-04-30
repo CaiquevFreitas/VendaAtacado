@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 export async function logar(email:string, senha:string){
     try {
         const response = await fetch('http://localhost:3000/loginCliente', {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
