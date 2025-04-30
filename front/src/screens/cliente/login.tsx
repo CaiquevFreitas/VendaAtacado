@@ -33,9 +33,9 @@ export default function Login(){
             </View>
 
             <View style={styles.container}>
-                <Textinput tipo='email-address' descricao="Email"/>
-                <Textinput tipo='default' descricao="Senha" isSenha={true}/>
-                <Button title="Acessar" />
+                <Textinput tipo='email-address' descricao="Email" onChangeText={setEmail} />
+                <Textinput tipo='default' descricao="Senha" isSenha={true} max={8} onChangeText={setSenha} />
+                <Button title="Acessar" onPress={handleLogin} />
                 <View style={styles.viewLinks}>
                     <TextLink texto="Esqueceu a senha?" />
                     <TextLink texto="Cadastre-se" onPress={() => navigation.navigate("Cadastro")}/>
