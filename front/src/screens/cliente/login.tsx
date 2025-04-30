@@ -1,8 +1,9 @@
-import { View, KeyboardAvoidingView, Image, StyleSheet } from 'react-native';
+import { View, KeyboardAvoidingView, Image, StyleSheet, Alert } from 'react-native';
 import { themes } from "../../../assets/colors/themes";
 import { Textinput } from '../../components/textInput';
 import { Button } from '../../components/button';
 import { TextLink } from '../../components/textLink';
+import { useState } from 'react';
 
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -11,7 +12,15 @@ import type { RootStackParamList } from "../../../types";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Login(){
+    const [email,setEmail] = useState('');
+    const [senha,setSenha] = useState('');
     const navigation = useNavigation<NavigationProp>();
+
+    function handleLogin(){
+        if(!email || !senha){
+            Alert.alert("Atenção","Preencha todos os campos")
+        }
+    }
 
     return(
         <KeyboardAvoidingView style={styles.background}>
