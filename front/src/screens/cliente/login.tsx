@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
 import { verificarEmail } from '../../../controllers/validations/email.validation';
-import { logar } from '../../requests/loginCliente';
+import { logarCliente } from '../../requests/loginCliente';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -22,7 +22,7 @@ export default function Login(){
         if(!email || !senha){
             Alert.alert("Atenção","Preencha todos os campos")
         }else if(verificarEmail(email)){
-            logar(email,senha)
+            logarCliente(email,senha)
         }
     }
 

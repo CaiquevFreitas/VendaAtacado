@@ -11,12 +11,12 @@ router.post('/loginCliente', async(req,res) =>{
     })
     
     if (user == null){
-            res.status(200).json({ status: 0, message: 'usuário não encontrado.' });
+            res.status(200).json({ message: 'usuário não encontrado.' });
             return;
     }
 
     if(user.senha != senha){
-        res.status(200).json({ status: 0, message: 'senha incorreta.'});
+        res.status(200).json({ message: 'senha incorreta.'});
         return;
     }
 

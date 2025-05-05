@@ -1,6 +1,6 @@
 import { Alert } from "react-native";
 
-export async function logar(email:string, senha:string){
+export async function logarCliente(email:string, senha:string){
     try {
         const response = await fetch('http://localhost:3000/loginCliente', {
           method: 'POST',
