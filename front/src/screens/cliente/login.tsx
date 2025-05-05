@@ -1,17 +1,38 @@
-import { View, KeyboardAvoidingView, Image, StyleSheet } from 'react-native';
+import { View, KeyboardAvoidingView, Image, StyleSheet, Alert } from 'react-native';
 import { themes } from "../../../assets/colors/themes";
 import { Textinput } from '../../components/textInput';
 import { Button } from '../../components/button';
 import { TextLink } from '../../components/textLink';
+import { useState } from 'react';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
+import { verificarEmail } from '../../../controllers/validations/email.validation';
+import { logarCliente } from '../../requests/loginCliente';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Login(){
+    const [email,setEmail] = useState('');
+    const [senha,setSenha] = useState('');
     const navigation = useNavigation<NavigationProp>();
+
+    async function handleLogin() {
+        if (!email || !senha) {
+          Alert.alert("Atenção", "Preencha todos os campos");
+        } else if (verificarEmail(email)) {
+          const sucesso = await logarCliente(email, senha);
+          if (sucesso) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "ClienteTabs" }], // ou a tela principal
+            });
+          }
+        }
+      }
+      
 
     return(
         <KeyboardAvoidingView style={styles.background}>
@@ -20,9 +41,9 @@ export default function Login(){
             </View>
 
             <View style={styles.container}>
-                <Textinput tipo='email-address' descricao="Email"/>
-                <Textinput tipo='default' descricao="Senha" isSenha={true}/>
-                <Button title="Acessar" />
+                <Textinput tipo='email-address' descricao="Email" onChangeText={setEmail} />
+                <Textinput tipo='default' descricao="Senha" isSenha={true} max={8} onChangeText={setSenha} />
+                <Button title="Acessar" onPress={handleLogin} />
                 <View style={styles.viewLinks}>
                     <TextLink texto="Esqueceu a senha?" />
                     <TextLink texto="Cadastre-se" onPress={() => navigation.navigate("Cadastro")}/>

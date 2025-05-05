@@ -6,7 +6,7 @@ const db = require('./src/models/database');
 dotenv.config();
 const app = express();
 app.use(cors({
-    origin: 'exp://localhost:8081',
+    origin: 'exp://192.168.69.96:8081',
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ['Content-Type']
 }))
@@ -15,12 +15,14 @@ app.use(express.urlencoded({extended:true}))
 
 //Importação das Rotas
 const cadastroclienteRoute = require('./src/routes/cadastroCliente')
+const loginCliente = require('./src/routes/loginCliente')
 
 app.get('/', (req, res) => {
     res.send('API funcionando!');
 });
 
 app.use('/', cadastroclienteRoute);
+app.use('/', loginCliente);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);
