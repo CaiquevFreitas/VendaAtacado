@@ -6,7 +6,7 @@ const db = require('./src/models/database');
 dotenv.config();
 const app = express();
 app.use(cors({
-    origin: 'http://localhost:8081',
+    origin: 'exp://192.168.69.96:8081',
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ['Content-Type']
 }))
