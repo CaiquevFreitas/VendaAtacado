@@ -5,6 +5,7 @@ import { Button } from '../../components/button';
 import { TextLink } from '../../components/textLink';
 import { useState } from 'react';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
@@ -18,13 +19,20 @@ export default function Login(){
     const [senha,setSenha] = useState('');
     const navigation = useNavigation<NavigationProp>();
 
-    function handleLogin(){
-        if(!email || !senha){
-            Alert.alert("Atenção","Preencha todos os campos")
-        }else if(verificarEmail(email)){
-            logarCliente(email,senha)
+    async function handleLogin() {
+        if (!email || !senha) {
+          Alert.alert("Atenção", "Preencha todos os campos");
+        } else if (verificarEmail(email)) {
+          const sucesso = await logarCliente(email, senha);
+          if (sucesso) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "ClienteTabs" }], // ou a tela principal
+            });
+          }
         }
-    }
+      }
+      
 
     return(
         <KeyboardAvoidingView style={styles.background}>
