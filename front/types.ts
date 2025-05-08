@@ -3,5 +3,6 @@ export type RootStackParamList = {
     LojaTabs: undefined;
     Login: undefined;
     Cadastro: undefined;
+    CadastroLoja: undefined;
   };
   

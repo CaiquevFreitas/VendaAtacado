@@ -46,8 +46,10 @@ export default function Login(){
                 <Button title="Acessar" onPress={handleLogin} />
                 <View style={styles.viewLinks}>
                     <TextLink texto="Esqueceu a senha?" />
-                    <TextLink texto="Cadastre-se" onPress={() => navigation.navigate("Cadastro")}/>
+                    <TextLink texto="Cadastre-se como Cliente" onPress={() => navigation.navigate("Cadastro")}/>
+                    
                 </View>
+                <TextLink texto="Cadastre-se como Loja" onPress={() => navigation.navigate("CadastroLoja")}/>
             </View>
         </KeyboardAvoidingView>
     )
