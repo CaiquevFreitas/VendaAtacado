@@ -13,19 +13,25 @@ import { ActivityIndicator, View } from 'react-native';
 const Tab = createBottomTabNavigator();
 
 export default function ClientNavigator() {
-  const [perfilComponent, setPerfilComponent] = useState<React.ComponentType<any> | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isCliente, setIsCliente] = useState<boolean | null>(null);
 
   useEffect(() => {
     const verificarPerfil = async () => {
-      const userType = await AsyncStorage.getItem('userType');
-      setPerfilComponent(userType === 'cliente' ? PerfilLogado : Perfil);
+      try {
+        const userType = await AsyncStorage.getItem('userType');
+        setIsCliente(userType === 'cliente');
+      } catch (error) {
+        console.error('Erro ao verificar tipo de usuário:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     verificarPerfil();
   }, []);
 
-  if (!perfilComponent) {
-    
+  if (isLoading || isCliente === null) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
@@ -64,7 +70,7 @@ export default function ClientNavigator() {
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Buscar" component={Buscar} />
       <Tab.Screen name="Carrinho" component={Carrinho} />
-      <Tab.Screen name="Perfil" component={perfilComponent} />
+      <Tab.Screen name="Perfil" component={isCliente ? PerfilLogado : Perfil} />
     </Tab.Navigator>
   );
 }
