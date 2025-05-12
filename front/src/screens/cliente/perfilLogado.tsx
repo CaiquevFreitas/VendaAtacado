@@ -34,7 +34,7 @@ export default function PerfilLogado(){
               </View>
             </View>
             <ScrollView>
-
+            
             </ScrollView>
         </View>
     )
