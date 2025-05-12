@@ -2,6 +2,7 @@ import { View, TouchableOpacity, Alert, StyleSheet, Image, Text, ScrollView } fr
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { themes } from '../../../assets/colors/themes';
+import { ButtonOption } from '../../components/buttonOptions';
 
 export default function PerfilLogado(){
 
@@ -33,8 +34,11 @@ export default function PerfilLogado(){
                 </TouchableOpacity>
               </View>
             </View>
-            <ScrollView>
-            
+            <ScrollView >
+              <View style={styles.viewOptions}>
+                <ButtonOption title='Teste 1'></ButtonOption>
+                <ButtonOption title='Teste 2'></ButtonOption>
+              </View>
             </ScrollView>
         </View>
     )
@@ -65,5 +69,12 @@ const styles = StyleSheet.create({
     },
     texto:{
       color: themes.colors.white
+    },
+    viewOptions:{
+      flex: 1,
+      backgroundColor: 'green',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20
     }
 })
