@@ -3,13 +3,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function cadastrarLoja(
   nomeLoja: string,
+  nomeVendedor: string,
   cpf: string,
-  endereco: string,
-  horario: string,
+  dataNascimento: Date,
+  horarioAbertura: Date,
+  horarioFechamento: Date,
   telefone: string,
   email: string,
   senha: string
-): Promise<boolean> {
+){
   try {
     const response = await fetch('http://192.168.69.96:3000/cadastroLoja', {
       method: 'POST',
@@ -18,9 +20,11 @@ export async function cadastrarLoja(
       },
       body: JSON.stringify({
         nomeLoja,
+        nomeVendedor,
+        dataNascimento,
         cpf,
-        endereco,
-        horario,
+        horarioAbertura,
+        horarioFechamento,
         telefone,
         email,
         senha
@@ -32,14 +36,11 @@ export async function cadastrarLoja(
     if (response.ok) {
       await AsyncStorage.setItem('userType', 'loja');
       Alert.alert('Sucesso', 'Loja cadastrada com sucesso!');
-      return true;
     } else {
       Alert.alert('Erro', dados.message || 'Falha no Cadastro');
-      return false;
     }
   } catch (error) {
     console.error('Erro:', error);
     Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
-    return false;
   }
 }

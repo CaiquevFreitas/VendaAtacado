@@ -4,6 +4,7 @@ import { Textinput } from '../../components/textInput/index';
 import { Button } from '../../components/button';
 import { TextLink } from '../../components/textLink';
 import { DateInput } from '../../components/textInput/dateInput';
+import { TimeInput } from '../../components/textInput/timeInput';
 
 import { useState} from 'react';
 import { useNavigation } from "@react-navigation/native";
@@ -21,23 +22,20 @@ export default function CadastroLoja() {
 
     const [nomeLoja, setNomeLoja] = useState('');
     const [cpf, setCpf] = useState('');
-    const [horarioAbertura, setHorarioAbertura] = useState('');
-    const [horarioFechamento, setHorariofechamento] = useState('');
+    const [horarioAbertura, setHorarioAbertura] = useState<Date | undefined>(undefined);
+    const [horarioFechamento, setHorarioFechamento] = useState<Date | undefined>(undefined);    
     const [telefone, setTelefone] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [nomeVendedor, setNomeVendedor] = useState('');
-    const [logo, setLogo] = useState('');
     const [dataNascimento, setDataNascimento] = useState<Date | undefined>(undefined);
 
     async function handleCadastro() {
         if (!nomeLoja || !cpf || !horarioAbertura || !horarioFechamento || !telefone || !email || !senha || !nomeVendedor || !dataNascimento || !confirmarSenha) {
             Alert.alert("Atenção", "Preencha todos os campos");
         } else if (verificarEmail(email) && calcularIdade(dataNascimento)) {
-            Alert.alert("Atenção", "Email inválido");
-        } else {
-            const sucesso = await cadastrarLoja(
+            cadastrarLoja(
                 nomeVendedor,
                 nomeLoja,
                 cpf,
@@ -48,10 +46,7 @@ export default function CadastroLoja() {
                 horarioAbertura,
                 horarioFechamento
             );
-            if (sucesso) {
-                navigation.navigate("Login");
-            }
-        }
+        } 
     }
 
     return (
@@ -60,17 +55,18 @@ export default function CadastroLoja() {
                 <View style={styles.container}>
                     <Text style={styles.titulo}>Cadastro da Loja</Text>
 
-                    <Textinput tipo="default" descricao="Nome do Proprietario" onChangeText={setNomeVendedor} />
+                    <Textinput tipo="default" descricao="Nome da Loja" onChangeText={setNomeLoja} />
+                    <Textinput tipo="default" descricao="Nome do Proprietário" onChangeText={setNomeVendedor} />
                     <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} max={11} />
 
                     <DateInput descricao='Data de Nascimento' onChange={setDataNascimento} />
-                    <Textinput tipo="default" descricao="Horário de Funcionamento" onChangeText={setHorarioAbertura} />
+                    <TimeInput descricao='Horário de Abertura' onChange={setHorarioAbertura} />
+                    <TimeInput descricao='Horário de Fechamento' onChange={setHorarioFechamento} />
                     <Textinput tipo="phone-pad" descricao="Telefone" onChangeText={setTelefone} max={11} />
                     <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
                     <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} max={8} />
                     <Textinput tipo="default" descricao="Confirmar Senha" isSenha={true} onChangeText={setConfirmarSenha} max={8} />
-                    <Textinput tipo="default" descricao="Nome da Loja" onChangeText={setNomeLoja} />
-                    <Textinput tipo="default" descricao="Logo (URL)" onChangeText={setLogo} />
+
 
                     <Button title="Cadastrar" onPress={handleCadastro} />
 
