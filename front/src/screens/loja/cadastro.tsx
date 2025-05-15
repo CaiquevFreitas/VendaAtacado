@@ -3,14 +3,18 @@ import { themes } from "../../../assets/colors/themes";
 import { Textinput } from '../../components/textInput/index';
 import { Button } from '../../components/button';
 import { TextLink } from '../../components/textLink';
+import { DateInput } from '../../components/textInput/dateInput';
+import { TimeInput } from '../../components/textInput/timeInput';
 
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
 
 import { cadastrarLoja } from '../../requests/cadastrarLoja';
 import { verificarEmail } from '../../../controllers/validations/email.validation';
+import { calcularIdade } from '../../../controllers/validations/idade.validation';
+import { validarSenha } from '../../../controllers/validations/senha.validation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -19,68 +23,46 @@ export default function CadastroLoja() {
 
     const [nomeLoja, setNomeLoja] = useState('');
     const [cpf, setCpf] = useState('');
-    const [horario, setHorario] = useState('');
+    const [horarioAbertura, setHorarioAbertura] = useState<Date | undefined>(undefined);
+    const [horarioFechamento, setHorarioFechamento] = useState<Date | undefined>(undefined);    
     const [telefone, setTelefone] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
     const [nomeVendedor, setNomeVendedor] = useState('');
-    const [logo, setLogo] = useState('');
-    const [dataNascimento, setDataNascimento] = useState('');
-
-    const [cep, setCep] = useState('');
-    const [rua, setRua] = useState('');
-    const [bairro, setBairro] = useState('');
-    const [cidade, setCidade] = useState('');
-    const [estado, setEstado] = useState('');
-
-    useEffect(() => {
-        if (cep.length === 8) {
-            fetch(`https://viacep.com.br/ws/${cep}/json/`)
-                .then((response) => response.json())
-                .then((data) => {
-                    if (!data.erro) {
-                        setRua(data.logradouro);
-                        setBairro(data.bairro);
-                        setCidade(data.localidade);
-                        setEstado(data.uf);
-                    } else {
-                        Alert.alert("CEP inválido", "Não foi possível encontrar este CEP.");
-                    }
-                })
-                .catch(() => {
-                    Alert.alert("Erro", "Erro ao buscar informações do CEP.");
-                });
-        }
-    }, [cep]);
+    const [dataNascimento, setDataNascimento] = useState<Date | undefined>(undefined);
 
     async function handleCadastro() {
-        if (!nomeLoja || !cpf || !cep || !rua || !bairro || !cidade || !estado || !horario || !telefone || !email || !senha || !nomeVendedor || !logo || !dataNascimento || !confirmarSenha) {
-            Alert.alert("Atenção", "Preencha todos os campos");
-        } else if (!verificarEmail(email)) {
-            Alert.alert("Atenção", "Email inválido");
-        } else {
-            const sucesso = await cadastrarLoja(
-                nomeVendedor,
-                nomeLoja,
-                cpf,
-                telefone,
-                email,
-                senha,
-                dataNascimento,
-                confirmarSenha,
-                horario,
-                logo,
-                cep,
-                rua,
-                bairro,
-                cidade,
-                estado
-            );
-            if (sucesso) {
-                navigation.navigate("Login");
-            }
-        }
+        if (
+          !nomeLoja ||
+          !cpf ||
+          !horarioAbertura ||
+          !horarioFechamento ||
+          !telefone ||
+          !email ||
+          !senha ||
+          !nomeVendedor ||
+          !dataNascimento ||
+          !confirmarSenha
+        ) {
+          Alert.alert("Atenção", "Preencha todos os campos");
+        } else if (
+          verificarEmail(email) &&
+          calcularIdade(dataNascimento) &&
+          validarSenha(senha, confirmarSenha)
+        ) {
+          await cadastrarLoja(
+            nomeLoja,
+            nomeVendedor,
+            cpf,
+            dataNascimento,
+            horarioAbertura,
+            horarioFechamento,
+            telefone,
+            email,
+            senha
+          );
+        } 
     }
 
     return (
@@ -89,23 +71,18 @@ export default function CadastroLoja() {
                 <View style={styles.container}>
                     <Text style={styles.titulo}>Cadastro da Loja</Text>
 
-                    <Textinput tipo="default" descricao="Nome do Proprietario" onChangeText={setNomeVendedor} />
+                    <Textinput tipo="default" descricao="Nome da Loja" onChangeText={setNomeLoja} />
+                    <Textinput tipo="default" descricao="Nome do Proprietário" onChangeText={setNomeVendedor} />
                     <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} max={11} />
 
-                    <Textinput tipo="numeric" descricao="CEP" onChangeText={setCep} value={cep} />
-                    <Textinput tipo="default" descricao="Rua" onChangeText={setRua} value={rua} />
-                    <Textinput tipo="default" descricao="Bairro" onChangeText={setBairro} value={bairro} />
-                    <Textinput tipo="default" descricao="Cidade" onChangeText={setCidade} value={cidade} />
-                    <Textinput tipo="default" descricao="Estado" onChangeText={setEstado} value={estado} />
-
-                    <Textinput tipo="default" descricao="Data de Nascimento (YYYY-MM-DD)" onChangeText={setDataNascimento} />
-                    <Textinput tipo="default" descricao="Horário de Funcionamento" onChangeText={setHorario} />
+                    <DateInput descricao='Data de Nascimento' onChange={setDataNascimento} />
+                    <TimeInput descricao='Horário de Abertura' onChange={setHorarioAbertura} value={horarioAbertura} />
+                    <TimeInput descricao='Horário de Fechamento' onChange={setHorarioFechamento} value={horarioFechamento} />
                     <Textinput tipo="phone-pad" descricao="Telefone" onChangeText={setTelefone} max={11} />
                     <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
                     <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} max={8} />
                     <Textinput tipo="default" descricao="Confirmar Senha" isSenha={true} onChangeText={setConfirmarSenha} max={8} />
-                    <Textinput tipo="default" descricao="Nome da Loja" onChangeText={setNomeLoja} />
-                    <Textinput tipo="default" descricao="Logo (URL)" onChangeText={setLogo} />
+
 
                     <Button title="Cadastrar" onPress={handleCadastro} />
 
