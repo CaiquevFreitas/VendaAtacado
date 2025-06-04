@@ -34,6 +34,8 @@ export default function CadastroLoja() {
     async function handleCadastro() {
         if (!nomeLoja || !cnpj || !horarioAbertura || !horarioFechamento || !telefone || !email || !senha || !nomeVendedor || !dataNascimento || !confirmarSenha) {
             Alert.alert("Atenção", "Preencha todos os campos");
+        } else if (senha !== confirmarSenha) {
+            Alert.alert("Atenção", "As senhas não conferem");
         } else if (verificarEmail(email) && calcularIdade(dataNascimento)) {
             cadastrarLoja(
                 nomeLoja,

@@ -23,12 +23,16 @@ export default function Cadastro(){
     const [cpf, setCpf] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
+    const [confirmarSenha, setConfirmarSenha] = useState('');
     const [telefone, setTelefone] = useState('');
 
     function handleCadastro(){
-        if(!data || !nome || !cpf || !email || !senha || !telefone){
+        if(!data || !nome || !cpf || !email || !senha || !confirmarSenha || !telefone){
             Alert.alert("Atenção","Preencha todos os campos")
-        }else if(verificarEmail(email) && calcularIdade(data)){
+        }else if(senha !== confirmarSenha){
+            Alert.alert("Atenção","As senhas não conferem")
+        }
+        else if(verificarEmail(email) && calcularIdade(data)){
             cadastrar(nome,data,cpf,email,senha, telefone)
         }
     }
@@ -57,6 +61,7 @@ export default function Cadastro(){
                         <Text style={styles.sectionTitle}>Dados de Acesso</Text>
                         <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
                         <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} max={8} />
+                        <Textinput tipo="default" descricao="Confirmar Senha" isSenha={true} onChangeText={setConfirmarSenha} max={8} />
                     </View>
 
                     <View style={styles.buttonContainer}>
