@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView, StyleSheet, ScrollView, Text, Alert } from 'react-native';
+import { View, KeyboardAvoidingView, StyleSheet, ScrollView, Text, Alert, Platform } from 'react-native';
 import { themes } from "../../../assets/colors/themes";
 import { Textinput } from '../../components/textInput/index';
 import { Button } from '../../components/button';
@@ -34,26 +34,38 @@ export default function Cadastro(){
     }
 
     return(
-        <KeyboardAvoidingView style={styles.background}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-
+        <KeyboardAvoidingView 
+            style={styles.background}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <ScrollView 
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.container}>
                     <Text style={styles.titulo}>Cadastro</Text>
 
-                    <Textinput tipo="default" descricao="Nome Completo" onChangeText={setNome} />
-                    <DateInput descricao='Data de Nascimento' onChange={setData} />
-                    <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} max={11} />
-                    <Textinput tipo="phone-pad" descricao="Telefone" onChangeText={setTelefone} max={11} />
-                    <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
-                    <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} max={8} />
+                    <View style={styles.formSection}>
+                        <Text style={styles.sectionTitle}>Dados Pessoais</Text>
+                        <Textinput tipo="default" descricao="Nome Completo" onChangeText={setNome} />
+                        <DateInput descricao='Data de Nascimento' onChange={setData} />
+                        <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} max={11} />
+                        <Textinput tipo="phone-pad" descricao="Telefone" onChangeText={setTelefone} max={11} />
+                    </View>
 
-                    <Button title="Cadastrar" onPress={handleCadastro} />
+                    <View style={styles.formSection}>
+                        <Text style={styles.sectionTitle}>Dados de Acesso</Text>
+                        <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
+                        <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} max={8} />
+                    </View>
 
-                    <View style={styles.viewLinks}>
-                    <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("Login")} />
+                    <View style={styles.buttonContainer}>
+                        <Button title="Cadastrar" onPress={handleCadastro} />
+                        <View style={styles.viewLinks}>
+                            <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("Login")} />
+                        </View>
                     </View>
                 </View>
-
             </ScrollView>
         </KeyboardAvoidingView>
     )
@@ -66,25 +78,45 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 20
+        paddingVertical: 30,
+        paddingHorizontal: 20
     },
     container:{
+        flex: 1,
         alignItems: "center",
         justifyContent: "flex-start",
-        width: '90%',
-        gap: 10
+        width: '100%',
+        gap: 20
     },
     titulo:{
         color: themes.colors.white,
-        fontSize: 28,
-        marginBottom: 20
+        fontSize: 32,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textAlign: 'center'
+    },
+    formSection: {
+        width: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 15,
+        padding: 15,
+        marginBottom: 10
+    },
+    sectionTitle: {
+        color: themes.colors.white,
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 15
+    },
+    buttonContainer: {
+        width: '100%',
+        alignItems: 'center',
+        marginTop: 10
     },
     viewLinks: {
-        width: "90%",
+        width: "100%",
         flexDirection: "row",
         justifyContent: "center",
         marginTop: 15
     }
-})
+});

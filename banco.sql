@@ -28,7 +28,7 @@ create table endereco(
     foreign key (fk_idLoja) references loja(idLoja)
 );
 
-
+insert into cliente values(default, 'Caique', 'caique@gmail.com', '09376587790', '71988882222', '2003-02-03', '12345678');
 create table cliente(
 	idCliente int primary key auto_increment,
     nomeCliente varchar(255) not null,
