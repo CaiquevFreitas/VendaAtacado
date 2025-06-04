@@ -45,11 +45,9 @@ export default function Login(){
                 <Textinput tipo='default' descricao="Senha" isSenha={true} max={8} onChangeText={setSenha} />
                 <Button title="Acessar" onPress={handleLogin} />
                 <View style={styles.viewLinks}>
-                    <TextLink texto="Esqueceu a senha?" />
+                    <TextLink texto="Cadastre-se como Loja" onPress={() => navigation.navigate("CadastroLoja")}/>
                     <TextLink texto="Cadastre-se como Cliente" onPress={() => navigation.navigate("Cadastro")}/>
-                    
                 </View>
-                <TextLink texto="Cadastre-se como Loja" onPress={() => navigation.navigate("CadastroLoja")}/>
             </View>
         </KeyboardAvoidingView>
     )

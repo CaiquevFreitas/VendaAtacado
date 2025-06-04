@@ -1,4 +1,4 @@
-import { View, KeyboardAvoidingView, StyleSheet, ScrollView, Text, Alert } from 'react-native';
+import { View, KeyboardAvoidingView, StyleSheet, ScrollView, Text, Alert, Platform } from 'react-native';
 import { themes } from "../../../assets/colors/themes";
 import { Textinput } from '../../components/textInput/index';
 import { Button } from '../../components/button';
@@ -21,7 +21,7 @@ export default function CadastroLoja() {
     const navigation = useNavigation<NavigationProp>();
 
     const [nomeLoja, setNomeLoja] = useState('');
-    const [cpf, setCpf] = useState('');
+    const [cnpj, setCnpj] = useState('');
     const [horarioAbertura, setHorarioAbertura] = useState<Date | undefined>(undefined);
     const [horarioFechamento, setHorarioFechamento] = useState<Date | undefined>(undefined);    
     const [telefone, setTelefone] = useState('');
@@ -32,46 +32,68 @@ export default function CadastroLoja() {
     const [dataNascimento, setDataNascimento] = useState<Date | undefined>(undefined);
 
     async function handleCadastro() {
-        if (!nomeLoja || !cpf || !horarioAbertura || !horarioFechamento || !telefone || !email || !senha || !nomeVendedor || !dataNascimento || !confirmarSenha) {
+        if (!nomeLoja || !cnpj || !horarioAbertura || !horarioFechamento || !telefone || !email || !senha || !nomeVendedor || !dataNascimento || !confirmarSenha) {
             Alert.alert("Atenção", "Preencha todos os campos");
         } else if (verificarEmail(email) && calcularIdade(dataNascimento)) {
             cadastrarLoja(
-                nomeVendedor,
                 nomeLoja,
-                cpf,
-                telefone,
-                email,
-                senha,
+                nomeVendedor,
+                cnpj,
                 dataNascimento,
                 horarioAbertura,
-                horarioFechamento
+                horarioFechamento,
+                telefone,
+                email,
+                senha
             );
         } 
     }
 
     return (
-        <KeyboardAvoidingView style={styles.background}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+        <KeyboardAvoidingView 
+            style={styles.background}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+            <ScrollView 
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.container}>
                     <Text style={styles.titulo}>Cadastro da Loja</Text>
+                    
+                    <View style={styles.formSection}>
+                        <Text style={styles.sectionTitle}>Dados da Loja</Text>
+                        <Textinput tipo="default" descricao="Nome da Loja" onChangeText={setNomeLoja} />
+                        <Textinput tipo="numeric" descricao="CNPJ (apenas números)" onChangeText={setCnpj} max={11} />
+                        <View style={styles.rowContainer}>
+                            <View style={styles.halfWidth}>
+                                <TimeInput descricao='Horário de Abertura' onChange={setHorarioAbertura} />
+                            </View>
+                            <View style={styles.halfWidth}>
+                                <TimeInput descricao='Horário de Fechamento' onChange={setHorarioFechamento} />
+                            </View>
+                        </View>
+                    </View>
 
-                    <Textinput tipo="default" descricao="Nome da Loja" onChangeText={setNomeLoja} />
-                    <Textinput tipo="default" descricao="Nome do Proprietário" onChangeText={setNomeVendedor} />
-                    <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} max={11} />
+                    <View style={styles.formSection}>
+                        <Text style={styles.sectionTitle}>Dados do Proprietário</Text>
+                        <Textinput tipo="default" descricao="Nome do Proprietário" onChangeText={setNomeVendedor} />
+                        <DateInput descricao='Data de Nascimento' onChange={setDataNascimento} />
+                        <Textinput tipo="phone-pad" descricao="Telefone" onChangeText={setTelefone} max={11} />
+                    </View>
 
-                    <DateInput descricao='Data de Nascimento' onChange={setDataNascimento} />
-                    <TimeInput descricao='Horário de Abertura' onChange={setHorarioAbertura} />
-                    <TimeInput descricao='Horário de Fechamento' onChange={setHorarioFechamento} />
-                    <Textinput tipo="phone-pad" descricao="Telefone" onChangeText={setTelefone} max={11} />
-                    <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
-                    <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} max={8} />
-                    <Textinput tipo="default" descricao="Confirmar Senha" isSenha={true} onChangeText={setConfirmarSenha} max={8} />
+                    <View style={styles.formSection}>
+                        <Text style={styles.sectionTitle}>Dados de Acesso</Text>
+                        <Textinput tipo="email-address" descricao="Email" onChangeText={setEmail} />
+                        <Textinput tipo="default" descricao="Senha (Max: 8 caracteres)" isSenha={true} onChangeText={setSenha} max={8} />
+                        <Textinput tipo="default" descricao="Confirmar Senha" isSenha={true} onChangeText={setConfirmarSenha} max={8} />
+                    </View>
 
-
-                    <Button title="Cadastrar" onPress={handleCadastro} />
-
-                    <View style={styles.viewLinks}>
-                        <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("Login")} />
+                    <View style={styles.buttonContainer}>
+                        <Button title="Cadastrar" onPress={handleCadastro} />
+                        <View style={styles.viewLinks}>
+                            <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("Login")} />
+                        </View>
                     </View>
                 </View>
             </ScrollView>
@@ -86,23 +108,52 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 20
+        paddingVertical: 30,
+        paddingHorizontal: 20
     },
     container: {
+        flex: 1,
         alignItems: "center",
         justifyContent: "flex-start",
-        width: '90%',
-        gap: 10
+        width: '100%',
+        gap: 20
     },
     titulo: {
         color: themes.colors.white,
-        fontSize: 28,
-        marginBottom: 20
+        fontSize: 32,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textAlign: 'center'
+    },
+    formSection: {
+        width: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 15,
+        padding: 15,
+        marginBottom: 10
+    },
+    sectionTitle: {
+        color: themes.colors.white,
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 15
+    },
+    rowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        gap: 10
+    },
+    halfWidth: {
+        flex: 1
+    },
+    buttonContainer: {
+        width: '100%',
+        alignItems: 'center',
+        marginTop: 10
     },
     viewLinks: {
-        width: "90%",
+        width: "100%",
         flexDirection: "row",
         justifyContent: "center",
         marginTop: 15
