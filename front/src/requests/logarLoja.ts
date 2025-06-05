@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function logarLoja(email: string, senha: string): Promise<boolean> {
   try {
-    const response = await fetch('http://192.168.69.96:3000/loginLoja', {
+    const response = await fetch('http://192.168.176.214:3000/loginLoja', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

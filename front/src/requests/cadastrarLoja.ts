@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export async function cadastrarLoja(
   nomeLoja: string,
   nomeVendedor: string,
-  cpf: string,
+  cnpj: string,
   dataNascimento: Date,
   horarioAbertura: Date,
   horarioFechamento: Date,
@@ -13,7 +13,7 @@ export async function cadastrarLoja(
   senha: string
 ){
   try {
-    const response = await fetch('http://192.168.69.96:3000/cadastroLoja', {
+    const response = await fetch('http://192.168.176.214:3000/cadastroLoja', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ export async function cadastrarLoja(
         nomeLoja,
         nomeVendedor,
         dataNascimento,
-        cpf,
+        cnpj,
         horarioAbertura,
         horarioFechamento,
         telefone,

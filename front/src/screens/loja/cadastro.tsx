@@ -66,7 +66,7 @@ export default function CadastroLoja() {
                     <View style={styles.formSection}>
                         <Text style={styles.sectionTitle}>Dados da Loja</Text>
                         <Textinput tipo="default" descricao="Nome da Loja" onChangeText={setNomeLoja} />
-                        <Textinput tipo="numeric" descricao="CNPJ (apenas números)" onChangeText={setCnpj} max={11} />
+                        <Textinput tipo="numeric" descricao="CNPJ (apenas números)" onChangeText={setCnpj} max={14} />
                         <View style={styles.rowContainer}>
                             <View style={styles.halfWidth}>
                                 <TimeInput descricao='Horário de Abertura' onChange={setHorarioAbertura} />

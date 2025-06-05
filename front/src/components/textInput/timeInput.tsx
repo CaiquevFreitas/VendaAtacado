@@ -17,7 +17,7 @@ export function TimeInput({ descricao, value, onChange }: Props) {
     setShowPicker(Platform.OS === "ios");
     if (time) {
       
-      const timeZoneOffset = 3 * 60 * 60 * 1000; 
+      const timeZoneOffset = 0 * 60 * 60 * 1000; 
       const adjustedTime = new Date(time.getTime() + timeZoneOffset);
       setSelectedTime(adjustedTime);
       onChange?.(adjustedTime);

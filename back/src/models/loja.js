@@ -17,6 +17,6 @@ Loja.init({
     dataNascimento: { type: DataTypes.DATE, allowNull: false },
     nota: { type: DataTypes.DOUBLE },
 }, 
-{ sequelize, modelName: 'Loja' });
+{ sequelize, modelName: 'Loja', tableName: 'loja',  timestamps: false});
 
 module.exports =   Loja ;
