@@ -10,13 +10,13 @@ Loja.init({
     logo: { type: DataTypes.STRING(1000) },
     email: { type: DataTypes.STRING(100), allowNull: false },
     telefone: { type: DataTypes.CHAR(11), allowNull: false, unique: true },
-    cpf: { type: DataTypes.CHAR(11), allowNull: false, unique: true },
+    cnpj: { type: DataTypes.CHAR(14), allowNull: false, unique: true },
     senha: { type: DataTypes.CHAR(8), allowNull: false },
     horarioAbertura: { type: DataTypes.TIME, allowNull: false },
     horarioFechamento: { type: DataTypes.TIME, allowNull: false },
     dataNascimento: { type: DataTypes.DATE, allowNull: false },
     nota: { type: DataTypes.DOUBLE },
 }, 
-{ sequelize, modelName: 'Loja' });
+{ sequelize, modelName: 'Loja', tableName: 'loja',  timestamps: false});
 
 module.exports =   Loja ;

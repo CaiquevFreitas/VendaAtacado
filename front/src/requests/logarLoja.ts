@@ -1,9 +1,9 @@
 import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export async function logarCliente(email: string, senha: string): Promise<boolean> {
+export async function logarLoja(email: string, senha: string): Promise<boolean> {
   try {
-    const response = await fetch('http://192.168.176.214:3000/loginCliente', {
+    const response = await fetch('http://192.168.176.214:3000/loginLoja', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -14,8 +14,8 @@ export async function logarCliente(email: string, senha: string): Promise<boolea
     const dados = await response.json();
 
     if (response.ok) {
-      await AsyncStorage.setItem('userType', 'cliente');
-      Alert.alert('Sucesso', 'Login realizado!');
+      await AsyncStorage.setItem('userType', 'loja');
+      Alert.alert('Sucesso', 'Login da loja realizado!');
       return true;
     } else {
       Alert.alert('Erro', dados.message || 'Falha no Login');

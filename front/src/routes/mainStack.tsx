@@ -5,6 +5,8 @@ import ClientNavigator from './clientNavigator';
 import LojaNavigator from './lojaNavigator';
 import Login from '../screens/cliente/login';
 import Cadastro from '../screens/cliente/cadastro';
+import CadastroLoja from '../screens/loja/cadastro';
+import LoginLoja from '../screens/loja/login';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -14,7 +16,7 @@ export default function MainStackNavigator({ userType }: { userType: string | nu
       {/* Rota principal do app */}
       {userType === 'cliente' ? (
         <Stack.Screen name="ClienteTabs" component={ClientNavigator} />
-      ) : userType === 'lojista' ? (
+      ) : userType === 'loja' ? (
         <Stack.Screen name="LojaTabs" component={LojaNavigator} />
       ) : (
         <Stack.Screen name="ClienteTabs" component={ClientNavigator} />
@@ -22,7 +24,9 @@ export default function MainStackNavigator({ userType }: { userType: string | nu
 
       {/* Telas acessível de qualquer lugar */}
       <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="LoginLoja" component={LoginLoja} />
       <Stack.Screen name='Cadastro' component={Cadastro} />
+      <Stack.Screen name='CadastroLoja' component={CadastroLoja} />
     </Stack.Navigator>
   );
 }

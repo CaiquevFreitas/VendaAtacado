@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
 import { verificarEmail } from '../../../controllers/validations/email.validation';
-import { logarCliente } from '../../requests/loginCliente';
+import { logarLoja } from '../../requests/logarLoja';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -23,11 +23,11 @@ export default function Login(){
         if (!email || !senha) {
           Alert.alert("Atenção", "Preencha todos os campos");
         } else if (verificarEmail(email)) {
-          const sucesso = await logarCliente(email, senha);
+          const sucesso = await logarLoja(email, senha);
           if (sucesso) {
             navigation.reset({
               index: 0,
-              routes: [{ name: "ClienteTabs" }], // ou a tela principal
+              routes: [{ name: "LojaTabs" }], // ou a tela principal
             });
           }
         }
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     viewLinks: {
         width: "90%",
         flexDirection: "row",
-        justifyContent: "space-between"
+        padding: 10,
+        justifyContent: 'center'
     }
 })

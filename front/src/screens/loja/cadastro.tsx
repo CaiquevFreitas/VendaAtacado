@@ -4,41 +4,55 @@ import { Textinput } from '../../components/textInput/index';
 import { Button } from '../../components/button';
 import { TextLink } from '../../components/textLink';
 import { DateInput } from '../../components/textInput/dateInput';
-import { useState } from 'react';
+import { TimeInput } from '../../components/textInput/timeInput';
 
+import { useState} from 'react';
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
 
-import { cadastrar } from '../../requests/cadastrar';
-import { calcularIdade } from '../../../controllers/validations/idade.validation';
+import { cadastrarLoja } from '../../requests/cadastrarLoja';
 import { verificarEmail } from '../../../controllers/validations/email.validation';
+import { calcularIdade } from '../../../controllers/validations/idade.validation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export default function Cadastro(){
+export default function CadastroLoja() {
     const navigation = useNavigation<NavigationProp>();
-    const [nome, setNome] = useState('');
-    const [data, setData] = useState<Date | undefined>(undefined);
-    const [cpf, setCpf] = useState('');
+
+    const [nomeLoja, setNomeLoja] = useState('');
+    const [cnpj, setCnpj] = useState('');
+    const [horarioAbertura, setHorarioAbertura] = useState<Date | undefined>(undefined);
+    const [horarioFechamento, setHorarioFechamento] = useState<Date | undefined>(undefined);    
+    const [telefone, setTelefone] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
-    const [telefone, setTelefone] = useState('');
+    const [nomeVendedor, setNomeVendedor] = useState('');
+    const [dataNascimento, setDataNascimento] = useState<Date | undefined>(undefined);
 
-    function handleCadastro(){
-        if(!data || !nome || !cpf || !email || !senha || !confirmarSenha || !telefone){
-            Alert.alert("Atenção","Preencha todos os campos")
-        }else if(senha !== confirmarSenha){
-            Alert.alert("Atenção","As senhas não conferem")
-        }
-        else if(verificarEmail(email) && calcularIdade(data)){
-            cadastrar(nome,data,cpf,email,senha, telefone)
-            navigation.navigate("Login")
-        }
+    async function handleCadastro() {
+        if (!nomeLoja || !cnpj || !horarioAbertura || !horarioFechamento || !telefone || !email || !senha || !nomeVendedor || !dataNascimento || !confirmarSenha) {
+            Alert.alert("Atenção", "Preencha todos os campos");
+        } else if (senha !== confirmarSenha) {
+            Alert.alert("Atenção", "As senhas não conferem");
+        } else if (verificarEmail(email) && calcularIdade(dataNascimento)) {
+            cadastrarLoja(
+                nomeLoja,
+                nomeVendedor,
+                cnpj,
+                dataNascimento,
+                horarioAbertura,
+                horarioFechamento,
+                telefone,
+                email,
+                senha
+            );
+            navigation.navigate("LoginLoja")
+        } 
     }
 
-    return(
+    return (
         <KeyboardAvoidingView 
             style={styles.background}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -48,13 +62,26 @@ export default function Cadastro(){
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.container}>
-                    <Text style={styles.titulo}>Cadastro</Text>
+                    <Text style={styles.titulo}>Cadastro da Loja</Text>
+                    
+                    <View style={styles.formSection}>
+                        <Text style={styles.sectionTitle}>Dados da Loja</Text>
+                        <Textinput tipo="default" descricao="Nome da Loja" onChangeText={setNomeLoja} />
+                        <Textinput tipo="numeric" descricao="CNPJ (apenas números)" onChangeText={setCnpj} max={14} />
+                        <View style={styles.rowContainer}>
+                            <View style={styles.halfWidth}>
+                                <TimeInput descricao='Horário de Abertura' onChange={setHorarioAbertura} />
+                            </View>
+                            <View style={styles.halfWidth}>
+                                <TimeInput descricao='Horário de Fechamento' onChange={setHorarioFechamento} />
+                            </View>
+                        </View>
+                    </View>
 
                     <View style={styles.formSection}>
-                        <Text style={styles.sectionTitle}>Dados Pessoais</Text>
-                        <Textinput tipo="default" descricao="Nome Completo" onChangeText={setNome} />
-                        <DateInput descricao='Data de Nascimento' onChange={setData} />
-                        <Textinput tipo="numeric" descricao="CPF (apenas números)" onChangeText={setCpf} max={11} />
+                        <Text style={styles.sectionTitle}>Dados do Proprietário</Text>
+                        <Textinput tipo="default" descricao="Nome do Proprietário" onChangeText={setNomeVendedor} />
+                        <DateInput descricao='Data de Nascimento' onChange={setDataNascimento} />
                         <Textinput tipo="phone-pad" descricao="Telefone" onChangeText={setTelefone} max={11} />
                     </View>
 
@@ -68,7 +95,7 @@ export default function Cadastro(){
                     <View style={styles.buttonContainer}>
                         <Button title="Cadastrar" onPress={handleCadastro} />
                         <View style={styles.viewLinks}>
-                            <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("Login")} />
+                            <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("LoginLoja")} />
                         </View>
                     </View>
                 </View>
@@ -78,7 +105,7 @@ export default function Cadastro(){
 }
 
 const styles = StyleSheet.create({
-    background:{
+    background: {
         flex: 1,
         backgroundColor: themes.colors.primary
     },
@@ -87,14 +114,14 @@ const styles = StyleSheet.create({
         paddingVertical: 30,
         paddingHorizontal: 20
     },
-    container:{
+    container: {
         flex: 1,
         alignItems: "center",
         justifyContent: "flex-start",
         width: '100%',
         gap: 20
     },
-    titulo:{
+    titulo: {
         color: themes.colors.white,
         fontSize: 32,
         fontWeight: 'bold',
@@ -113,6 +140,15 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         marginBottom: 15
+    },
+    rowContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+        gap: 10
+    },
+    halfWidth: {
+        flex: 1
     },
     buttonContainer: {
         width: '100%',
