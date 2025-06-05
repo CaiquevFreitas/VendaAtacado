@@ -17,14 +17,13 @@ app.use(express.urlencoded({extended:true}))
 const cadastroclienteRoute = require('./src/routes/cadastroCliente')
 const loginCliente = require('./src/routes/loginCliente')
 const cadastroLoja = require('./src/routes/cadastroLoja')
+const loginLoja = require('./src/routes/loginLoja')
 
-app.get('/', (req, res) => {
-    res.send('API funcionando!');
-});
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
 app.use('/', cadastroLoja);
+app.use('/', loginLoja);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);

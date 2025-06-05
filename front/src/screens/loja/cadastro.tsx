@@ -48,6 +48,7 @@ export default function CadastroLoja() {
                 email,
                 senha
             );
+            navigation.navigate("LoginLoja")
         } 
     }
 
@@ -94,7 +95,7 @@ export default function CadastroLoja() {
                     <View style={styles.buttonContainer}>
                         <Button title="Cadastrar" onPress={handleCadastro} />
                         <View style={styles.viewLinks}>
-                            <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("Login")} />
+                            <TextLink texto="Já possui uma conta?" onPress={() => navigation.navigate("LoginLoja")} />
                         </View>
                     </View>
                 </View>

@@ -34,6 +34,7 @@ export default function Cadastro(){
         }
         else if(verificarEmail(email) && calcularIdade(data)){
             cadastrar(nome,data,cpf,email,senha, telefone)
+            navigation.navigate("Login")
         }
     }
 
