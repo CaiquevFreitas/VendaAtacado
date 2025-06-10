@@ -27,7 +27,7 @@ export default function Login(){
           if (sucesso) {
             navigation.reset({
               index: 0,
-              routes: [{ name: "LojaTabs" }], // ou a tela principal
+              routes: [{ name: "LojaTabs" }], 
             });
           }
         }
