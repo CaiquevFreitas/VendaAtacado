@@ -13,6 +13,7 @@ import type { RootStackParamList } from "../../../types";
 import { cadastrar } from '../../requests/cadastrar';
 import { calcularIdade } from '../../../controllers/validations/idade.validation';
 import { verificarEmail } from '../../../controllers/validations/email.validation';
+import { validarInputs } from '../../../controllers/validations/inputs.validation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -31,8 +32,7 @@ export default function Cadastro(){
             Alert.alert("Atenção","Preencha todos os campos")
         }else if(senha !== confirmarSenha){
             Alert.alert("Atenção","As senhas não conferem")
-        }
-        else if(verificarEmail(email) && calcularIdade(data)){
+        }else if(verificarEmail(email) && calcularIdade(data) && validarInputs(senha, telefone, cpf)){
             cadastrar(nome,data,cpf,email,senha, telefone)
             navigation.navigate("Login")
         }

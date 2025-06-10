@@ -14,6 +14,7 @@ import type { RootStackParamList } from "../../../types";
 import { cadastrarLoja } from '../../requests/cadastrarLoja';
 import { verificarEmail } from '../../../controllers/validations/email.validation';
 import { calcularIdade } from '../../../controllers/validations/idade.validation';
+import { validarInputs } from '../../../controllers/validations/inputs.validation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -36,7 +37,7 @@ export default function CadastroLoja() {
             Alert.alert("Atenção", "Preencha todos os campos");
         } else if (senha !== confirmarSenha) {
             Alert.alert("Atenção", "As senhas não conferem");
-        } else if (verificarEmail(email) && calcularIdade(dataNascimento)) {
+        } else if (verificarEmail(email) && calcularIdade(dataNascimento) && validarInputs(senha, telefone, '', cnpj)) {
             cadastrarLoja(
                 nomeLoja,
                 nomeVendedor,
