@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Alert, StyleSheet, Image, Text, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -18,8 +18,33 @@ type ProfileOptionProps = {
     onPress: () => void;
 };
 
+type LojaData = {
+    id: number;
+    nomeLoja: string;
+    nomeVendedor: string;
+    horarioAbertura: string;
+    horarioFechamento: string;
+};
+
 export default function Perfil(){
     const navigation = useNavigation<NavigationProp>();
+    const [lojaData, setLojaData] = useState<LojaData | null>(null);
+
+    useEffect(() => {
+        const carregarDadosLoja = async () => {
+            try {
+                const dadosString = await AsyncStorage.getItem('lojaData');
+                if (dadosString) {
+                    const dados = JSON.parse(dadosString);
+                    setLojaData(dados);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados da loja:', error);
+            }
+        };
+
+        carregarDadosLoja();
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -55,8 +80,10 @@ export default function Perfil(){
                         style={styles.profileImage} 
                     />
                     <View>
-                        <Text style={styles.storeName}>Nome da Loja</Text>
-                        <Text style={styles.storeEmail}>loja@email.com</Text>
+                        <Text style={styles.storeName}>{lojaData?.nomeLoja || 'Carregando...'}</Text>
+                        <Text style={styles.storeEmail}>
+                            {lojaData ? `${lojaData.horarioAbertura} - ${lojaData.horarioFechamento}` : 'Carregando...'}
+                        </Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>

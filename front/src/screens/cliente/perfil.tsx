@@ -14,7 +14,7 @@ export default function Perfil() {
     <View style={styles.container}>
       <Image style={styles.img} source={require("../../../assets/icon.png")} />
       <Button title="Entrar como Cliente" onPress={() => navigation.navigate("Login")} />
-      <Button title="Entrar como Loja" onPress={() => navigation.navigate("Login")} />
+      <Button title="Entrar como Loja" onPress={() => navigation.navigate("LoginLoja")} />
     </View>
   );
 }
