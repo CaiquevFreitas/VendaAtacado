@@ -2,10 +2,14 @@ import { themes } from "../../../assets/colors/themes";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+    inputContainer: {
+        width: '100%',
+        position: 'relative',
+        marginBottom: 15,
+    },
     input:{
         backgroundColor: themes.colors.white,
         width: '100%',
-        marginBottom: 15,
         color: themes.colors.black,
         fontSize: 16,
         borderRadius: 10,
@@ -18,5 +22,14 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.20,
         shadowRadius: 1.41,
         elevation: 2
+    },
+    inputComIcone: {
+        paddingRight: 50, 
+    },
+    iconContainer: {
+        position: 'absolute',
+        right: 12,
+        height: '100%',
+        justifyContent: 'center',
     }
 })
