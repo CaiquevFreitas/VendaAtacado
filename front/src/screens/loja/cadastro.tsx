@@ -15,6 +15,7 @@ import { cadastrarLoja } from '../../requests/cadastrarLoja';
 import { verificarEmail } from '../../../controllers/validations/email.validation';
 import { calcularIdade } from '../../../controllers/validations/idade.validation';
 import { validarInputs } from '../../../controllers/validations/inputs.validation';
+import { validarHorario } from '../../../controllers/validations/horario.validation';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -37,7 +38,7 @@ export default function CadastroLoja() {
             Alert.alert("Atenção", "Preencha todos os campos");
         } else if (senha !== confirmarSenha) {
             Alert.alert("Atenção", "As senhas não conferem");
-        } else if (verificarEmail(email) && calcularIdade(dataNascimento) && validarInputs(senha, telefone, '', cnpj)) {
+        } else if (verificarEmail(email) && calcularIdade(dataNascimento) && validarInputs(senha, telefone, '', cnpj) && validarHorario(horarioAbertura, horarioFechamento)) {
             cadastrarLoja(
                 nomeLoja,
                 nomeVendedor,
