@@ -82,7 +82,7 @@ export default function Perfil(){
                     <View>
                         <Text style={styles.storeName}>{lojaData?.nomeLoja || 'Carregando...'}</Text>
                         <Text style={styles.storeEmail}>
-                            {lojaData ? `${lojaData.horarioAbertura} - ${lojaData.horarioFechamento}` : 'Carregando...'}
+                             {lojaData ? `${lojaData.horarioAbertura.slice(0, 5)} às ${lojaData.horarioFechamento.slice(0, 5)}` : 'Carregando...'}
                         </Text>
                     </View>
                 </View>
@@ -97,7 +97,7 @@ export default function Perfil(){
                     <ProfileOption 
                         icon={<Ionicons name="settings-outline" size={24} color={themes.colors.primary} />}
                         title="Configurações da Loja"
-                        onPress={() => {}}
+                        onPress={() => navigation.navigate('ConfiguracoesLoja')}
                     />
                     <ProfileOption 
                         icon={<Ionicons name="notifications-outline" size={24} color={themes.colors.primary} />}

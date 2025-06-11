@@ -7,6 +7,7 @@ import Login from '../screens/cliente/login';
 import Cadastro from '../screens/cliente/cadastro';
 import CadastroLoja from '../screens/loja/cadastro';
 import LoginLoja from '../screens/loja/login';
+import ConfiguracoesLoja from '../screens/loja/configuracoes';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -27,6 +28,7 @@ export default function MainStackNavigator({ userType }: { userType: string | nu
       <Stack.Screen name="LoginLoja" component={LoginLoja} />
       <Stack.Screen name='Cadastro' component={Cadastro} />
       <Stack.Screen name='CadastroLoja' component={CadastroLoja} />
+      <Stack.Screen name='ConfiguracoesLoja' component={ConfiguracoesLoja} />
     </Stack.Navigator>
   );
 }
