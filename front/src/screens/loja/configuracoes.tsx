@@ -48,7 +48,7 @@ export default function ConfiguracoesLoja() {
                     icon={<Ionicons name="business-outline" size={24} color={themes.colors.primary} />}
                     title="Alterar Informações da Loja"
                     description="Atualize nome, horário de funcionamento e outras informações"
-                    onPress={() => {}}
+                    onPress={() => navigation.navigate('AlterarInformacoesLoja')}
                 />
 
                 <ConfigOption 

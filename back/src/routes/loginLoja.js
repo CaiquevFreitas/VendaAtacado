@@ -35,12 +35,14 @@ router.post('/loginLoja', async (req, res) => {
             success: true,
             message: 'Login realizado com sucesso!',
             loja: {
-                id: loja.id,
+                id: loja.idLoja,
                 nomeLoja: loja.nomeLoja,
                 nomeVendedor: loja.nomeVendedor,
                 email: loja.email,
                 horarioAbertura: loja.horarioAbertura,
-                horarioFechamento: loja.horarioFechamento
+                horarioFechamento: loja.horarioFechamento,
+                telefone: loja.telefone,
+                senha: loja.senha
             }
         });
 

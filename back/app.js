@@ -2,7 +2,7 @@ const express =  require('express');
 const port = 3000;
 const cors = require('cors');
 const dotenv = require('dotenv');
-const db = require('./src/models/database');
+
 dotenv.config();
 const app = express();
 app.use(cors({
@@ -14,10 +14,11 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 
 //Importação das Rotas
-const cadastroclienteRoute = require('./src/routes/cadastroCliente')
+const cadastroclienteRoute = require('./src/routes/create/cadastroCliente')
 const loginCliente = require('./src/routes/loginCliente')
-const cadastroLoja = require('./src/routes/cadastroLoja')
+const cadastroLoja = require('./src/routes/create/cadastroLoja')
 const loginLoja = require('./src/routes/loginLoja')
+const editLoja = require('./src/routes/update/editLoja')
 
 
 app.use('/', cadastroclienteRoute);

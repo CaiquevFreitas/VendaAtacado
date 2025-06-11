@@ -1,5 +1,5 @@
 const express = require('express')
-const Loja = require('../models/loja')
+const Loja = require('../../models/loja')
 const { Op } = require('sequelize');
 const router = express.Router();
 
