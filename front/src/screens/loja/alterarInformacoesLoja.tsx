@@ -151,7 +151,7 @@ export default function AlterarInformacoesLoja() {
                     style={styles.backButton} 
                     onPress={() => navigation.goBack()}
                 >
-                    <Ionicons name="arrow-back" size={24} color={themes.colors.primary} />
+                    <Ionicons name="arrow-back" size={24} color={themes.colors.white} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Alterar Informações da Loja</Text>
             </View>
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
         paddingTop: 40,
     },
     backButton: {
-        padding: 8,
+        padding: 8
     },
     headerTitle: {
         fontSize: 24,
