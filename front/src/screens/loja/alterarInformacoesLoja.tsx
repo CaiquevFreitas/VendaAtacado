@@ -77,11 +77,20 @@ export default function AlterarInformacoesLoja() {
             }
 
             if (editFields.senha) {
-                const senhaAtualSalva = await AsyncStorage.getItem('@loja_senha');
-                if (senhaAtual !== senhaAtualSalva) {
-                    Alert.alert('Erro', 'Senha atual incorreta');
-                    return;
+                const senhaAtualSalva = await AsyncStorage.getItem('lojaData');
+                
+                if(senhaAtualSalva){
+                    const lojaSenha = JSON.parse(senhaAtualSalva);
+                    if (senhaAtual !== lojaSenha.senha) {
+                        Alert.alert('Erro', 'Senha atual incorreta');
+                        return;
+                    }
+                    if(novaSenha === lojaSenha.senha){
+                        Alert.alert('Erro', 'A nova senha não pode ser igual a senha atual');
+                        return;
+                    }
                 }
+                
             }
 
             const camposParaAtualizar: any = {};
