@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function logarLoja(email: string, senha: string): Promise<boolean> {
   try {
-    const response = await fetch('http://192.168.176.214:3000/loginLoja', {
+    const response = await fetch('http://localhost:3000/loginLoja', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ export async function logarLoja(email: string, senha: string): Promise<boolean> 
     if (response.ok) {
       await AsyncStorage.setItem('userType', 'loja');
       await AsyncStorage.setItem('lojaData', JSON.stringify({
-        id: dados.loja.idLoja,
+        id: dados.loja.id,
         nomeLoja: dados.loja.nomeLoja,
         nomeVendedor: dados.loja.nomeVendedor,
         horarioAbertura: dados.loja.horarioAbertura,
@@ -24,7 +24,7 @@ export async function logarLoja(email: string, senha: string): Promise<boolean> 
         telefone: dados.loja.telefone,
         senha: dados.loja.senha
       }));
-      Alert.alert('Sucesso', 'Login da loja realizado!' + dados.loja.id);
+      Alert.alert('Sucesso', 'Login da loja realizado!');
       return true;
     } else {
       Alert.alert('Erro', dados.message || 'Falha no Login');

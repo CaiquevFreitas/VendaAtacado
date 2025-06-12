@@ -15,16 +15,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function MainStackNavigator({ userType }: { userType: string | null }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* Rota principal do app */}
-      {userType === 'cliente' ? (
-        <Stack.Screen name="ClienteTabs" component={ClientNavigator} />
-      ) : userType === 'loja' ? (
-        <Stack.Screen name="LojaTabs" component={LojaNavigator} />
-      ) : (
-        <Stack.Screen name="ClienteTabs" component={ClientNavigator} />
-      )}
-
-      {/* Telas acessível de qualquer lugar */}
+      <Stack.Screen name="ClienteTabs" component={ClientNavigator} />
+      <Stack.Screen name="LojaTabs" component={LojaNavigator} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="LoginLoja" component={LoginLoja} />
       <Stack.Screen name='Cadastro' component={Cadastro} />

@@ -54,13 +54,14 @@ export default function AlterarInformacoesLoja() {
 
     const carregarInformacoesLoja = async () => {
         try {
-            const lojaInfoString = await AsyncStorage.getItem('@loja_info');
-            if (lojaInfoString) {
-                const info = JSON.parse(lojaInfoString);
+            const lojaDataString = await AsyncStorage.getItem('lojaData');
+            if (lojaDataString) {
+                const lojaData = JSON.parse(lojaDataString);
                 setLojaInfo({
-                    ...info,
-                    horarioAbertura: new Date(info.horarioAbertura),
-                    horarioFechamento: new Date(info.horarioFechamento)
+                    nome: lojaData.nomeLoja,
+                    horarioAbertura: new Date(lojaData.horarioAbertura),
+                    horarioFechamento: new Date(lojaData.horarioFechamento),
+                    telefone: lojaData.telefone
                 });
             }
         } catch (error) {
@@ -102,11 +103,21 @@ export default function AlterarInformacoesLoja() {
                 camposParaAtualizar.senha = novaSenha;
             }
 
-            const lojaId = await AsyncStorage.getItem('@loja_id');
+            const lojaDataString = await AsyncStorage.getItem('lojaData');
+            if (!lojaDataString) {
+                Alert.alert('Erro', 'Dados da loja não encontrados');
+                return;
+            }
+            console.log('lojaDataString:', lojaDataString);
+            const lojaData = JSON.parse(lojaDataString);
+            console.log('lojaData parsed:', lojaData);
+            const lojaId = lojaData.id;
+
             if (!lojaId) {
                 Alert.alert('Erro', 'ID da loja não encontrado');
                 return;
             }
+            console.log('lojaId:', lojaId);
 
             await editarLoja({
                 id: lojaId,

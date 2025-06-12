@@ -11,21 +11,21 @@ router.put('/editLoja/:id', async (req, res) => {
             horarioFechamento, 
             telefone, 
             senha 
-        } = req.query;
+        } = req.body;
         
         // Cria um objeto com apenas os campos que devem ser atualizados
         const camposParaAtualizar = {};
         
         if (nome) {
-            camposParaAtualizar.nome = nome;
+            camposParaAtualizar.nomeLoja = nome;
         }
         
         if (horarioAbertura) {
-            camposParaAtualizar.horarioAbertura = new Date(horarioAbertura);
+            camposParaAtualizar.horarioAbertura = horarioAbertura;
         }
         
         if (horarioFechamento) {
-            camposParaAtualizar.horarioFechamento = new Date(horarioFechamento);
+            camposParaAtualizar.horarioFechamento = horarioFechamento;
         }
         
         if (telefone) {
@@ -36,19 +36,23 @@ router.put('/editLoja/:id', async (req, res) => {
             camposParaAtualizar.senha = senha;
         }
         
-        // Atualiza apenas os campos necessários
-        const lojaAtualizada = await Loja.findByIdAndUpdate(
-            id,
-            { $set: camposParaAtualizar },
-            { new: true }
-        );
+        // Atualiza os campos
+        const numRowsUpdated = await Loja.update(camposParaAtualizar, {
+            where: { idLoja: id }
+        });
         
-        if (!lojaAtualizada) {
+        if (numRowsUpdated[0] === 0) {
             return res.status(404).json({ error: 'Loja não encontrada' });
         }
+
+        // Busca a loja atualizada
+        const lojaAtualizada = await Loja.findOne({
+            where: { idLoja: id }
+        });
         
         res.json({ message: 'Loja atualizada com sucesso', loja: lojaAtualizada });
     } catch (error) {
+        console.error('Erro ao atualizar loja:', error);
         res.status(500).json({ error: 'Erro ao atualizar a loja' });
     }
 });

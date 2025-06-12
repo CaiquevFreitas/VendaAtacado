@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const app = express();
 app.use(cors({
-    origin: 'exp://192.168.176.214:8081',
+    origin: 'http://localhost:8081',
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ['Content-Type']
 }))
@@ -25,6 +25,7 @@ app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
 app.use('/', cadastroLoja);
 app.use('/', loginLoja);
+app.use('/', editLoja);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);

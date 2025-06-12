@@ -30,7 +30,7 @@ router.post('/loginLoja', async (req, res) => {
                 message: 'Senha incorreta.'
             });
         }
-
+        
         return res.status(200).json({
             success: true,
             message: 'Login realizado com sucesso!',
