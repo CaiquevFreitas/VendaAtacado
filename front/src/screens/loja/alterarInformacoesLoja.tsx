@@ -117,9 +117,9 @@ export default function AlterarInformacoesLoja() {
                 Alert.alert('Erro', 'Dados da loja não encontrados');
                 return;
             }
-            console.log('lojaDataString:', lojaDataString);
+            
             const lojaData = JSON.parse(lojaDataString);
-            console.log('lojaData parsed:', lojaData);
+            
             const lojaId = lojaData.id;
 
             if (!lojaId) {
