@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Alert, StyleSheet, Image, Text, ScrollView } from 'react-native';
+import { View, TouchableOpacity, Alert, StyleSheet, Image, Text, ScrollView, AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -30,21 +30,38 @@ export default function Perfil(){
     const navigation = useNavigation<NavigationProp>();
     const [lojaData, setLojaData] = useState<LojaData | null>(null);
 
-    useEffect(() => {
-        const carregarDadosLoja = async () => {
-            try {
-                const dadosString = await AsyncStorage.getItem('lojaData');
-                if (dadosString) {
-                    const dados = JSON.parse(dadosString);
-                    setLojaData(dados);
-                }
-            } catch (error) {
-                console.error('Erro ao carregar dados da loja:', error);
+    const carregarDadosLoja = async () => {
+        try {
+            const dadosString = await AsyncStorage.getItem('lojaData');
+            if (dadosString) {
+                const dados = JSON.parse(dadosString);
+                setLojaData(dados);
             }
-        };
+        } catch (error) {
+            console.error('Erro ao carregar dados da loja:', error);
+        }
+    };
 
+    useEffect(() => {
         carregarDadosLoja();
-    }, []);
+
+        // Adiciona listener para quando o app voltar ao foco
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            if (nextAppState === 'active') {
+                carregarDadosLoja();
+            }
+        });
+
+        // Adiciona listener para quando a tela receber foco
+        const unsubscribe = navigation.addListener('focus', () => {
+            carregarDadosLoja();
+        });
+
+        return () => {
+            subscription.remove();
+            unsubscribe();
+        };
+    }, [navigation]);
 
     const handleLogout = async () => {
         try {

@@ -57,11 +57,25 @@ export default function AlterarInformacoesLoja() {
             const lojaDataString = await AsyncStorage.getItem('lojaData');
             if (lojaDataString) {
                 const lojaData = JSON.parse(lojaDataString);
+                
+                const horarioAbertura = new Date();
+                const horarioFechamento = new Date();
+                
+                if (typeof lojaData.horarioAbertura === 'string') {
+                    const [horas, minutos] = lojaData.horarioAbertura.split(':');
+                    horarioAbertura.setHours(parseInt(horas), parseInt(minutos));
+                }
+                
+                if (typeof lojaData.horarioFechamento === 'string') {
+                    const [horas, minutos] = lojaData.horarioFechamento.split(':');
+                    horarioFechamento.setHours(parseInt(horas), parseInt(minutos));
+                }
+
                 setLojaInfo({
-                    nome: lojaData.nomeLoja,
-                    horarioAbertura: new Date(lojaData.horarioAbertura),
-                    horarioFechamento: new Date(lojaData.horarioFechamento),
-                    telefone: lojaData.telefone
+                    nome: lojaData.nomeLoja || '',
+                    horarioAbertura,
+                    horarioFechamento,
+                    telefone: lojaData.telefone || ''
                 });
             }
         } catch (error) {
@@ -90,7 +104,6 @@ export default function AlterarInformacoesLoja() {
                         return;
                     }
                 }
-                
             }
 
             const camposParaAtualizar: any = {};
@@ -100,8 +113,8 @@ export default function AlterarInformacoesLoja() {
             }
             
             if (editFields.horario) {
-                camposParaAtualizar.horarioAbertura = lojaInfo.horarioAbertura;
-                camposParaAtualizar.horarioFechamento = lojaInfo.horarioFechamento;
+                camposParaAtualizar.horarioAbertura = lojaInfo.horarioAbertura.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                camposParaAtualizar.horarioFechamento = lojaInfo.horarioFechamento.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             }
             
             if (editFields.telefone) {
@@ -119,28 +132,22 @@ export default function AlterarInformacoesLoja() {
             }
             
             const lojaData = JSON.parse(lojaDataString);
-            
             const lojaId = lojaData.id;
-
+            
             if (!lojaId) {
                 Alert.alert('Erro', 'ID da loja não encontrado');
                 return;
             }
-            console.log('lojaId:', lojaId);
+            
 
             await editarLoja({
                 id: lojaId,
                 campos: camposParaAtualizar
             });
 
-            const lojaInfoAtual = await AsyncStorage.getItem('@loja_info');
-            const infoAtual = lojaInfoAtual ? JSON.parse(lojaInfoAtual) : {};
-            const novasInfos = { ...infoAtual, ...camposParaAtualizar };
-            await AsyncStorage.setItem('@loja_info', JSON.stringify(novasInfos));
-
-            if (editFields.senha) {
-                await AsyncStorage.setItem('@loja_senha', novaSenha);
-            }
+            // Atualiza os dados no AsyncStorage
+            const dadosAtualizados = { ...lojaData, ...camposParaAtualizar };
+            await AsyncStorage.setItem('lojaData', JSON.stringify(dadosAtualizados));
 
             Alert.alert('Sucesso', 'Informações atualizadas com sucesso!', [
                 { text: 'OK', onPress: () => navigation.goBack() }

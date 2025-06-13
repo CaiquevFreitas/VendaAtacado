@@ -5,6 +5,7 @@ const router = express.Router();
 router.put('/editLoja/:id', async (req, res) => {
     try {
         const { id } = req.params;
+        
         const { 
             nome, 
             horarioAbertura, 
@@ -13,39 +14,43 @@ router.put('/editLoja/:id', async (req, res) => {
             senha 
         } = req.body;
         
-        // Cria um objeto com apenas os campos que devem ser atualizados
+        
         const camposParaAtualizar = {};
         
-        if (nome) {
+        if (nome !== undefined && nome !== null && nome.trim() !== '') {
             camposParaAtualizar.nomeLoja = nome;
         }
         
-        if (horarioAbertura) {
+        if (horarioAbertura !== undefined && horarioAbertura !== null && horarioAbertura.trim() !== '') {
             camposParaAtualizar.horarioAbertura = horarioAbertura;
         }
         
-        if (horarioFechamento) {
+        if (horarioFechamento !== undefined && horarioFechamento !== null && horarioFechamento.trim() !== '') {
             camposParaAtualizar.horarioFechamento = horarioFechamento;
         }
         
-        if (telefone) {
+        if (telefone !== undefined && telefone !== null && telefone.trim() !== '') {
             camposParaAtualizar.telefone = telefone;
         }
         
-        if (senha) {
+        if (senha !== undefined && senha !== null && senha.trim() !== '') {
             camposParaAtualizar.senha = senha;
         }
         
-        // Atualiza os campos
+        
         const numRowsUpdated = await Loja.update(camposParaAtualizar, {
             where: { idLoja: id }
         });
         
-        if (numRowsUpdated[0] === 0) {
+        const lojaExiste = await Loja.findOne({
+            where: { idLoja: id }
+        });
+
+        if (!lojaExiste) {
             return res.status(404).json({ error: 'Loja não encontrada' });
         }
 
-        // Busca a loja atualizada
+        
         const lojaAtualizada = await Loja.findOne({
             where: { idLoja: id }
         });
