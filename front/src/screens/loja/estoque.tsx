@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
+import ModalCadastroProduto from '../../components/modal';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -28,6 +29,7 @@ type Produto = {
 export default function Estoque() {
     const navigation = useNavigation<NavigationProp>();
     const [produtos, setProdutos] = useState<Produto[]>([]);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         carregarProdutos();
@@ -80,6 +82,7 @@ export default function Estoque() {
             <View style={styles.header}>
                 <TouchableOpacity 
                     style={styles.headerButton}
+                    onPress={() => setModalVisible(true)}
                 >
                     <Ionicons name="add-circle-outline" size={24} color={themes.colors.white} />
                 </TouchableOpacity>
@@ -113,7 +116,6 @@ export default function Estoque() {
                             <View style={styles.produtoAcoes}>
                                 <TouchableOpacity 
                                     style={[styles.actionButton, styles.editButton]}
-                                    
                                 >
                                     <Ionicons name="pencil" size={20} color={themes.colors.white} />
                                 </TouchableOpacity>
@@ -128,6 +130,12 @@ export default function Estoque() {
                     ))
                 )}
             </ScrollView>
+
+            <ModalCadastroProduto
+                visible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onProdutoCadastrado={carregarProdutos}
+            />
         </View>
     );
 }

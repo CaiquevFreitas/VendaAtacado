@@ -8,14 +8,14 @@ create table loja(
     logo varchar(1000),
     email varchar(100) not null,
     telefone char(11) not null unique,
-	cpf char(11) not null unique,
+	cnpj char(14) not null unique,
     senha char(8) not null,
     horarioAbertura time not null,
     horarioFechamento time not null,
     dataNascimento date not null,
     nota double
 );
-
+select * from loja;
 create table endereco(
 	idEndereco int primary key auto_increment,
     estado varchar(100) not null,
@@ -28,7 +28,7 @@ create table endereco(
     foreign key (fk_idLoja) references loja(idLoja)
 );
 
-insert into cliente values(default, 'Caique', 'caique@gmail.com', '09376587790', '71988882222', '2003-02-03', '12345678');
+
 create table cliente(
 	idCliente int primary key auto_increment,
     nomeCliente varchar(255) not null,
@@ -42,7 +42,7 @@ create table cliente(
 create table produto(
 	idProduto int primary key auto_increment,
     nomeProduto varchar(100),
-    categoria varchar(100),
+    categoria enum('Frutas','Vegetais','Doces','Almoço','Bebidas','Verduras', 'Carnes','Limpeza', 'Bolos', 'Salgados'),
     preco double,
     estoque int,
     fk_idLoja int not null,
