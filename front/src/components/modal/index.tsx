@@ -17,6 +17,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { styles } from './style';
 import { themes } from '../../../assets/colors/themes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { cadastrarProduto } from '../../../controllers/requests/cadastrarProduto';
 
 interface ModalCadastroProdutoProps {
     visible: boolean;
@@ -97,21 +98,7 @@ export default function ModalCadastroProduto({ visible, onProdutoCadastrado }: M
                 } as any);
             }
 
-            const response = await fetch('http://192.168.176.214:3000/cadastrarProduto', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Erro ao cadastrar produto');
-            }
-
-            Alert.alert('Sucesso', 'Produto cadastrado com sucesso!');
+            await cadastrarProduto(formData);
             limparFormulario();
             onProdutoCadastrado();
         } catch (error: any) {
