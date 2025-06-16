@@ -25,7 +25,7 @@ type Produto = {
     id: number;
     nome: string;
     valor: number;
-    quantidade: number;
+    estoque: number;
     imagem: string;
     fk_idLoja: number;
     categoria: string;
@@ -36,12 +36,11 @@ export default function Estoque() {
     const [produtos, setProdutos] = useState<Produto[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
 
-    // Efeito para carregar produtos quando o componente montar
     useEffect(() => {
         carregarProdutos();
     }, []);
 
-    // Efeito para monitorar mudanças no estado
+    
     useEffect(() => {
         console.log('Estado produtos atualizado:', produtos);
     }, [produtos]);
@@ -56,7 +55,7 @@ export default function Estoque() {
                     id: produto.idProduto,
                     nome: produto.nomeProduto || '',
                     valor: produto.preco || 0,
-                    quantidade: produto.quantidade || 0,
+                    estoque: produto.estoque || 0,
                     imagem: produto.imagem || '',
                     fk_idLoja: produto.fk_idLoja || produto.idLoja,
                     categoria: produto.categoria || ''
@@ -148,7 +147,7 @@ export default function Estoque() {
                                 <Text style={styles.produtoNome}>{produto.nome}</Text>
                                 <Text style={styles.produtoPreco}>{formatarPreco(produto.valor)}</Text>
                                 <Text style={styles.produtoQuantidade}>
-                                    Quantidade: {produto.quantidade}
+                                    Quantidade: {produto.estoque}
                                 </Text>
                             </View>
                             <View style={styles.produtoAcoes}>
