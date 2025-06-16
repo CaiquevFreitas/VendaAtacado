@@ -62,17 +62,6 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-    cancelButton: {
-        backgroundColor: '#ff4444',
-        padding: 15,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    cancelButtonText: {
-        color: themes.colors.white,
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
     pickerContainer: {
         borderWidth: 1,
         borderColor: themes.colors.secondary,
@@ -82,5 +71,30 @@ export const styles = StyleSheet.create({
     picker: {
         height: 50,
         width: '100%',
+    },
+    imagePickerButton: {
+        width: '100%',
+        height: 150,
+        borderWidth: 1,
+        borderColor: themes.colors.secondary,
+        borderRadius: 8,
+        overflow: 'hidden',
+        backgroundColor: themes.colors.white,
+    },
+    imagePreview: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    imagePlaceholder: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+    },
+    imagePlaceholderText: {
+        marginTop: 8,
+        color: themes.colors.secondary,
+        fontSize: 14,
     },
 });

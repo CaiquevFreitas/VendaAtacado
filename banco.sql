@@ -42,6 +42,7 @@ create table cliente(
 create table produto(
 	idProduto int primary key auto_increment,
     nomeProduto varchar(100),
+    imagem varchar(100),
     categoria enum('Frutas','Vegetais','Doces','Almoço','Bebidas','Verduras', 'Carnes','Limpeza', 'Bolos', 'Salgados'),
     preco double,
     estoque int,

@@ -18,7 +18,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
 import { Textinput } from '../../components/textInput';
 import { TimeInput } from '../../components/textInput/timeInput';
-import { editarLoja } from '../../requests/editarLoja';
+import { editarLoja } from '../../../controllers/requests/editarLoja';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

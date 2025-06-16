@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
 
-import { cadastrar } from '../../requests/cadastrar';
+import { cadastrar } from '../../../controllers/requests/cadastrar';
 import { calcularIdade } from '../../../controllers/validations/idade.validation';
 import { verificarEmail } from '../../../controllers/validations/email.validation';
 import { validarInputs } from '../../../controllers/validations/inputs.validation';
