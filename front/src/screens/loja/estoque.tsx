@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
 import ModalCadastroProduto from '../../components/modal';
+import { buscarProdutosLoja } from '../../../controllers/requests/mostrarProdutos';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -24,6 +25,8 @@ type Produto = {
     valor: number;
     quantidade: number;
     imagem: string;
+    fk_idLoja: number;
+    categoria: string;
 };
 
 export default function Estoque() {
@@ -31,18 +34,45 @@ export default function Estoque() {
     const [produtos, setProdutos] = useState<Produto[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
 
+    // Efeito para carregar produtos quando o componente montar
     useEffect(() => {
         carregarProdutos();
     }, []);
 
+    // Efeito para monitorar mudanças no estado
+    useEffect(() => {
+        console.log('Estado produtos atualizado:', produtos);
+    }, [produtos]);
+
     const carregarProdutos = async () => {
         try {
-            const produtosString = await AsyncStorage.getItem('produtos');
-            if (produtosString) {
-                setProdutos(JSON.parse(produtosString));
+            const produtosData = await buscarProdutosLoja();
+            console.log('Dados recebidos:', produtosData);
+            
+            if (Array.isArray(produtosData)) {
+                const produtosFormatados = produtosData.map(produto => ({
+                    id: produto.idProduto,
+                    nome: produto.nomeProduto || '',
+                    valor: produto.preco || 0,
+                    quantidade: produto.quantidade || 0,
+                    imagem: produto.imagem || '',
+                    fk_idLoja: produto.fk_idLoja || produto.idLoja,
+                    categoria: produto.categoria || ''
+                }));
+                
+                console.log('Produtos formatados:', produtosFormatados);
+                setProdutos(prevProdutos => {
+                    console.log('Atualizando estado com:', produtosFormatados);
+                    return produtosFormatados;
+                });
+            } else {
+                console.error('Dados recebidos não são um array:', produtosData);
+                setProdutos(prevProdutos => []);
             }
         } catch (error) {
+            console.error('Erro ao carregar produtos:', error);
             Alert.alert('Erro', 'Não foi possível carregar os produtos');
+            setProdutos(prevProdutos => []);
         }
     };
 
@@ -73,7 +103,10 @@ export default function Estoque() {
         );
     };
 
-    const formatarPreco = (valor: number) => {
+    const formatarPreco = (valor: number | undefined | null) => {
+        if (valor === undefined || valor === null) {
+            return 'R$ 0,00';
+        }
         return `R$ ${valor.toFixed(2).replace('.', ',')}`;
     };
 
@@ -101,9 +134,12 @@ export default function Estoque() {
                     </View>
                 ) : (
                     produtos.map((produto) => (
-                        <View key={produto.id} style={styles.produtoCard}>
+                        <View 
+                            key={`produto-${produto.id}`} 
+                            style={styles.produtoCard}
+                        >
                             <Image 
-                                source={{ uri: produto.imagem }} 
+                                source={{ uri:`../../../../back/${produto.imagem}` }} 
                                 style={styles.produtoImagem}
                             />
                             <View style={styles.produtoInfo}>
@@ -133,7 +169,6 @@ export default function Estoque() {
 
             <ModalCadastroProduto
                 visible={modalVisible}
-                onClose={() => setModalVisible(false)}
                 onProdutoCadastrado={carregarProdutos}
             />
         </View>

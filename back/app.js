@@ -24,6 +24,7 @@ const cadastroLoja = require('./src/routes/create/cadastroLoja')
 const loginLoja = require('./src/routes/loginLoja')
 const editLoja = require('./src/routes/update/editLoja')
 const cadastrarProduto = require('./src/routes/create/cadastrarProduto')
+const showProduto = require('./src/routes/read/showProduto')    
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
@@ -31,6 +32,7 @@ app.use('/', cadastroLoja);
 app.use('/', loginLoja);
 app.use('/', editLoja);
 app.use('/', cadastrarProduto);
+app.use('/', showProduto);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);
