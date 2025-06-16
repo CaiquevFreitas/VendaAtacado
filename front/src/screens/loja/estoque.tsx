@@ -17,6 +17,8 @@ import type { RootStackParamList } from '../../../types';
 import ModalCadastroProduto from '../../components/modal';
 import { buscarProdutosLoja } from '../../../controllers/requests/mostrarProdutos';
 
+const API_URL = 'http://localhost:3000'; 
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type Produto = {
@@ -139,7 +141,7 @@ export default function Estoque() {
                             style={styles.produtoCard}
                         >
                             <Image 
-                                source={{ uri:`../../../../back/${produto.imagem}` }} 
+                                source={{ uri: `${API_URL}${produto.imagem}` }} 
                                 style={styles.produtoImagem}
                             />
                             <View style={styles.produtoInfo}>
