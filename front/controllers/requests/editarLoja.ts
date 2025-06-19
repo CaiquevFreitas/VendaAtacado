@@ -1,4 +1,5 @@
 import { Alert } from "react-native";
+import API_URL from "./api.url";
 
 interface EditarLojaParams {
     id: string;
@@ -13,7 +14,7 @@ interface EditarLojaParams {
 
 export async function editarLoja(params: EditarLojaParams) {
     try {
-        const response = await fetch(`http://localhost:3000/editLoja/${params.id}`, {
+        const response = await fetch(`${API_URL}/editLoja/${params.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

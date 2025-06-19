@@ -1,7 +1,8 @@
 import { Alert } from "react-native";
+import API_URL from "./api.url";
 
 export async function cadastrarProduto(formData:FormData){
-    const response = await fetch('http://192.168.176.214:3000/cadastrarProduto', {
+    const response = await fetch(`${API_URL}/cadastrarProduto`, {
         method: 'POST',
         body: formData,
         headers: {

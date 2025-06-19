@@ -1,9 +1,10 @@
 import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_URL from "./api.url";
 
 export async function logarCliente(email: string, senha: string): Promise<boolean> {
   try {
-    const response = await fetch('http://192.168.176.214:3000/loginCliente', {
+    const response = await fetch(`${API_URL}/loginCliente`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

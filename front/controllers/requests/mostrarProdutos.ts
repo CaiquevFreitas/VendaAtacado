@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import API_URL from "./api.url";
 
 export const buscarProdutosLoja = async () => {
     try {
@@ -10,7 +10,7 @@ export const buscarProdutosLoja = async () => {
                 throw new Error('ID da loja não encontrado');
             }
             
-            const response = await fetch(`http://localhost:3000/showProduto/${lojaId}`);
+            const response = await fetch(`${API_URL}/showProduto/${lojaId}`);
             
             if (!response.ok) {
                 throw new Error('Erro ao buscar produtos');

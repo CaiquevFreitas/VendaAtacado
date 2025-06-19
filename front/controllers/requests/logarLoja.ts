@@ -1,9 +1,10 @@
 import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_URL from "./api.url";
 
 export async function logarLoja(email: string, senha: string): Promise<boolean> {
   try {
-    const response = await fetch('http://localhost:3000/loginLoja', {
+    const response = await fetch(`${API_URL}/loginLoja`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
