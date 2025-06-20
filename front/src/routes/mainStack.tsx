@@ -10,6 +10,7 @@ import LoginLoja from '../screens/loja/login';
 import ConfiguracoesLoja from '../screens/loja/configuracoes';
 import AlterarInformacoesLoja from '../screens/loja/alterarInformacoesLoja';
 import AlterarEndereco from '../screens/loja/alterarEndereco';
+import AlterarLogo from '../screens/loja/alterarLogo';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -25,6 +26,7 @@ export default function MainStackNavigator({ userType }: { userType: string | nu
       <Stack.Screen name='ConfiguracoesLoja' component={ConfiguracoesLoja} />
       <Stack.Screen name='AlterarInformacoesLoja' component={AlterarInformacoesLoja} />
       <Stack.Screen name='AlterarEndereco' component={AlterarEndereco} />
+      <Stack.Screen name='AlterarLogo' component={AlterarLogo} />
     </Stack.Navigator>
   );
 }

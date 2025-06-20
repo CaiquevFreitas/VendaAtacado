@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import API_URL from '../../../controllers/requests/api.url';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -24,6 +25,7 @@ type LojaData = {
     nomeVendedor: string;
     horarioAbertura: string;
     horarioFechamento: string;
+    logo?: string;
 };
 
 export default function Perfil(){
@@ -93,7 +95,7 @@ export default function Perfil(){
             <View style={styles.header}>
                 <View style={styles.profileInfo}>
                     <Image 
-                        source={{ uri: 'https://th.bing.com/th/id/OIP.emrz2EGwVvz2df6AzRXBwgHaEb?rs=1&pid=ImgDetMain' }} 
+                        source={{ uri: lojaData?.logo ? `${API_URL}${lojaData.logo}` : 'https://th.bing.com/th/id/OIP.emrz2EGwVvz2df6AzRXBwgHaEb?rs=1&pid=ImgDetMain' }} 
                         style={styles.profileImage} 
                     />
                     <View>

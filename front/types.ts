@@ -8,5 +8,6 @@ export type RootStackParamList = {
     ConfiguracoesLoja: undefined;
     AlterarInformacoesLoja: undefined;
     AlterarEndereco: undefined;
+    AlterarLogo: undefined;
 };
   

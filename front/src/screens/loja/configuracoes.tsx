@@ -62,7 +62,7 @@ export default function ConfiguracoesLoja() {
                     icon={<FontAwesome5 name="store" size={24} color={themes.colors.primary} />}
                     title="Alterar Logo da Loja"
                     description="Atualize a imagem de perfil da sua loja"
-                    onPress={() => {}}
+                    onPress={() => navigation.navigate('AlterarLogo')}
                 />
             </View>
         </View>
