@@ -15,7 +15,7 @@ create table loja(
     dataNascimento date not null,
     nota double
 );
-select * from loja;
+
 create table endereco(
 	idEndereco int primary key auto_increment,
     estado varchar(100) not null,
@@ -43,6 +43,7 @@ create table produto(
 	idProduto int primary key auto_increment,
     nomeProduto varchar(100),
     imagem varchar(100),
+    status boolean default true,
     categoria enum('Frutas','Vegetais','Doces','Almoço','Bebidas','Verduras', 'Carnes','Limpeza', 'Bolos', 'Salgados'),
     preco double,
     estoque int,

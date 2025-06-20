@@ -16,6 +16,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
 import ModalCadastroProduto from '../../components/modal';
 import { buscarProdutosLoja } from '../../../controllers/requests/mostrarProdutos';
+import { deletarProduto } from '../../../controllers/requests/deletarProduto';
 
 const API_URL = 'http://localhost:3000'; 
 
@@ -87,12 +88,10 @@ export default function Estoque() {
                     style: 'destructive',
                     onPress: async () => {
                         try {
-                            const novosProdutos = produtos.filter(produto => produto.id !== id);
-                            await AsyncStorage.setItem('produtos', JSON.stringify(novosProdutos));
-                            setProdutos(novosProdutos);
-                            Alert.alert('Sucesso', 'Produto excluído com sucesso');
+                            await deletarProduto(id);
+                            carregarProdutos(); // Recarrega a lista após deletar
                         } catch (error) {
-                            Alert.alert('Erro', 'Não foi possível excluir o produto');
+                            console.error('Erro ao excluir produto:', error);
                         }
                     }
                 }
