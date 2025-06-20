@@ -12,6 +12,6 @@ Endereco.init({
     cep: { type: DataTypes.STRING(10) },
     numero: { type: DataTypes.STRING(5) },
     fk_idLoja: { type: DataTypes.INTEGER, allowNull: false, references: { model: Loja, key: 'idLoja' } },
-}, { sequelize, modelName: 'Endereco' });
+}, { sequelize, modelName: 'Endereco', tableName: 'endereco', timestamps: false });
 
 module.exports =  Endereco ;

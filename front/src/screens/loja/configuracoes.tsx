@@ -55,7 +55,7 @@ export default function ConfiguracoesLoja() {
                     icon={<Ionicons name="location-outline" size={24} color={themes.colors.primary} />}
                     title="Adicionar Endereço"
                     description="Cadastre ou atualize o endereço da sua loja"
-                    onPress={() => {}}
+                    onPress={() => navigation.navigate('AlterarEndereco')}
                 />
 
                 <ConfigOption 
