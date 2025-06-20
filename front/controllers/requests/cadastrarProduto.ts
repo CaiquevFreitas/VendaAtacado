@@ -11,8 +11,8 @@ export async function cadastrarProduto(formData:FormData){
     });
 
     const data = await response.json();
-    Alert.alert('Sucesso', 'Produto cadastrado com sucesso!');
     if (!response.ok) {
         throw new Error(data.message || 'Erro ao cadastrar produto');
     }
+    Alert.alert('Sucesso', 'Produto cadastrado com sucesso!');
 }

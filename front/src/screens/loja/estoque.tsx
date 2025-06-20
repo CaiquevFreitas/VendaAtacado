@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
-import ModalCadastroProduto from '../../components/modal';
+import ModalProduto from '../../components/modal';
 import { buscarProdutosLoja } from '../../../controllers/requests/mostrarProdutos';
 import { deletarProduto } from '../../../controllers/requests/deletarProduto';
 
@@ -36,6 +36,7 @@ export default function Estoque() {
     const navigation = useNavigation<NavigationProp>();
     const [produtos, setProdutos] = useState<Produto[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
+    const [produtoSelecionado, setProdutoSelecionado] = useState<Produto | null>(null);
 
     useEffect(() => {
         carregarProdutos();
@@ -99,6 +100,16 @@ export default function Estoque() {
         );
     };
 
+    const handleAbrirModal = (produto?: Produto) => {
+        setProdutoSelecionado(produto || null);
+        setModalVisible(true);
+    };
+
+    const handleFecharModal = () => {
+        setProdutoSelecionado(null);
+        setModalVisible(false);
+    };
+
     const formatarPreco = (valor: number | undefined | null) => {
         if (valor === undefined || valor === null) {
             return 'R$ 0,00';
@@ -111,7 +122,7 @@ export default function Estoque() {
             <View style={styles.header}>
                 <TouchableOpacity 
                     style={styles.headerButton}
-                    onPress={() => setModalVisible(true)}
+                    onPress={() => handleAbrirModal()}
                 >
                     <Ionicons name="add-circle-outline" size={24} color={themes.colors.white} />
                 </TouchableOpacity>
@@ -148,6 +159,7 @@ export default function Estoque() {
                             <View style={styles.produtoAcoes}>
                                 <TouchableOpacity 
                                     style={[styles.actionButton, styles.editButton]}
+                                    onPress={() => handleAbrirModal(produto)}
                                 >
                                     <Ionicons name="pencil" size={20} color={themes.colors.white} />
                                 </TouchableOpacity>
@@ -163,10 +175,14 @@ export default function Estoque() {
                 )}
             </ScrollView>
 
-            <ModalCadastroProduto
+            <ModalProduto
                 visible={modalVisible}
-                onProdutoCadastrado={carregarProdutos}
-                onClose={() => setModalVisible(false)}
+                onSuccess={() => {
+                    setModalVisible(false);
+                    carregarProdutos();
+                }}
+                onClose={handleFecharModal}
+                produtoParaEditar={produtoSelecionado}
             />
         </View>
     );

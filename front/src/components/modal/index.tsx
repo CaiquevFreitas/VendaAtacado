@@ -18,11 +18,22 @@ import { styles } from './style';
 import { themes } from '../../../assets/colors/themes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { cadastrarProduto } from '../../../controllers/requests/cadastrarProduto';
+import { editarProduto } from '../../../controllers/requests/editarProduto';
 
-interface ModalCadastroProdutoProps {
+type Produto = {
+    id: number;
+    nome: string;
+    valor: number;
+    estoque: number;
+    imagem: string;
+    categoria: string;
+};
+
+interface ModalProdutoProps {
     visible: boolean;
-    onProdutoCadastrado: () => void;
+    onSuccess: () => void;
     onClose: () => void;
+    produtoParaEditar?: Produto | null;
 }
 
 const categorias = [
@@ -38,12 +49,26 @@ const categorias = [
     'Salgados'
 ];
 
-export default function ModalCadastroProduto({ visible, onProdutoCadastrado, onClose }: ModalCadastroProdutoProps) {
+export default function ModalProduto({ visible, onSuccess, onClose, produtoParaEditar }: ModalProdutoProps) {
     const [nomeProduto, setNomeProduto] = useState('');
     const [categoria, setCategoria] = useState(categorias[0]);
     const [preco, setPreco] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [imagem, setImagem] = useState<string | null>(null);
+
+    const isEditMode = !!produtoParaEditar;
+
+    React.useEffect(() => {
+        if (isEditMode) {
+            setNomeProduto(produtoParaEditar.nome);
+            setCategoria(produtoParaEditar.categoria);
+            setPreco(String(produtoParaEditar.valor));
+            setQuantidade(String(produtoParaEditar.estoque));
+            setImagem(produtoParaEditar.imagem ? `http://localhost:3000${produtoParaEditar.imagem}` : null);
+        } else {
+            limparFormulario();
+        }
+    }, [produtoParaEditar, visible]);
 
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -84,26 +109,24 @@ export default function ModalCadastroProduto({ visible, onProdutoCadastrado, onC
             formData.append('nomeProduto', nomeProduto);
             formData.append('categoria', categoria);
             formData.append('preco', preco);
-            formData.append('quantidade', quantidade);
-            formData.append('fk_idLoja', id);
+            formData.append('estoque', quantidade);
 
-            if (imagem) {
-                const filename = imagem.split('/').pop();
-                const match = /\.(\w+)$/.exec(filename || '');
-                const type = match ? `image/${match[1]}` : 'image';
-
-                formData.append('imagem', {
-                    uri: imagem,
-                    name: filename,
-                    type
-                } as any);
+            if (imagem && !imagem.startsWith('http')) {
+                const filename = imagem.split('/').pop()!;
+                const type = `image/${filename.split('.').pop()}`;
+                formData.append('imagem', { uri: imagem, name: filename, type } as any);
             }
 
-            await cadastrarProduto(formData);
+            if (isEditMode) {
+                await editarProduto(produtoParaEditar.id, formData);
+            } else {
+                formData.append('fk_idLoja', id);
+                await cadastrarProduto(formData);
+            }
             limparFormulario();
-            onProdutoCadastrado();
+            onSuccess();
         } catch (error: any) {
-            Alert.alert('Erro', error.message || 'Não foi possível cadastrar o produto');
+            Alert.alert('Erro', error.message || 'Não foi possível salvar o produto');
         }
     };
 
@@ -128,7 +151,7 @@ export default function ModalCadastroProduto({ visible, onProdutoCadastrado, onC
                 <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
                     <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>Cadastrar Produto</Text>
+                            <Text style={styles.modalTitle}>{isEditMode ? 'Editar Produto' : 'Cadastrar Produto'}</Text>
                             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                                 <Ionicons name="close" size={24} color={themes.colors.secondary} />
                             </TouchableOpacity>
@@ -199,7 +222,7 @@ export default function ModalCadastroProduto({ visible, onProdutoCadastrado, onC
 
                         <View style={styles.buttonContainer}>
                             <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                                <Text style={styles.submitButtonText}>Cadastrar</Text>
+                                <Text style={styles.submitButtonText}>{isEditMode ? 'Salvar Alterações' : 'Cadastrar'}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
