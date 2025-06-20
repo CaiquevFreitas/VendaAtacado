@@ -7,7 +7,7 @@ const path = require('path');
 dotenv.config();
 const app = express();
 app.use(cors({
-    origin: 'http://localhost:8081',
+    origin: process.env.FRONT_URL,
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ['Content-Type']
 }))

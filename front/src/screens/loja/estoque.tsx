@@ -48,7 +48,6 @@ export default function Estoque() {
     const carregarProdutos = async () => {
         try {
             const produtosData = await buscarProdutosLoja();
-            console.log('Dados recebidos:', produtosData);
             
             if (Array.isArray(produtosData)) {
                 const produtosFormatados = produtosData.map(produto => ({
@@ -61,13 +60,10 @@ export default function Estoque() {
                     categoria: produto.categoria || ''
                 }));
                 
-                console.log('Produtos formatados:', produtosFormatados);
                 setProdutos(prevProdutos => {
-                    console.log('Atualizando estado com:', produtosFormatados);
                     return produtosFormatados;
                 });
             } else {
-                console.error('Dados recebidos não são um array:', produtosData);
                 setProdutos(prevProdutos => []);
             }
         } catch (error) {
@@ -171,6 +167,7 @@ export default function Estoque() {
             <ModalCadastroProduto
                 visible={modalVisible}
                 onProdutoCadastrado={carregarProdutos}
+                onClose={() => setModalVisible(false)}
             />
         </View>
     );

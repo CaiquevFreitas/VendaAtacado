@@ -22,6 +22,7 @@ import { cadastrarProduto } from '../../../controllers/requests/cadastrarProduto
 interface ModalCadastroProdutoProps {
     visible: boolean;
     onProdutoCadastrado: () => void;
+    onClose: () => void;
 }
 
 const categorias = [
@@ -37,7 +38,7 @@ const categorias = [
     'Salgados'
 ];
 
-export default function ModalCadastroProduto({ visible, onProdutoCadastrado }: ModalCadastroProdutoProps) {
+export default function ModalCadastroProduto({ visible, onProdutoCadastrado, onClose }: ModalCadastroProdutoProps) {
     const [nomeProduto, setNomeProduto] = useState('');
     const [categoria, setCategoria] = useState(categorias[0]);
     const [preco, setPreco] = useState('');
@@ -128,6 +129,9 @@ export default function ModalCadastroProduto({ visible, onProdutoCadastrado }: M
                     <View style={styles.modalContent}>
                         <View style={styles.modalHeader}>
                             <Text style={styles.modalTitle}>Cadastrar Produto</Text>
+                            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                                <Ionicons name="close" size={24} color={themes.colors.secondary} />
+                            </TouchableOpacity>
                         </View>
 
                         <View style={styles.formContainer}>
