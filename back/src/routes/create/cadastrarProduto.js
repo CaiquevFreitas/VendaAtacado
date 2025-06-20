@@ -11,7 +11,6 @@ if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configuração do Multer
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, uploadsDir);
@@ -39,16 +38,16 @@ const upload = multer({
 router.post('/cadastrarProduto', upload.single('imagem'), async (req, res) => {
     try {
         const { nomeProduto, categoria, preco, quantidade, fk_idLoja } = req.body;
-        const imagem = req.file ? `/uploads/${req.file.filename}` : null;
-
-        // Verificar se já existe um produto com o mesmo nome na mesma loja
+        const imagem = req.file ? `/uploads/${req.file.filename}` : null
         const produtoExistente = await Produto.findOne({
-            nomeProduto: nomeProduto,
-            fk_idLoja: fk_idLoja
+            where: {
+                nomeProduto: nomeProduto,
+                fk_idLoja: fk_idLoja
+            }
         });
 
         if (produtoExistente) {
-            // Se existir um arquivo de imagem, removê-lo pois o produto não será salvo
+           
             if (req.file) {
                 fs.unlinkSync(req.file.path);
             }

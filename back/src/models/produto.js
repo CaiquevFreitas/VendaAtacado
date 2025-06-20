@@ -7,6 +7,7 @@ Produto.init({
     idProduto: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
     nomeProduto: { type: DataTypes.STRING(100) },
     imagem: { type: DataTypes.STRING(100) },
+    status: { type: DataTypes.BOOLEAN, defaultValue: true},
     categoria: { type: DataTypes.ENUM('Frutas','Vegetais','Doces','Almoço','Bebidas','Verduras', 'Carnes','Limpeza', 'Bolos', 'Salgados') },
     preco: { type: DataTypes.DOUBLE },
     estoque: { type: DataTypes.INTEGER },

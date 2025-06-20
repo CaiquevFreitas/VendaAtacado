@@ -18,7 +18,7 @@ import ModalCadastroProduto from '../../components/modal';
 import { buscarProdutosLoja } from '../../../controllers/requests/mostrarProdutos';
 import { deletarProduto } from '../../../controllers/requests/deletarProduto';
 
-const API_URL = 'http://localhost:3000'; 
+import API_URL from '../../../controllers/requests/api.url';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -89,7 +89,7 @@ export default function Estoque() {
                     onPress: async () => {
                         try {
                             await deletarProduto(id);
-                            carregarProdutos(); // Recarrega a lista após deletar
+                            carregarProdutos(); 
                         } catch (error) {
                             console.error('Erro ao excluir produto:', error);
                         }
