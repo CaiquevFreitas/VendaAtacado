@@ -1,6 +1,7 @@
 import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_URL from "./api.url";
+import { mostrarEndereco } from './mostrarEndereco';
 
 export async function logarLoja(email: string, senha: string): Promise<boolean> {
   try {
@@ -16,7 +17,16 @@ export async function logarLoja(email: string, senha: string): Promise<boolean> 
 
     if (response.ok) {
       await AsyncStorage.setItem('userType', 'loja');
-      await AsyncStorage.setItem('lojaData', JSON.stringify({
+      const lojaData: {
+        id: number;
+        nomeLoja: string;
+        nomeVendedor: string;
+        horarioAbertura: string;
+        horarioFechamento: string;
+        telefone: string;
+        senha: string;
+        endereco?: any;
+      } = {
         id: dados.loja.id,
         nomeLoja: dados.loja.nomeLoja,
         nomeVendedor: dados.loja.nomeVendedor,
@@ -24,7 +34,14 @@ export async function logarLoja(email: string, senha: string): Promise<boolean> 
         horarioFechamento: dados.loja.horarioFechamento,
         telefone: dados.loja.telefone,
         senha: dados.loja.senha
-      }));
+      };
+      try {
+        const endereco = await mostrarEndereco(lojaData.id);
+        lojaData.endereco = endereco;
+      } catch (e) {
+        // Se não encontrar endereço, apenas ignora
+      }
+      await AsyncStorage.setItem('lojaData', JSON.stringify(lojaData));
       Alert.alert('Sucesso', 'Login da loja realizado!');
       return true;
     } else {

@@ -17,10 +17,12 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
 import { Textinput } from '../../components/textInput';
 import { cadastrarEndereco } from '../../../controllers/requests/cadastrarEndereco';
+import { editarEndereco } from '../../../controllers/requests/editarEndereco';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface Endereco {
+    idEndereco?: number;
     estado: string;
     cidade: string;
     bairro: string;
@@ -51,6 +53,7 @@ export default function AlterarEndereco() {
                 const lojaData = JSON.parse(lojaDataString);
                 if (lojaData.endereco) {
                     setEndereco({
+                        idEndereco: lojaData.endereco.idEndereco,
                         estado: lojaData.endereco.estado || '',
                         cidade: lojaData.endereco.cidade || '',
                         bairro: lojaData.endereco.bairro || '',
@@ -66,13 +69,11 @@ export default function AlterarEndereco() {
     };
 
     const salvarEndereco = async () => {
-        
         if (!endereco.estado || !endereco.cidade || !endereco.bairro || !endereco.logradouro || !endereco.numero || !endereco.cep) {
             Alert.alert('Erro', 'Preencha todos os campos');
             return;
         }
         try {
-            
             const lojaDataString = await AsyncStorage.getItem('lojaData');
             if (!lojaDataString) {
                 Alert.alert('Erro', 'Dados da loja não encontrados.');
@@ -83,12 +84,21 @@ export default function AlterarEndereco() {
                 Alert.alert('Erro', 'ID da loja não encontrado.');
                 return;
             }
-            await cadastrarEndereco({
-                ...endereco,
-                fk_idLoja: lojaData.id
-            });
-            
-            lojaData.endereco = endereco;
+            let enderecoSalvo = { ...endereco };
+            if (endereco.idEndereco) {
+                
+                await editarEndereco(endereco.idEndereco, endereco);
+            } else {
+                
+                const data = await cadastrarEndereco({
+                    ...endereco,
+                    fk_idLoja: lojaData.id
+                });
+                if (data && data.endereco && data.endereco.idEndereco) {
+                    enderecoSalvo.idEndereco = data.endereco.idEndereco;
+                }
+            }
+            lojaData.endereco = enderecoSalvo;
             await AsyncStorage.setItem('lojaData', JSON.stringify(lojaData));
             Alert.alert('Sucesso', 'Endereço salvo com sucesso!', [
                 { text: 'OK', onPress: () => navigation.goBack() }
