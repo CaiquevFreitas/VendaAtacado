@@ -1,5 +1,6 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('./database');
+const Loja = require('./loja');
 
 class Endereco extends Model {}
 

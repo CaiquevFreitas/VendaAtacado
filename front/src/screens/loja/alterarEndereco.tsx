@@ -16,12 +16,7 @@ import { themes } from '../../../assets/colors/themes';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
 import { Textinput } from '../../components/textInput';
-
-
-async function cadastrarOuEditarEndereco(endereco: any) {
-    
-    return Promise.resolve();
-}
+import { cadastrarEndereco } from '../../../controllers/requests/cadastrarEndereco';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -77,14 +72,24 @@ export default function AlterarEndereco() {
             return;
         }
         try {
-            await cadastrarOuEditarEndereco(endereco);
             
             const lojaDataString = await AsyncStorage.getItem('lojaData');
-            if (lojaDataString) {
-                const lojaData = JSON.parse(lojaDataString);
-                lojaData.endereco = endereco;
-                await AsyncStorage.setItem('lojaData', JSON.stringify(lojaData));
+            if (!lojaDataString) {
+                Alert.alert('Erro', 'Dados da loja não encontrados.');
+                return;
             }
+            const lojaData = JSON.parse(lojaDataString);
+            if (!lojaData.id) {
+                Alert.alert('Erro', 'ID da loja não encontrado.');
+                return;
+            }
+            await cadastrarEndereco({
+                ...endereco,
+                fk_idLoja: lojaData.id
+            });
+            
+            lojaData.endereco = endereco;
+            await AsyncStorage.setItem('lojaData', JSON.stringify(lojaData));
             Alert.alert('Sucesso', 'Endereço salvo com sucesso!', [
                 { text: 'OK', onPress: () => navigation.goBack() }
             ]);
