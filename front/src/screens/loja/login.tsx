@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from "../../../types";
 import { verificarEmail } from '../../../controllers/validations/email.validation';
-import { logarLoja } from '../../requests/logarLoja';
+import { logarLoja } from '../../../controllers/requests/logarLoja';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

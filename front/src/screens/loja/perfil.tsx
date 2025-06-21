@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, TouchableOpacity, Alert, StyleSheet, Image, Text, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, TouchableOpacity, Alert, StyleSheet, Image, Text, ScrollView, AppState } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import API_URL from '../../../controllers/requests/api.url';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -18,8 +19,51 @@ type ProfileOptionProps = {
     onPress: () => void;
 };
 
+type LojaData = {
+    id: number;
+    nomeLoja: string;
+    nomeVendedor: string;
+    horarioAbertura: string;
+    horarioFechamento: string;
+    logo?: string;
+};
+
 export default function Perfil(){
     const navigation = useNavigation<NavigationProp>();
+    const [lojaData, setLojaData] = useState<LojaData | null>(null);
+
+    const carregarDadosLoja = async () => {
+        try {
+            const dadosString = await AsyncStorage.getItem('lojaData');
+            if (dadosString) {
+                const dados = JSON.parse(dadosString);
+                setLojaData(dados);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados da loja:', error);
+        }
+    };
+
+    useEffect(() => {
+        carregarDadosLoja();
+
+        // Adiciona listener para quando o app voltar ao foco
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            if (nextAppState === 'active') {
+                carregarDadosLoja();
+            }
+        });
+
+        // Adiciona listener para quando a tela receber foco
+        const unsubscribe = navigation.addListener('focus', () => {
+            carregarDadosLoja();
+        });
+
+        return () => {
+            subscription.remove();
+            unsubscribe();
+        };
+    }, [navigation]);
 
     const handleLogout = async () => {
         try {
@@ -51,12 +95,14 @@ export default function Perfil(){
             <View style={styles.header}>
                 <View style={styles.profileInfo}>
                     <Image 
-                        source={{ uri: 'https://th.bing.com/th/id/OIP.emrz2EGwVvz2df6AzRXBwgHaEb?rs=1&pid=ImgDetMain' }} 
+                        source={{ uri: lojaData?.logo ? `${API_URL}${lojaData.logo}` : 'https://th.bing.com/th/id/OIP.emrz2EGwVvz2df6AzRXBwgHaEb?rs=1&pid=ImgDetMain' }} 
                         style={styles.profileImage} 
                     />
                     <View>
-                        <Text style={styles.storeName}>Nome da Loja</Text>
-                        <Text style={styles.storeEmail}>loja@email.com</Text>
+                        <Text style={styles.storeName}>{lojaData?.nomeLoja || 'Carregando...'}</Text>
+                        <Text style={styles.storeEmail}>
+                             {lojaData ? `${lojaData.horarioAbertura.slice(0, 5)} às ${lojaData.horarioFechamento.slice(0, 5)}` : 'Carregando...'}
+                        </Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -70,7 +116,7 @@ export default function Perfil(){
                     <ProfileOption 
                         icon={<Ionicons name="settings-outline" size={24} color={themes.colors.primary} />}
                         title="Configurações da Loja"
-                        onPress={() => {}}
+                        onPress={() => navigation.navigate('ConfiguracoesLoja')}
                     />
                     <ProfileOption 
                         icon={<Ionicons name="notifications-outline" size={24} color={themes.colors.primary} />}

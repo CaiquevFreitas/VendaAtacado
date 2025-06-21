@@ -1,5 +1,6 @@
 import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_URL from "./api.url";
 
 export async function cadastrarLoja(
   nomeLoja: string,
@@ -13,7 +14,7 @@ export async function cadastrarLoja(
   senha: string
 ){
   try {
-    const response = await fetch('http://192.168.176.214:3000/cadastroLoja', {
+    const response = await fetch(`${API_URL}/cadastroLoja`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

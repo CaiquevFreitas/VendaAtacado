@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons'
 import Perfil from '../screens/loja/perfil';
 import Pedidos from '../screens/loja/pedidos';
 import Estoque from '../screens/loja/estoque';
+import Relatorios from '../screens/loja/relatorios';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,6 +25,9 @@ export default function LojaNavigator(){
                     case 'Estoque':
                         iconName = 'file-tray-stacked-outline';
                         break;
+                    case 'Relatorios':
+                        iconName = 'stats-chart-outline';
+                        break;
                     default:
                         iconName = 'help-circle-outline'
                 }
@@ -32,6 +36,7 @@ export default function LojaNavigator(){
         })}>
             <Tab.Screen name='Pedidos' component={Pedidos} />
             <Tab.Screen name='Estoque' component={Estoque} />
+            <Tab.Screen name='Relatorios' component={Relatorios} />
             <Tab.Screen name='Perfil' component={Perfil} />
         </Tab.Navigator>
     )
