@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Alert, StyleSheet, Image, Text, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -17,8 +17,34 @@ type ProfileOptionProps = {
     onPress: () => void;
 };
 
+type ClienteData = {
+    id: number;
+    nome: string;
+    email: string;
+    telefone: string;
+    dataNascimento: string;
+    senha: string;
+};
+
 export default function PerfilLogado(){
     const navigation = useNavigation<NavigationProp>();
+    const [clienteData, setClienteData] = useState<ClienteData | null>(null);
+
+    useEffect(() => {
+        carregarDadosCliente();
+    }, []);
+
+    const carregarDadosCliente = async () => {
+        try {
+            const dadosSalvos = await AsyncStorage.getItem('clienteData');
+            if (dadosSalvos) {
+                const dados = JSON.parse(dadosSalvos);
+                setClienteData(dados);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do cliente:', error);
+        }
+    };
 
     const handleLogout = async () => {
         try {
@@ -49,8 +75,8 @@ export default function PerfilLogado(){
                         style={styles.profileImage} 
                     />
                     <View>
-                        <Text style={styles.userName}>Nome cliente</Text>
-                        <Text style={styles.userEmail}>cliente@email.com</Text>
+                        <Text style={styles.userName}>{clienteData?.nome || 'Carregando...'}</Text>
+                        <Text style={styles.userEmail}>{clienteData?.email || 'carregando@email.com'}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>

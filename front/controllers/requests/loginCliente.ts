@@ -16,6 +16,22 @@ export async function logarCliente(email: string, senha: string): Promise<boolea
 
     if (response.ok) {
       await AsyncStorage.setItem('userType', 'cliente');
+      const clienteData: {
+        id: number;
+        nome: string;
+        email: string;
+        telefone: string;
+        dataNascimento: string;
+        senha: string;
+      } = {
+        id: dados.user.id,
+        nome: dados.user.nome,
+        email: dados.user.email,
+        telefone: dados.user.telefone,
+        dataNascimento: dados.user.dataNascimento,
+        senha: dados.user.senha
+      };
+      await AsyncStorage.setItem('clienteData', JSON.stringify(clienteData));
       Alert.alert('Sucesso', 'Login realizado!');
       return true;
     } else {
