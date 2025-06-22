@@ -32,6 +32,7 @@ create table endereco(
 create table cliente(
 	idCliente int primary key auto_increment,
     nomeCliente varchar(255) not null,
+    foto varchar(100),
     email varchar(100) not null,
     cpf char(11) not null unique,
     telefone char(11) not null unique,
@@ -55,9 +56,11 @@ create table avaliacao(
 	idAvaliacao int primary key auto_increment,
     nota int not null,
     comentario varchar(100),
-    fk_idProduto int not null,
+    fk_idProduto int,
+    fk_idLoja int,
     fk_idCliente int not null,
     foreign key(fk_idProduto) references produto(idProduto),
+    foreign key(fk_idLoja) references  loja(idLoja),
 	foreign key(fk_idCliente) references cliente(idCliente)
 );
 

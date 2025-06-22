@@ -13,6 +13,10 @@ Cliente.init({
         type: DataTypes.STRING(255), 
         allowNull: false 
     },
+    foto: { 
+        type: DataTypes.STRING(100), 
+        allowNull: true 
+    },  
     email: { 
         type: DataTypes.STRING(100), 
         allowNull: false 

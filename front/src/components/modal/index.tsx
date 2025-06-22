@@ -19,6 +19,7 @@ import { themes } from '../../../assets/colors/themes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { cadastrarProduto } from '../../../controllers/requests/cadastrarProduto';
 import { editarProduto } from '../../../controllers/requests/editarProduto';
+import API_URL from '../../../controllers/requests/api.url';
 
 
 type Produto = {
@@ -67,7 +68,7 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
             setCategoria(produtoParaEditar.categoria);
             setPreco(String(produtoParaEditar.valor));
             setQuantidade(String(produtoParaEditar.estoque));
-            setImagem(produtoParaEditar.imagem ? `http://localhost:3000${produtoParaEditar.imagem}` : null);
+            setImagem(produtoParaEditar.imagem ? `${API_URL}${produtoParaEditar.imagem}` : null);
             setStatus(produtoParaEditar.status !== undefined ? produtoParaEditar.status : true);
         } else {
             limparFormulario();
