@@ -9,5 +9,8 @@ export type RootStackParamList = {
     AlterarInformacoesLoja: undefined;
     AlterarEndereco: undefined;
     AlterarLogo: undefined;
+    ConfiguracoesCliente: undefined;
+    AlterarInformacoesCliente: undefined;
+    AlterarFotoCliente: undefined;
 };
   

@@ -6,6 +6,10 @@ import { themes } from '../../../assets/colors/themes';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../types';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type ProfileOptionProps = {
     icon: React.ReactNode;
@@ -14,7 +18,7 @@ type ProfileOptionProps = {
 };
 
 export default function PerfilLogado(){
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp>();
 
     const handleLogout = async () => {
         try {
@@ -60,7 +64,7 @@ export default function PerfilLogado(){
                     <ProfileOption 
                         icon={<Ionicons name="settings-outline" size={24} color={themes.colors.primary} />}
                         title="Configurações"
-                        onPress={() => {}}
+                        onPress={() => navigation.navigate('ConfiguracoesCliente')}
                     />
                     <ProfileOption 
                         icon={<MaterialIcons name="payment" size={24} color={themes.colors.primary} />}
