@@ -36,6 +36,7 @@ const showEndereco = require('./src/routes/read/showEndereco')
 const editLogo = require('./src/routes/update/editLogo')
 const editProduto = require('./src/routes/update/editProduto')
 const showLojas = require('./src/routes/read/showLojas')
+const editCliente = require('./src/routes/update/editCliente')
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
@@ -51,6 +52,7 @@ app.use('/', showEndereco);
 app.use('/', editLogo);
 app.use('/', editProduto);
 app.use('/', showLojas);
+app.use('/', editCliente);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);

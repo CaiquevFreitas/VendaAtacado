@@ -49,7 +49,12 @@ export default function PerfilLogado(){
     const handleLogout = async () => {
         try {
             await AsyncStorage.clear();
+            await AsyncStorage.removeItem('userType');
             Alert.alert('Logout realizado', 'Você saiu da sua conta.');
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+            });
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível sair da conta.');
             console.error('Erro ao fazer logout:', error);
@@ -74,8 +79,8 @@ export default function PerfilLogado(){
                         source={{ uri: 'https://th.bing.com/th/id/OIP.emrz2EGwVvz2df6AzRXBwgHaEb?rs=1&pid=ImgDetMain' }} 
                         style={styles.profileImage} 
                     />
-                    <View>
-                        <Text style={styles.userName}>{clienteData?.nome || 'Carregando...'}</Text>
+                    <View style={{ maxWidth: 180 }}>
+                        <Text style={styles.userName} numberOfLines={1} ellipsizeMode="tail">{clienteData?.nome || 'Carregando...'}</Text>
                         <Text style={styles.userEmail}>{clienteData?.email || 'carregando@email.com'}</Text>
                     </View>
                 </View>

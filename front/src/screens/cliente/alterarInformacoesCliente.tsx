@@ -17,6 +17,7 @@ import { themes } from '../../../assets/colors/themes';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
 import { Textinput } from '../../components/textInput';
+import { editarCliente } from '../../../controllers/requests/editarCliente';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -67,48 +68,56 @@ export default function AlterarInformacoesCliente() {
                 Alert.alert('Erro', 'Para alterar a senha, preencha todos os campos de senha');
                 return;
             }
-
-            if (editFields.senha) {
-                const clienteDataString = await AsyncStorage.getItem('clienteData');
-                
-                if(clienteDataString){
-                    const clienteData = JSON.parse(clienteDataString);
+            
+            let clienteId = null;
+            const clienteDataString = await AsyncStorage.getItem('clienteData');
+            if (clienteDataString) {
+                console.log(clienteDataString);
+                const clienteData = JSON.parse(clienteDataString);
+                clienteId = clienteData.id;
+                if (editFields.senha) {
                     if (senhaAtual !== clienteData.senha) {
                         Alert.alert('Erro', 'Senha atual incorreta');
                         return;
                     }
-                    if(novaSenha === clienteData.senha){
+                    if (novaSenha === clienteData.senha) {
                         Alert.alert('Erro', 'A nova senha não pode ser igual a senha atual');
                         return;
                     }
                 }
             }
 
+            if (!clienteId) {
+                Alert.alert('Erro', 'ID do cliente não encontrado.');
+                return;
+            }
+
             const camposParaAtualizar: any = {};
-            
             if (editFields.email) {
                 camposParaAtualizar.email = clienteInfo.email;
             }
-            
             if (editFields.telefone) {
                 camposParaAtualizar.telefone = clienteInfo.telefone;
             }
-            
             if (editFields.senha) {
                 camposParaAtualizar.senha = novaSenha;
             }
 
-            // Atualiza os dados no AsyncStorage
-            const clienteDataString = await AsyncStorage.getItem('clienteData');
+            
+            await editarCliente({
+                id: clienteId,
+                campos: camposParaAtualizar
+            });
+
+
             if (clienteDataString) {
                 const clienteData = JSON.parse(clienteDataString);
                 const dadosAtualizados = { ...clienteData, ...camposParaAtualizar };
                 await AsyncStorage.setItem('clienteData', JSON.stringify(dadosAtualizados));
             }
 
-            Alert.alert('Sucesso', 'Informações atualizadas com sucesso!', [
-                { text: 'OK', onPress: () => navigation.goBack() }
-            ]);
+            
+            navigation.goBack();
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível salvar as alterações');
         }
