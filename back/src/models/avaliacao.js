@@ -13,6 +13,6 @@ Avaliacao.init({
     fk_idProduto: { type: DataTypes.INTEGER, references: { model: Produto, key: 'idProduto' } },
     fk_idCliente: { type: DataTypes.INTEGER, allowNull: false, references: { model: Cliente, key: 'idCliente' } },
     fk_idLoja: { type: DataTypes.INTEGER, references: { model: Loja, key: 'idLoja' } },
-}, { sequelize, modelName: 'Avaliacao' });
+}, { sequelize, modelName: 'Avaliacao', tableName: 'avaliacao', timestamps: false });
 
 module.exports = Avaliacao;

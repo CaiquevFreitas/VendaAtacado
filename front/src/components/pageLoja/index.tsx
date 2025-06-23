@@ -1,53 +1,54 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import styles from './style';
 import { useRoute, useNavigation } from '@react-navigation/native';
-
-
-interface Produto {
-  id: number;
-  nome: string;
-  imagem: string;
-  preco: number;
-  vendidos: number;
-  avaliacao: number;
-}
-
-interface Avaliacao {
-  id: number;
-  nomeCliente: string;
-  nota: number;
-  comentario: string;
-}
-
-interface PageLojaProps {
-  nome: string;
-  logo: string;
-  endereco: string;
-  seguidores?: string;
-  nota?: number;
-  produtos: Produto[];
-  avaliacoes: Avaliacao[];
-  onSeguir?: () => void;
-  seguindo?: boolean;
-}
+import { renderPageloja, PageLojaResponse } from '../../../controllers/requests/renderPageloja';  
+import API_URL from '../../../controllers/requests/api.url';  
 
 const PageLoja: React.FC = () => {
   const route = useRoute<any>();
   const navigation = useNavigation();
-  const {
-    nome,
-    logo,
-    endereco,
-    seguidores,
-    nota,
-    produtos,
-    avaliacoes,
-    onSeguir,
-    seguindo
-  } = route.params;
-  const avaliacoesTyped: Avaliacao[] = avaliacoes;
+  const { idLoja } = route.params;
+
+  const [dados, setDados] = useState<PageLojaResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await renderPageloja(idLoja);
+        setDados(res);
+      } catch (e: any) {
+        setErro(e.message || 'Erro ao carregar dados');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [idLoja]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <ActivityIndicator size="large" color="#222" />
+        <Text style={{ marginTop: 10 }}>Carregando loja...</Text>
+      </View>
+    );
+  }
+  if (erro || !dados) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <Text style={{ color: 'red' }}>{erro || 'Erro ao carregar dados'}</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 20 }}>
+          <Text style={{ color: '#222', fontWeight: 'bold' }}>Voltar</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const { loja, endereco, produtos, avaliacoes } = dados;
 
   return (
     <ScrollView style={styles.container}>
@@ -57,27 +58,19 @@ const PageLoja: React.FC = () => {
       </TouchableOpacity>
       {/* Header Loja */}
       <View style={[styles.header, { paddingTop: 50 }]}> {/* espaço para o botão */}
-        <Image source={{ uri: logo }} style={styles.logo} />
+        <Image source={{ uri: `${API_URL}${loja.logo}` }} style={styles.logo} />
         <View style={styles.headerInfo}>
-          <Text style={styles.nomeLoja} numberOfLines={1} ellipsizeMode="tail">{nome}</Text>
-          <Text style={styles.endereco}>{endereco}</Text>
+          <Text style={styles.nomeLoja} numberOfLines={1} ellipsizeMode="tail">{loja.nomeLoja}</Text>
+          <Text style={styles.endereco}>{`${endereco.logradouro}, ${endereco.numero} - ${endereco.bairro}, ${endereco.cidade} - ${endereco.estado}`}</Text>
           <View style={styles.headerRow}>
-            {nota !== undefined && (
+            {loja.nota !== undefined && (
               <View style={styles.notaContainer}>
                 <Ionicons name="star" size={16} color="#FFD700" />
-                <Text style={styles.notaText}>{nota.toFixed(1)}</Text>
+                <Text style={styles.notaText}>{loja.nota != null ? loja.nota.toFixed(1) : 'N/A'}</Text>
               </View>
-            )}
-            {seguidores && (
-              <Text style={styles.seguidores}>{seguidores} seguidores</Text>
             )}
           </View>
         </View>
-        {onSeguir && (
-          <TouchableOpacity style={[styles.seguirBtn, seguindo && styles.seguindoBtn]} onPress={onSeguir}>
-            <Text style={[styles.seguirBtnText, seguindo && styles.seguindoBtnText]}>{seguindo ? 'Seguindo' : 'Seguir'}</Text>
-          </TouchableOpacity>
-        )}
       </View>
 
       {/* Produtos */}
@@ -85,19 +78,14 @@ const PageLoja: React.FC = () => {
         <Text style={styles.sectionTitle}>Produtos</Text>
         <FlatList
           data={produtos}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => item.idProduto.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.produtoCard}>
-              <Image source={{ uri: item.imagem }} style={styles.produtoImg} />
-              <Text style={styles.produtoNome} numberOfLines={2}>{item.nome}</Text>
+              <Image source={{ uri: `${API_URL}${item.imagem}` }} style={styles.produtoImg} />
+              <Text style={styles.produtoNome} numberOfLines={2}>{item.nomeProduto}</Text>
               <Text style={styles.produtoPreco}>R${item.preco.toFixed(2)}</Text>
-              <View style={styles.produtoInfoRow}>
-                <Ionicons name="star" size={14} color="#FFD700" />
-                <Text style={styles.produtoAvaliacao}>{item.avaliacao.toFixed(1)}</Text>
-                <Text style={styles.produtoVendidos}>{item.vendidos} vendidos</Text>
-              </View>
             </View>
           )}
         />
@@ -105,11 +93,11 @@ const PageLoja: React.FC = () => {
 
       {/* Avaliações */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Avaliações</Text>
-        {avaliacoesTyped.length === 0 ? (
+        <Text style={styles.sectionTitle}>Avaliações da Loja</Text>
+        {avaliacoes.length === 0 ? (
           <Text style={styles.semAvaliacao}>Nenhuma avaliação ainda.</Text>
         ) : (
-          avaliacoesTyped.map((av: Avaliacao) => (
+          avaliacoes.map((av) => (
             <View key={av.id} style={styles.avaliacaoCard}>
               <View style={styles.avaliacaoHeader}>
                 <Ionicons name="person-circle" size={28} color="#888" />

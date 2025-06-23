@@ -103,20 +103,7 @@ export default function Home() {
                         {lojas.map((loja) => (
                             <TouchableOpacity key={loja.id} style={styles.lojaCard} onPress={() => {
                                 navigation.navigate('PageLoja', {
-                                    nome: loja.nomeLoja,
-                                    logo: loja.logo ? `http://localhost:3000${loja.logo}` : 'https://via.placeholder.com/80/4CAF50/FFFFFF?text=🏪',
-                                    endereco: 'Endereço Exemplo, 123 - Centro',
-                                    seguidores: '10,2mil',
-                                    nota: loja.nota,
-                                    produtos: [
-                                        { id: 1, nome: 'Produto 1', imagem: 'https://via.placeholder.com/100', preco: 10.99, vendidos: 100, avaliacao: 4.5 },
-                                        { id: 2, nome: 'Produto 2', imagem: 'https://via.placeholder.com/100', preco: 20.99, vendidos: 50, avaliacao: 4.2 }
-                                    ],
-                                    avaliacoes: [
-                                        { id: 1, nomeCliente: 'João', nota: 5, comentario: 'Ótima loja!' },
-                                        { id: 2, nomeCliente: 'Maria', nota: 4, comentario: 'Bom atendimento.' }
-                                    ],
-                                    seguindo: false
+                                    idLoja: loja.id
                                 });
                             }}>
                                 <Image 
