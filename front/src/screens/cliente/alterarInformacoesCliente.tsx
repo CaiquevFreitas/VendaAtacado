@@ -72,7 +72,7 @@ export default function AlterarInformacoesCliente() {
             let clienteId = null;
             const clienteDataString = await AsyncStorage.getItem('clienteData');
             if (clienteDataString) {
-                console.log(clienteDataString);
+                
                 const clienteData = JSON.parse(clienteDataString);
                 clienteId = clienteData.id;
                 if (editFields.senha) {
