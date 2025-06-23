@@ -4,141 +4,209 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    TextInput,
+    ScrollView,
+    Switch,
     Alert,
-    KeyboardAvoidingView,
     Platform,
-    ScrollView
+    KeyboardAvoidingView
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { themes } from '../../../assets/colors/themes';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { themes } from '../../../assets/colors/themes';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
+import { Textinput } from '../../components/textInput';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+interface ClienteInfo {
+    email: string;
+    telefone: string;
+}
+
 export default function AlterarInformacoesCliente() {
     const navigation = useNavigation<NavigationProp>();
-    const [nome, setNome] = useState('');
-    const [email, setEmail] = useState('');
-    const [telefone, setTelefone] = useState('');
-    const [dataNascimento, setDataNascimento] = useState('');
+    const [clienteInfo, setClienteInfo] = useState<ClienteInfo>({
+        email: '',
+        telefone: '',
+    });
+    
+    const [editFields, setEditFields] = useState({
+        email: false,
+        telefone: false,
+        senha: false,
+    });
+
+    const [senhaAtual, setSenhaAtual] = useState('');
+    const [novaSenha, setNovaSenha] = useState('');
 
     useEffect(() => {
-        carregarDadosCliente();
+        carregarInformacoesCliente();
     }, []);
 
-    const carregarDadosCliente = async () => {
+    const carregarInformacoesCliente = async () => {
         try {
-            const clienteData = await AsyncStorage.getItem('clienteData');
-            if (clienteData) {
-                const cliente = JSON.parse(clienteData);
-                setNome(cliente.nome || '');
-                setEmail(cliente.email || '');
-                setTelefone(cliente.telefone || '');
-                setDataNascimento(cliente.dataNascimento || '');
+            const clienteDataString = await AsyncStorage.getItem('clienteData');
+            if (clienteDataString) {
+                const clienteData = JSON.parse(clienteDataString);
+                
+                setClienteInfo({
+                    email: clienteData.email || '',
+                    telefone: clienteData.telefone || ''
+                });
             }
         } catch (error) {
-            console.error('Erro ao carregar dados do cliente:', error);
+            Alert.alert('Erro', 'Não foi possível carregar as informações do cliente');
         }
     };
 
-    const handleSalvar = async () => {
-        if (!nome || !email || !telefone) {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios');
-            return;
-        }
-
+    const salvarAlteracoes = async () => {
         try {
-            const clienteData = await AsyncStorage.getItem('clienteData');
-            const cliente = clienteData ? JSON.parse(clienteData) : {};
-            
-            const dadosAtualizados = {
-                ...cliente,
-                nome,
-                email,
-                telefone,
-                dataNascimento
-            };
+            if (editFields.senha && (!senhaAtual || !novaSenha)) {
+                Alert.alert('Erro', 'Para alterar a senha, preencha todos os campos de senha');
+                return;
+            }
 
-            await AsyncStorage.setItem('clienteData', JSON.stringify(dadosAtualizados));
-            Alert.alert('Sucesso', 'Informações atualizadas com sucesso!');
-            navigation.goBack();
+            if (editFields.senha) {
+                const clienteDataString = await AsyncStorage.getItem('clienteData');
+                
+                if(clienteDataString){
+                    const clienteData = JSON.parse(clienteDataString);
+                    if (senhaAtual !== clienteData.senha) {
+                        Alert.alert('Erro', 'Senha atual incorreta');
+                        return;
+                    }
+                    if(novaSenha === clienteData.senha){
+                        Alert.alert('Erro', 'A nova senha não pode ser igual a senha atual');
+                        return;
+                    }
+                }
+            }
+
+            const camposParaAtualizar: any = {};
+            
+            if (editFields.email) {
+                camposParaAtualizar.email = clienteInfo.email;
+            }
+            
+            if (editFields.telefone) {
+                camposParaAtualizar.telefone = clienteInfo.telefone;
+            }
+            
+            if (editFields.senha) {
+                camposParaAtualizar.senha = novaSenha;
+            }
+
+            // Atualiza os dados no AsyncStorage
+            const clienteDataString = await AsyncStorage.getItem('clienteData');
+            if (clienteDataString) {
+                const clienteData = JSON.parse(clienteDataString);
+                const dadosAtualizados = { ...clienteData, ...camposParaAtualizar };
+                await AsyncStorage.setItem('clienteData', JSON.stringify(dadosAtualizados));
+            }
+
+            Alert.alert('Sucesso', 'Informações atualizadas com sucesso!', [
+                { text: 'OK', onPress: () => navigation.goBack() }
+            ]);
         } catch (error) {
-            console.error('Erro ao salvar dados:', error);
-            Alert.alert('Erro', 'Não foi possível salvar as informações');
+            Alert.alert('Erro', 'Não foi possível salvar as alterações');
         }
     };
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        <KeyboardAvoidingView 
             style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
             <View style={styles.header}>
                 <TouchableOpacity 
                     style={styles.backButton} 
                     onPress={() => navigation.goBack()}
                 >
-                    <Ionicons name="arrow-back" size={24} color={themes.colors.primary} />
+                    <Ionicons name="arrow-back" size={24} color={themes.colors.white} />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Alterar Informações</Text>
             </View>
 
-            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                <View style={styles.formContainer}>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Nome Completo *</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={nome}
-                            onChangeText={setNome}
-                            placeholder="Digite seu nome completo"
+            <ScrollView 
+                style={styles.content}
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.formSection}>
+                    <View style={styles.fieldHeader}>
+                        <Text style={styles.sectionTitle}>Email</Text>
+                        <Switch
+                            value={editFields.email}
+                            onValueChange={(value) => setEditFields(prev => ({ ...prev, email: value }))}
                         />
                     </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Email *</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={email}
-                            onChangeText={setEmail}
-                            placeholder="Digite seu email"
-                            keyboardType="email-address"
-                            autoCapitalize="none"
+                    {editFields.email && (
+                        <Textinput
+                            tipo="email-address"
+                            descricao="Email"
+                            value={clienteInfo.email}
+                            onChangeText={(text) => setClienteInfo(prev => ({ ...prev, email: text }))}
                         />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Telefone *</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={telefone}
-                            onChangeText={setTelefone}
-                            placeholder="Digite seu telefone"
-                            keyboardType="phone-pad"
-                        />
-                    </View>
-
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Data de Nascimento</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={dataNascimento}
-                            onChangeText={setDataNascimento}
-                            placeholder="DD/MM/AAAA"
-                        />
-                    </View>
+                    )}
                 </View>
-            </ScrollView>
 
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.saveButton} onPress={handleSalvar}>
+                <View style={styles.formSection}>
+                    <View style={styles.fieldHeader}>
+                        <Text style={styles.sectionTitle}>Telefone</Text>
+                        <Switch
+                            value={editFields.telefone}
+                            onValueChange={(value) => setEditFields(prev => ({ ...prev, telefone: value }))}
+                        />
+                    </View>
+                    {editFields.telefone && (
+                        <Textinput
+                            tipo="phone-pad"
+                            descricao="Telefone"
+                            value={clienteInfo.telefone}
+                            onChangeText={(text) => setClienteInfo(prev => ({ ...prev, telefone: text }))}
+                            max={11}
+                        />
+                    )}
+                </View>
+
+                <View style={styles.formSection}>
+                    <View style={styles.fieldHeader}>
+                        <Text style={styles.sectionTitle}>Alterar Senha</Text>
+                        <Switch
+                            value={editFields.senha}
+                            onValueChange={(value) => setEditFields(prev => ({ ...prev, senha: value }))}
+                        />
+                    </View>
+                    {editFields.senha && (
+                        <>
+                            <Textinput
+                                tipo="default"
+                                descricao="Senha atual"
+                                value={senhaAtual}
+                                onChangeText={setSenhaAtual}
+                                isSenha={true}
+                                max={8}
+                            />
+                            <Textinput
+                                tipo="default"
+                                descricao="Nova senha (Max: 8 caracteres)"
+                                value={novaSenha}
+                                onChangeText={setNovaSenha}
+                                isSenha={true}
+                                max={8}
+                            />
+                        </>
+                    )}
+                </View>
+
+                <TouchableOpacity 
+                    style={styles.saveButton}
+                    onPress={salvarAlteracoes}
+                >
                     <Text style={styles.saveButtonText}>Salvar Alterações</Text>
                 </TouchableOpacity>
-            </View>
+            </ScrollView>
         </KeyboardAvoidingView>
     );
 }
@@ -146,69 +214,54 @@ export default function AlterarInformacoesCliente() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: themes.colors.primary,
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 20,
         paddingTop: 40,
-        backgroundColor: 'white',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
     },
     backButton: {
-        padding: 8,
+        padding: 8
     },
     headerTitle: {
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
-        color: themes.colors.primary,
+        color: themes.colors.white,
         marginLeft: 15,
     },
     content: {
-        flex: 1,
         padding: 20,
     },
-    formContainer: {
-        gap: 20,
-    },
-    inputContainer: {
-        gap: 8,
-    },
-    label: {
-        fontSize: 16,
-        color: themes.colors.secondary,
-        fontWeight: '500',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: themes.colors.secondary,
-        borderRadius: 8,
+    formSection: {
+        width: '100%',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        borderRadius: 15,
         padding: 15,
-        fontSize: 16,
-        backgroundColor: 'white',
+        marginBottom: 20,
     },
-    buttonContainer: {
-        padding: 20,
-        backgroundColor: 'white',
-        borderTopWidth: 1,
-        borderTopColor: '#e0e0e0',
+    fieldHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 15,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: themes.colors.white,
     },
     saveButton: {
-        backgroundColor: themes.colors.primary,
+        backgroundColor: themes.colors.white,
         padding: 15,
         borderRadius: 8,
         alignItems: 'center',
+        marginTop: 20,
+        marginBottom: 40,
     },
     saveButtonText: {
-        color: themes.colors.white,
+        color: themes.colors.primary,
         fontSize: 16,
         fontWeight: 'bold',
     },
