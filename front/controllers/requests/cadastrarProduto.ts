@@ -5,9 +5,6 @@ export async function cadastrarProduto(formData:FormData){
     const response = await fetch(`${API_URL}/cadastrarProduto`, {
         method: 'POST',
         body: formData,
-        headers: {
-            'Content-Type': 'multipart/form-data',
-        },
     });
 
     const data = await response.json();

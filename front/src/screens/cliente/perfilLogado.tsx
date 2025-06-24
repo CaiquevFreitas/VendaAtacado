@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, Alert, StyleSheet, Image, Text, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
@@ -6,6 +6,10 @@ import { themes } from '../../../assets/colors/themes';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../types';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type ProfileOptionProps = {
     icon: React.ReactNode;
@@ -13,13 +17,44 @@ type ProfileOptionProps = {
     onPress: () => void;
 };
 
+type ClienteData = {
+    id: number;
+    nome: string;
+    email: string;
+    telefone: string;
+    dataNascimento: string;
+    senha: string;
+};
+
 export default function PerfilLogado(){
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp>();
+    const [clienteData, setClienteData] = useState<ClienteData | null>(null);
+
+    useEffect(() => {
+        carregarDadosCliente();
+    }, []);
+
+    const carregarDadosCliente = async () => {
+        try {
+            const dadosSalvos = await AsyncStorage.getItem('clienteData');
+            if (dadosSalvos) {
+                const dados = JSON.parse(dadosSalvos);
+                setClienteData(dados);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do cliente:', error);
+        }
+    };
 
     const handleLogout = async () => {
         try {
             await AsyncStorage.clear();
+            await AsyncStorage.removeItem('userType');
             Alert.alert('Logout realizado', 'Você saiu da sua conta.');
+            navigation.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+            });
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível sair da conta.');
             console.error('Erro ao fazer logout:', error);
@@ -44,9 +79,9 @@ export default function PerfilLogado(){
                         source={{ uri: 'https://th.bing.com/th/id/OIP.emrz2EGwVvz2df6AzRXBwgHaEb?rs=1&pid=ImgDetMain' }} 
                         style={styles.profileImage} 
                     />
-                    <View>
-                        <Text style={styles.userName}>Nome cliente</Text>
-                        <Text style={styles.userEmail}>cliente@email.com</Text>
+                    <View style={{ maxWidth: 180 }}>
+                        <Text style={styles.userName} numberOfLines={1} ellipsizeMode="tail">{clienteData?.nome || 'Carregando...'}</Text>
+                        <Text style={styles.userEmail}>{clienteData?.email || 'carregando@email.com'}</Text>
                     </View>
                 </View>
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -60,7 +95,7 @@ export default function PerfilLogado(){
                     <ProfileOption 
                         icon={<Ionicons name="settings-outline" size={24} color={themes.colors.primary} />}
                         title="Configurações"
-                        onPress={() => {}}
+                        onPress={() => navigation.navigate('ConfiguracoesCliente')}
                     />
                     <ProfileOption 
                         icon={<MaterialIcons name="payment" size={24} color={themes.colors.primary} />}

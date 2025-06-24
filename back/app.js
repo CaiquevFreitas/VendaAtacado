@@ -6,6 +6,10 @@ const path = require('path');
 
 dotenv.config();
 const app = express();
+
+// Carregar associações dos modelos
+require('./src/models/associations');
+
 app.use(cors({
     origin: process.env.FRONT_URL,
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
@@ -31,6 +35,9 @@ const editEndereco = require('./src/routes/update/editEndereco')
 const showEndereco = require('./src/routes/read/showEndereco')
 const editLogo = require('./src/routes/update/editLogo')
 const editProduto = require('./src/routes/update/editProduto')
+const showLojas = require('./src/routes/read/showLojas')
+const editCliente = require('./src/routes/update/editCliente')
+const showPageLoja = require('./src/routes/read/showPageLoja')
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
@@ -45,6 +52,9 @@ app.use('/', editEndereco);
 app.use('/', showEndereco);
 app.use('/', editLogo);
 app.use('/', editProduto);
+app.use('/', showLojas);
+app.use('/', editCliente);
+app.use('/', showPageLoja);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);

@@ -32,8 +32,8 @@ const upload = multer({
 router.put('/editProduto/:idProduto', upload.single('imagem'), async (req, res) => {
     try {
         const { idProduto } = req.params;
-        const { nomeProduto, categoria, preco, estoque } = req.body;
-
+        const { nomeProduto, categoria, preco, estoque, status } = req.body;
+        
         const produto = await Produto.findByPk(idProduto);
         if (!produto) {
             if (req.file) fs.unlinkSync(req.file.path);
@@ -52,6 +52,7 @@ router.put('/editProduto/:idProduto', upload.single('imagem'), async (req, res) 
             categoria,
             preco,
             estoque,
+            status: status === 'true' || status === true,
             imagem: imagemPath
         });
 

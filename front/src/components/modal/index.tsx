@@ -19,6 +19,8 @@ import { themes } from '../../../assets/colors/themes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { cadastrarProduto } from '../../../controllers/requests/cadastrarProduto';
 import { editarProduto } from '../../../controllers/requests/editarProduto';
+import API_URL from '../../../controllers/requests/api.url';
+
 
 type Produto = {
     id: number;
@@ -27,6 +29,7 @@ type Produto = {
     estoque: number;
     imagem: string;
     categoria: string;
+    status?: boolean;
 };
 
 interface ModalProdutoProps {
@@ -55,6 +58,7 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
     const [preco, setPreco] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [imagem, setImagem] = useState<string | null>(null);
+    const [status, setStatus] = useState(true);
 
     const isEditMode = !!produtoParaEditar;
 
@@ -64,7 +68,8 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
             setCategoria(produtoParaEditar.categoria);
             setPreco(String(produtoParaEditar.valor));
             setQuantidade(String(produtoParaEditar.estoque));
-            setImagem(produtoParaEditar.imagem ? `http://localhost:3000${produtoParaEditar.imagem}` : null);
+            setImagem(produtoParaEditar.imagem ? `${API_URL}${produtoParaEditar.imagem}` : null);
+            setStatus(produtoParaEditar.status !== undefined ? produtoParaEditar.status : true);
         } else {
             limparFormulario();
         }
@@ -118,6 +123,7 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
             }
 
             if (isEditMode) {
+                formData.append('status', status.toString());
                 await editarProduto(produtoParaEditar.id, formData);
             } else {
                 formData.append('fk_idLoja', id);
@@ -136,6 +142,7 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
         setPreco('');
         setQuantidade('');
         setImagem(null);
+        setStatus(true);
     };
 
     return (
@@ -144,90 +151,122 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
             transparent
             animationType="fade"
         >
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={styles.modalContainer}
-            >
-                <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-                    <View style={styles.modalContent}>
-                        <View style={styles.modalHeader}>
-                            <Text style={styles.modalTitle}>{isEditMode ? 'Editar Produto' : 'Cadastrar Produto'}</Text>
-                            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                                <Ionicons name="close" size={24} color={themes.colors.secondary} />
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <View style={styles.modalHeader}>
+                        <Text style={styles.modalTitle}>{isEditMode ? 'Editar Produto' : 'Cadastrar Produto'}</Text>
+                        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                            <Ionicons name="close" size={24} color={themes.colors.secondary} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.formContainer}>
+                        
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Imagem do Produto</Text>
+                            <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
+                                {imagem ? (
+                                    <Image source={{ uri: imagem }} style={styles.imagePreview} />
+                                ) : (
+                                    <View style={styles.imagePlaceholder}>
+                                        <Ionicons name="camera" size={32} color={themes.colors.secondary} />
+                                        <Text style={styles.imagePlaceholderText}>Selecionar imagem</Text>
+                                    </View>
+                                )}
                             </TouchableOpacity>
                         </View>
 
-                        <View style={styles.formContainer}>
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Imagem do Produto</Text>
-                                <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
-                                    {imagem ? (
-                                        <Image source={{ uri: imagem }} style={styles.imagePreview} />
-                                    ) : (
-                                        <View style={styles.imagePlaceholder}>
-                                            <Ionicons name="camera" size={32} color={themes.colors.secondary} />
-                                            <Text style={styles.imagePlaceholderText}>Selecionar imagem</Text>
-                                        </View>
-                                    )}
-                                </TouchableOpacity>
-                            </View>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Nome do Produto</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={nomeProduto}
+                                onChangeText={setNomeProduto}
+                                placeholder="Digite o nome do produto"
+                            />
+                        </View>
 
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Nome do Produto</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={nomeProduto}
-                                    onChangeText={setNomeProduto}
-                                    placeholder="Digite o nome do produto"
-                                />
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Categoria</Text>
+                            <View style={styles.pickerContainer}>
+                                <Picker
+                                    selectedValue={categoria}
+                                    onValueChange={(itemValue) => setCategoria(itemValue)}
+                                    style={styles.picker}
+                                >
+                                    {categorias.map((cat) => (
+                                        <Picker.Item key={cat} label={cat} value={cat} />
+                                    ))}
+                                </Picker>
                             </View>
+                        </View>
 
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Preço</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={preco}
+                                onChangeText={setPreco}
+                                placeholder="Digite o preço"
+                                keyboardType="numeric"
+                            />
+                        </View>
+
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Quantidade em Estoque</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={quantidade}
+                                onChangeText={setQuantidade}
+                                placeholder="Digite a quantidade"
+                                keyboardType="numeric"
+                            />
+                        </View>
+
+                        {isEditMode && (
                             <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Categoria</Text>
-                                <View style={styles.pickerContainer}>
-                                    <Picker
-                                        selectedValue={categoria}
-                                        onValueChange={(itemValue) => setCategoria(itemValue)}
-                                        style={styles.picker}
+                                <Text style={styles.label}>Status do Produto</Text>
+                                <View style={styles.statusContainer}>
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.statusButton,
+                                            status ? styles.statusActive : styles.statusInactive
+                                        ]}
+                                        onPress={() => setStatus(true)}
                                     >
-                                        {categorias.map((cat) => (
-                                            <Picker.Item key={cat} label={cat} value={cat} />
-                                        ))}
-                                    </Picker>
+                                        <Text style={[
+                                            styles.statusButtonText,
+                                            status ? styles.statusActiveText : styles.statusInactiveText
+                                        ]}>
+                                            Ativo
+                                        </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.statusButton,
+                                            !status ? styles.statusActive : styles.statusInactive
+                                        ]}
+                                        onPress={() => setStatus(false)}
+                                    >
+                                        <Text style={[
+                                            styles.statusButtonText,
+                                            !status ? styles.statusActiveText : styles.statusInactiveText
+                                        ]}>
+                                            Inativo
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
-
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Preço</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={preco}
-                                    onChangeText={setPreco}
-                                    placeholder="Digite o preço"
-                                    keyboardType="numeric"
-                                />
-                            </View>
-
-                            <View style={styles.inputContainer}>
-                                <Text style={styles.label}>Quantidade em Estoque</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={quantidade}
-                                    onChangeText={setQuantidade}
-                                    placeholder="Digite a quantidade"
-                                    keyboardType="numeric"
-                                />
-                            </View>
-                        </View>
-
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                                <Text style={styles.submitButtonText}>{isEditMode ? 'Salvar Alterações' : 'Cadastrar'}</Text>
-                            </TouchableOpacity>
-                        </View>
+                        )}
                     </View>
-                </ScrollView>
-            </KeyboardAvoidingView>
+
+                    <View style={styles.buttonContainer}>
+                        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                            <Text style={styles.submitButtonText}>{isEditMode ? 'Salvar Alterações' : 'Cadastrar'}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
         </Modal>
     );
 }

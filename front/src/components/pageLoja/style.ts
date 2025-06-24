@@ -1,0 +1,188 @@
+import { StyleSheet } from 'react-native';
+import { themes } from '../../../assets/colors/themes';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    backgroundColor: themes.colors.primary,
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    marginBottom: 10,
+  },
+  logo: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: '#fff',
+    marginRight: 12,
+  },
+  headerInfo: {
+    flex: 1,
+    minWidth: 0,
+  },
+  nomeLoja: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 2,
+    maxWidth: 180,
+  },
+  endereco: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 13,
+    marginBottom: 2,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  notaContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  notaText: {
+    color: '#FFD700',
+    fontWeight: 'bold',
+    marginLeft: 2,
+    fontSize: 14,
+  },
+  seguidores: {
+    color: '#fff',
+    fontSize: 13,
+    marginLeft: 8,
+  },
+  seguirBtn: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    borderRadius: 20,
+    marginLeft: 10,
+  },
+  seguindoBtn: {
+    backgroundColor: '#eee',
+    borderWidth: 1,
+    borderColor: themes.colors.primary,
+  },
+  seguirBtnText: {
+    color: themes.colors.primary,
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  seguindoBtnText: {
+    color: '#888',
+  },
+  section: {
+    marginTop: 18,
+    paddingHorizontal: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: themes.colors.primary,
+    marginBottom: 10,
+  },
+  produtoCard: {
+    width: 140,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginRight: 12,
+    padding: 10,
+    alignItems: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.10,
+    shadowRadius: 1.5,
+  },
+  produtoImg: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginBottom: 6,
+  },
+  produtoNome: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 2,
+    textAlign: 'center',
+  },
+  produtoPreco: {
+    color: themes.colors.primary,
+    fontWeight: 'bold',
+    fontSize: 15,
+    marginBottom: 2,
+  },
+  produtoInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  produtoAvaliacao: {
+    color: '#FFD700',
+    fontWeight: 'bold',
+    fontSize: 13,
+    marginLeft: 2,
+  },
+  produtoVendidos: {
+    color: '#888',
+    fontSize: 12,
+    marginLeft: 6,
+  },
+  avaliacaoCard: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 1,
+  },
+  avaliacaoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+    gap: 8,
+  },
+  avaliadorNome: {
+    fontWeight: 'bold',
+    color: '#333',
+    fontSize: 15,
+    marginRight: 8,
+  },
+  avaliacaoNotaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 'auto',
+  },
+  comentario: {
+    color: '#444',
+    fontSize: 14,
+    marginTop: 2,
+  },
+  semAvaliacao: {
+    color: '#888',
+    fontStyle: 'italic',
+    fontSize: 14,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+});
+
+export default styles;

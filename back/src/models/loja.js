@@ -19,4 +19,4 @@ Loja.init({
 }, 
 { sequelize, modelName: 'Loja', tableName: 'loja',  timestamps: false});
 
-module.exports =   Loja ;
+module.exports = Loja;

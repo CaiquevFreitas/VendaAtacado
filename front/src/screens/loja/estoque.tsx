@@ -30,6 +30,7 @@ type Produto = {
     imagem: string;
     fk_idLoja: number;
     categoria: string;
+    status?: boolean;
 };
 
 export default function Estoque() {
@@ -59,7 +60,8 @@ export default function Estoque() {
                     estoque: produto.estoque || 0,
                     imagem: produto.imagem || '',
                     fk_idLoja: produto.fk_idLoja || produto.idLoja,
-                    categoria: produto.categoria || ''
+                    categoria: produto.categoria || '',
+                    status: produto.status
                 }));
                 
                 setProdutos(prevProdutos => {
@@ -155,6 +157,20 @@ export default function Estoque() {
                                 <Text style={styles.produtoQuantidade}>
                                     Quantidade: {produto.estoque}
                                 </Text>
+                                {produto.status !== undefined && (
+                                    <View style={styles.statusContainer}>
+                                        <View style={[
+                                            styles.statusIndicator,
+                                            produto.status ? styles.statusActive : styles.statusInactive
+                                        ]} />
+                                        <Text style={[
+                                            styles.statusText,
+                                            produto.status ? styles.statusActiveText : styles.statusInactiveText
+                                        ]}>
+                                            {produto.status ? 'Ativo' : 'Inativo'}
+                                        </Text>
+                                    </View>
+                                )}
                             </View>
                             <View style={styles.produtoAcoes}>
                                 <TouchableOpacity 
@@ -295,5 +311,32 @@ const styles = StyleSheet.create({
     },
     deleteButton: {
         backgroundColor: '#ff4444',
+    },
+    statusContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 5,
+    },
+    statusIndicator: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        marginRight: 5,
+    },
+    statusActive: {
+        backgroundColor: themes.colors.primary,
+    },
+    statusInactive: {
+        backgroundColor: '#ff4444',
+    },
+    statusActiveText: {
+        color: themes.colors.primary,
+    },
+    statusInactiveText: {
+        color: '#ff4444',
+    },
+    statusText: {
+        fontSize: 14,
+        color: themes.colors.secondary,
     },
 });

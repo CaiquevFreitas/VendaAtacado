@@ -35,9 +35,12 @@ router.post('/loginCliente', async (req, res) => {
             success: true,
             message: 'Login realizado com sucesso!',
             user: {
-                id: user.id,
+                id: user.idCliente,
                 nome: user.nomeCliente,
-                email: user.email
+                email: user.email,
+                telefone: user.telefone,
+                dataNascimento: user.dataNascimento,
+                senha: user.senha
             }
         });
 

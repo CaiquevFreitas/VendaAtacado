@@ -7,13 +7,15 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        paddingHorizontal: 20,
     },
     modalContent: {
         backgroundColor: themes.colors.white,
         borderRadius: 20,
         padding: 20,
         width: '100%',
-        maxHeight: '80%',
+        maxHeight: '90%',
+        flexDirection: 'column',
     },
     modalHeader: {
         flexDirection: 'row',
@@ -30,10 +32,11 @@ export const styles = StyleSheet.create({
         padding: 5,
     },
     formContainer: {
-        gap: 15,
+        gap: 12,
+        paddingVertical: 10,
     },
     inputContainer: {
-        gap: 5,
+        gap: 4,
     },
     label: {
         fontSize: 16,
@@ -74,7 +77,7 @@ export const styles = StyleSheet.create({
     },
     imagePickerButton: {
         width: '100%',
-        height: 150,
+        height: 120,
         borderWidth: 1,
         borderColor: themes.colors.secondary,
         borderRadius: 8,
@@ -96,5 +99,41 @@ export const styles = StyleSheet.create({
         marginTop: 8,
         color: themes.colors.secondary,
         fontSize: 14,
+    },
+    statusContainer: {
+        flexDirection: 'row',
+        gap: 10,
+    },
+    statusButton: {
+        flex: 1,
+        padding: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        borderWidth: 1,
+    },
+    statusActive: {
+        backgroundColor: themes.colors.primary,
+        borderColor: themes.colors.primary,
+    },
+    statusInactive: {
+        backgroundColor: themes.colors.white,
+        borderColor: themes.colors.secondary,
+    },
+    statusButtonText: {
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    statusActiveText: {
+        color: themes.colors.white,
+    },
+    statusInactiveText: {
+        color: themes.colors.secondary,
+    },
+    scrollContainer: {
+        flex: 1,
+        minHeight: 200,
+    },
+    scrollContent: {
+        paddingBottom: 10,
     },
 });
