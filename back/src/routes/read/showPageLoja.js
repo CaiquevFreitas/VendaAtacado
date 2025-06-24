@@ -5,6 +5,7 @@ const Produto = require('../../models/produto');
 const Avaliacao = require('../../models/avaliacao');
 const Cliente = require('../../models/cliente');
 const Endereco = require('../../models/endereco');
+const { fn, col } = require('sequelize');
 
 router.get('/showPageLoja/:idLoja', async (req, res) => {
     try {
@@ -13,12 +14,19 @@ router.get('/showPageLoja/:idLoja', async (req, res) => {
         // Buscar dados da loja
         const loja = await Loja.findOne({
             where: { idLoja },
-            attributes: ['idLoja', 'nomeLoja', 'logo', 'nota']
+            attributes: ['idLoja', 'nomeLoja', 'logo']
         });
 
         if (!loja) {
             return res.status(404).json({ error: 'Loja não encontrada' });
         }
+
+        // Calcular média das avaliações
+        const mediaObj = await Avaliacao.findOne({
+            where: { fk_idLoja: idLoja },
+            attributes: [[fn('AVG', col('nota')), 'notaMedia']]
+        });
+        const notaMedia = mediaObj && mediaObj.dataValues.notaMedia ? parseFloat(mediaObj.dataValues.notaMedia) : 0;
 
         // Buscar endereço da loja
         const endereco = await Endereco.findOne({
@@ -51,7 +59,10 @@ router.get('/showPageLoja/:idLoja', async (req, res) => {
         }));
 
         res.json({
-            loja,
+            loja: {
+                ...loja.dataValues,
+                nota: notaMedia
+            },
             endereco,
             produtos,
             avaliacoes: avaliacoesFormatadas

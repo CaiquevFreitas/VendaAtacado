@@ -61,7 +61,11 @@ const PageLoja: React.FC = () => {
         <Image source={{ uri: `${API_URL}${loja.logo}` }} style={styles.logo} />
         <View style={styles.headerInfo}>
           <Text style={styles.nomeLoja} numberOfLines={1} ellipsizeMode="tail">{loja.nomeLoja}</Text>
-          <Text style={styles.endereco}>{`${endereco.logradouro}, ${endereco.numero} - ${endereco.bairro}, ${endereco.cidade} - ${endereco.estado}`}</Text>
+          <Text style={styles.endereco}>
+            {endereco
+              ? `${endereco.logradouro}, ${endereco.numero} - ${endereco.bairro}, ${endereco.cidade} - ${endereco.estado}`
+              : 'Endereço não cadastrado'}
+          </Text>
           <View style={styles.headerRow}>
             {loja.nota !== undefined && (
               <View style={styles.notaContainer}>
