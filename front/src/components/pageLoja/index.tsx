@@ -3,12 +3,14 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList, 
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import styles from './style';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../types';
 import { renderPageloja, PageLojaResponse } from '../../../controllers/requests/renderPageloja';  
 import API_URL from '../../../controllers/requests/api.url';  
 
 const PageLoja: React.FC = () => {
   const route = useRoute<any>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { idLoja } = route.params;
 
   const [dados, setDados] = useState<PageLojaResponse | null>(null);
@@ -86,11 +88,19 @@ const PageLoja: React.FC = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => (
-            <View style={styles.produtoCard}>
+            <TouchableOpacity style={styles.produtoCard} onPress={() => {
+              navigation.navigate('PageProduto', {
+                nome: item.nomeProduto,
+                imagem: `${API_URL}${item.imagem}`,
+                preco: item.preco,
+                vendidos: 0, // Substitua pelo valor real se disponível
+                avaliacoes: [] // Substitua pelo valor real se disponível
+              });
+            }}>
               <Image source={{ uri: `${API_URL}${item.imagem}` }} style={styles.produtoImg} />
               <Text style={styles.produtoNome} numberOfLines={2}>{item.nomeProduto}</Text>
               <Text style={styles.produtoPreco}>R${item.preco.toFixed(2)}</Text>
-            </View>
+            </TouchableOpacity>
           )}
         />
       </View>
