@@ -73,6 +73,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: 'center',
   },
+  descricao: {
+    color: '#444',
+    fontSize: 15,
+    lineHeight: 22,
+    marginTop: 4,
+  },
   avaliacaoCard: {
     backgroundColor: '#fafafa',
     borderRadius: 10,

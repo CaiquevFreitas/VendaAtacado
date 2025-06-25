@@ -16,12 +16,7 @@ export type RootStackParamList = {
         idLoja: number;
     };
     PageProduto: {
-        nome: string;
-        imagem: string;
-        preco: number;
-        precoOriginal?: number;
-        vendidos: number;
-        avaliacoes: any[];
+        idProduto: number;
     };
 };
   

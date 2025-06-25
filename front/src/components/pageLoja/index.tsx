@@ -90,11 +90,7 @@ const PageLoja: React.FC = () => {
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.produtoCard} onPress={() => {
               navigation.navigate('PageProduto', {
-                nome: item.nomeProduto,
-                imagem: `${API_URL}${item.imagem}`,
-                preco: item.preco,
-                vendidos: 0, // Substitua pelo valor real se disponível
-                avaliacoes: [] // Substitua pelo valor real se disponível
+                idProduto: item.idProduto
               });
             }}>
               <Image source={{ uri: `${API_URL}${item.imagem}` }} style={styles.produtoImg} />

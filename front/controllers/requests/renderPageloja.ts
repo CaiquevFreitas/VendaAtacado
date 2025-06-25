@@ -6,6 +6,7 @@ export interface ProdutoPageLoja {
     imagem: string;
     preco: number;
     estoque: number;
+    descricao?: string;
 }
 
 export interface AvaliacaoPageLoja {
