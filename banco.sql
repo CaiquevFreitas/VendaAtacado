@@ -28,7 +28,6 @@ create table endereco(
     foreign key (fk_idLoja) references loja(idLoja)
 );
 
-
 create table cliente(
 	idCliente int primary key auto_increment,
     nomeCliente varchar(255) not null,
@@ -44,6 +43,7 @@ create table produto(
 	idProduto int primary key auto_increment,
     nomeProduto varchar(100),
     imagem varchar(100),
+    descricao varchar(300),
     status boolean default true,
     categoria enum('Frutas','Vegetais','Doces','Almoço','Bebidas','Verduras', 'Carnes','Limpeza', 'Bolos', 'Salgados'),
     preco double,

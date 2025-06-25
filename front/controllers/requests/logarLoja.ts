@@ -21,6 +21,7 @@ export async function logarLoja(email: string, senha: string): Promise<boolean> 
         id: number;
         nomeLoja: string;
         nomeVendedor: string;
+        logo: string;
         horarioAbertura: string;
         horarioFechamento: string;
         telefone: string;
@@ -30,6 +31,7 @@ export async function logarLoja(email: string, senha: string): Promise<boolean> 
         id: dados.loja.id,
         nomeLoja: dados.loja.nomeLoja,
         nomeVendedor: dados.loja.nomeVendedor,
+        logo: dados.loja.logo,
         horarioAbertura: dados.loja.horarioAbertura,
         horarioFechamento: dados.loja.horarioFechamento,
         telefone: dados.loja.telefone,
@@ -39,7 +41,7 @@ export async function logarLoja(email: string, senha: string): Promise<boolean> 
         const endereco = await mostrarEndereco(lojaData.id);
         lojaData.endereco = endereco;
       } catch (e) {
-        // Se não encontrar endereço, apenas ignora
+        
       }
       await AsyncStorage.setItem('lojaData', JSON.stringify(lojaData));
       Alert.alert('Sucesso', 'Login da loja realizado!');
