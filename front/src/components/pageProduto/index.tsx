@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './style';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { renderPageProduto, PageProdutoResponse } from '../../../controllers/requests/renderPageProduto';
 import API_URL from '../../../controllers/requests/api.url';
 import ModalAddCarrinho from '../modalAddCarrinho';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { adicionarCarrinho } from '../../../controllers/requests/adicionarCarrinho';
 
 interface Avaliacao {
   id: number;
@@ -43,9 +45,16 @@ const PageProduto: React.FC = () => {
   // Funções mock para os botões
   const onComprar = () => {};
   const onAdicionarCarrinho = () => setModalVisible(true);
-  const handleAddCarrinho = (quantidade: number) => {
-    // Aqui você pode chamar a requisição de adicionar ao carrinho
-    // Exemplo: adicionarAoCarrinho(produto.idProduto, quantidade)
+  const handleAddCarrinho = async (quantidade: number) => {
+    try {
+      const idCarrinhoStr = await AsyncStorage.getItem('idCarrinho');
+      if (!idCarrinhoStr) throw new Error('Carrinho não encontrado');
+      const idCarrinho = Number(idCarrinhoStr);
+      await adicionarCarrinho(idCarrinho, idProduto, quantidade, dados?.produto.preco || 0);
+      Alert.alert('Sucesso', 'Produto adicionado ao carrinho!');
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Erro ao adicionar ao carrinho');
+    }
   };
 
   if (loading) {

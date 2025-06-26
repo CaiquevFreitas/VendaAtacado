@@ -39,6 +39,7 @@ const showLojas = require('./src/routes/read/showLojas')
 const editCliente = require('./src/routes/update/editCliente')
 const showPageLoja = require('./src/routes/read/showPageLoja')
 const showPageProduto = require('./src/routes/read/showPageProduto')
+const adicionaraoCarrinho = require('./src/routes/create/adicionaraoCarrinho')
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
@@ -57,6 +58,7 @@ app.use('/', showLojas);
 app.use('/', editCliente);
 app.use('/', showPageLoja);
 app.use('/', showPageProduto);
+app.use('/', adicionaraoCarrinho);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);

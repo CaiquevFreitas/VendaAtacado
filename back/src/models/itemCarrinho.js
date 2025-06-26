@@ -1,5 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('./database');
+const Produto = require('./produto');   
+const Carrinho = require('./carrinho');
 
 class ItemCarrinho extends Model {}
 ItemCarrinho.init({
