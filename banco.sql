@@ -87,7 +87,6 @@ create table itemPedido(
 
 create table carrinho(
 	idCarrinho int primary key auto_increment,
-	totalCarrinho double not null,
 	fk_idCliente int not null,
 	foreign key(fk_idCliente) references cliente(idCliente)
 );
