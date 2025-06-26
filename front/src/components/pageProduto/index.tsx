@@ -4,8 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import styles from './style';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { renderPageProduto, PageProdutoResponse } from '../../../controllers/requests/renderPageProduto';
-import  API_URL  from '../../../controllers/requests/api.url';
-
+import API_URL from '../../../controllers/requests/api.url';
+import ModalAddCarrinho from '../modalAddCarrinho';
 
 interface Avaliacao {
   id: number;
@@ -24,6 +24,7 @@ const PageProduto: React.FC = () => {
   const [dados, setDados] = useState<PageProdutoResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,7 +42,11 @@ const PageProduto: React.FC = () => {
 
   // Funções mock para os botões
   const onComprar = () => {};
-  const onAdicionarCarrinho = () => {};
+  const onAdicionarCarrinho = () => setModalVisible(true);
+  const handleAddCarrinho = (quantidade: number) => {
+    // Aqui você pode chamar a requisição de adicionar ao carrinho
+    // Exemplo: adicionarAoCarrinho(produto.idProduto, quantidade)
+  };
 
   if (loading) {
     return (
@@ -126,6 +131,17 @@ const PageProduto: React.FC = () => {
           <Text style={styles.comprarBtnText}>Compre agora</Text>
         </TouchableOpacity>
       </View>
+      <ModalAddCarrinho
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onAdd={handleAddCarrinho}
+        produto={{
+          nome: produto.nomeProduto,
+          imagem: `${API_URL}${produto.imagem}`,
+          preco: produto.preco,
+          estoque: produto.estoque
+        }}
+      />
     </View>
   );
 };
