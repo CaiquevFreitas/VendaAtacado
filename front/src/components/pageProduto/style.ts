@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   nomeProduto: {
-    fontSize: 18,
+    fontSize: 23,
     fontWeight: 'bold',
     color: '#222',
     marginBottom: 6,
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
   },
   preco: {
     color: '#E53935',
-    fontSize: 22,
+    fontSize: 23,
     fontWeight: 'bold',
     marginRight: 8,
   },
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
   },
   vendidos: {
     color: '#666',
-    fontSize: 13,
+    fontSize: 16,
     marginBottom: 2,
   },
   section: {
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
   sectionTitle: {
-    fontSize: 17,
+    fontSize: 23,
     fontWeight: 'bold',
     color: themes.colors.primary,
     marginBottom: 10,
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   },
   descricao: {
     color: '#444',
-    fontSize: 15,
+    fontSize: 18,
     lineHeight: 22,
     marginTop: 4,
   },
