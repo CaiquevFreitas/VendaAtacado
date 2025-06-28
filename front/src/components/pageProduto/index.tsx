@@ -6,8 +6,6 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { renderPageProduto, PageProdutoResponse } from '../../../controllers/requests/renderPageProduto';
 import API_URL from '../../../controllers/requests/api.url';
 import ModalAddCarrinho from '../modalAddCarrinho';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { adicionarCarrinho } from '../../../controllers/requests/adicionarCarrinho';
 
 interface Avaliacao {
   id: number;
@@ -42,20 +40,8 @@ const PageProduto: React.FC = () => {
     fetchData();
   }, [idProduto]);
 
-  // Funções mock para os botões
   const onComprar = () => {};
   const onAdicionarCarrinho = () => setModalVisible(true);
-  const handleAddCarrinho = async (quantidade: number) => {
-    try {
-      const idCarrinhoStr = await AsyncStorage.getItem('idCarrinho');
-      if (!idCarrinhoStr) throw new Error('Carrinho não encontrado');
-      const idCarrinho = Number(idCarrinhoStr);
-      await adicionarCarrinho(idCarrinho, idProduto, quantidade, dados?.produto.preco || 0);
-      Alert.alert('Sucesso', 'Produto adicionado ao carrinho!');
-    } catch (error: any) {
-      Alert.alert('Erro', error.message || 'Erro ao adicionar ao carrinho');
-    }
-  };
 
   if (loading) {
     return (
@@ -143,7 +129,7 @@ const PageProduto: React.FC = () => {
       <ModalAddCarrinho
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onAdd={handleAddCarrinho}
+        idProduto={idProduto}
         produto={{
           nome: produto.nomeProduto,
           imagem: `${API_URL}${produto.imagem}`,

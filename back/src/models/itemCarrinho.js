@@ -10,6 +10,6 @@ ItemCarrinho.init({
     precoUnitario: { type: DataTypes.DOUBLE, allowNull: false },
     fk_idProduto: { type: DataTypes.INTEGER, allowNull: false, references: { model: Produto, key: 'idProduto' } },
     fk_idCarrinho: { type: DataTypes.INTEGER, allowNull: false, references: { model: Carrinho, key: 'idCarrinho' } },
-}, { sequelize, modelName: 'ItemCarrinho' });
+}, { sequelize, modelName: 'ItemCarrinho', tableName: 'itemcarrinho', timestamps: false });
 
 module.exports = ItemCarrinho;

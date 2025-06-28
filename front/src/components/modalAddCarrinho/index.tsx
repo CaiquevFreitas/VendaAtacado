@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './style';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { adicionarCarrinho } from '../../../controllers/requests/adicionarCarrinho';  
 
 interface ModalAddCarrinhoProps {
   visible: boolean;
   onClose: () => void;
-  onAdd: (quantidade: number) => void;
+  idProduto: number;
   produto: {
     nome: string;
     imagem: string;
@@ -15,7 +17,7 @@ interface ModalAddCarrinhoProps {
   };
 }
 
-const ModalAddCarrinho: React.FC<ModalAddCarrinhoProps> = ({ visible, onClose, onAdd, produto }) => {
+const ModalAddCarrinho: React.FC<ModalAddCarrinhoProps> = ({ visible, onClose, idProduto, produto }) => {
   const [quantidade, setQuantidade] = useState(1);
 
   const aumentar = () => {
@@ -24,11 +26,21 @@ const ModalAddCarrinho: React.FC<ModalAddCarrinhoProps> = ({ visible, onClose, o
   const diminuir = () => {
     if (quantidade > 1) setQuantidade(q => q - 1);
   };
-  const handleAdd = () => {
-    onAdd(quantidade);
-    setQuantidade(1);
-    onClose();
+  
+  const handleAddCarrinho = async () => {
+    try {
+      const idCarrinhoStr = await AsyncStorage.getItem('idCarrinho');
+      if (!idCarrinhoStr) throw new Error('Carrinho não encontrado');
+      const idCarrinho = Number(idCarrinhoStr);
+      await adicionarCarrinho(idCarrinho, idProduto, quantidade, produto.preco);
+      Alert.alert('Sucesso', 'Produto adicionado ao carrinho!');
+      setQuantidade(1);
+      onClose();
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Erro ao adicionar ao carrinho');
+    }
   };
+  
   const handleClose = () => {
     setQuantidade(1);
     onClose();
@@ -54,7 +66,7 @@ const ModalAddCarrinho: React.FC<ModalAddCarrinhoProps> = ({ visible, onClose, o
               <Ionicons name="add-circle-outline" size={28} color={quantidade === produto.estoque ? '#ccc' : '#222'} />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.addBtn} onPress={handleAdd} disabled={produto.estoque === 0}>
+          <TouchableOpacity style={styles.addBtn} onPress={handleAddCarrinho} disabled={produto.estoque === 0}>
             <Text style={styles.addBtnText}>{produto.estoque === 0 ? 'Sem estoque' : 'Adicionar ao carrinho'}</Text>
           </TouchableOpacity>
         </View>
