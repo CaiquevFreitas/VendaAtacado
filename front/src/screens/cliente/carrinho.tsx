@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
     View, 
     Text, 
@@ -10,51 +10,49 @@ import {
     Alert
 } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
 import { themes } from "../../../assets/colors/themes";
-
-
-interface ItemCarrinho {
-    id: number;
-    nome: string;
-    imagem: string;
-    precoUnitario: number;
-    quantidade: number;
-    selecionado: boolean;
-}
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { mostrarItensCarrinho, ItemCarrinho } from '../../../controllers/requests/mostrarItensCarrinho';
+import API_URL from "../../../controllers/requests/api.url";
 
 export default function Carrinho() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const [itens, setItens] = useState<ItemCarrinho[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            carregarItensCarrinho();
+        }, [])
+    );
+
+    const carregarItensCarrinho = async () => {
+        try {
+            setLoading(true);
     
-    // Dados mock para demonstração
-    const [itens, setItens] = useState<ItemCarrinho[]>([
-        {
-            id: 1,
-            nome: "Produto 1 - Nome do Produto",
-            imagem: "https://via.placeholder.com/80x80",
-            precoUnitario: 29.90,
-            quantidade: 2,
-            selecionado: false
-        },
-        {
-            id: 2,
-            nome: "Produto 2 - Outro Produto",
-            imagem: "https://via.placeholder.com/80x80",
-            precoUnitario: 45.50,
-            quantidade: 1,
-            selecionado: false
-        },
-        {
-            id: 3,
-            nome: "Produto 3 - Mais um Produto",
-            imagem: "https://via.placeholder.com/80x80",
-            precoUnitario: 15.99,
-            quantidade: 3,
-            selecionado: false
+            const clienteDataString = await AsyncStorage.getItem('clienteData');
+            if (clienteDataString) {
+                const clienteData = JSON.parse(clienteDataString);
+                const idCliente = clienteData.id;
+            if (!idCliente) {
+                console.error('ID do cliente não encontrado');
+                setLoading(false);
+                return;
+            }
+
+            const response = await mostrarItensCarrinho(parseInt(idCliente));
+            setItens(response.itens);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar itens do carrinho:', error);
+            Alert.alert('Erro', 'Não foi possível carregar os itens do carrinho');
+        } finally {
+            setLoading(false);
         }
-    ]);
+    };
 
     const toggleItemSelecao = (id: number) => {
         setItens(prevItens => 
@@ -109,9 +107,9 @@ export default function Carrinho() {
     };
 
 
-    const navegarParaProduto = (id: number) => {
+    const navegarParaProduto = (idProduto: number) => {
         navigation.navigate('PageProduto', {
-            idProduto: id
+            idProduto: idProduto
         });
     };
 
@@ -136,14 +134,14 @@ export default function Carrinho() {
             {/* Imagem do produto */}
             <TouchableOpacity 
                 style={styles.imagemContainer}
-                onPress={() => navegarParaProduto(item.id)}
+                onPress={() => navegarParaProduto(item.idProduto)}
             >
-                <Image source={{ uri: item.imagem }} style={styles.imagemProduto} />
+                <Image source={{ uri: `${API_URL}${item.imagem}` }} style={styles.imagemProduto} />
             </TouchableOpacity>
 
             {/* Informações do produto */}
             <View style={styles.infoContainer}>
-                <TouchableOpacity onPress={() => navegarParaProduto(item.id)}>
+                <TouchableOpacity onPress={() => navegarParaProduto(item.idProduto)}>
                     <Text style={styles.nomeProduto} numberOfLines={2}>
                         {item.nome}
                     </Text>
@@ -186,6 +184,19 @@ export default function Carrinho() {
             </TouchableOpacity>
         </View>
     );
+
+    // Se está carregando
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.titulo}>Carrinho de Compras</Text>
+                <View style={styles.alertaContainer}>
+                    <Ionicons name="refresh" size={80} color="#fff" />
+                    <Text style={styles.alertaTexto}>Carregando itens...</Text>
+                </View>
+            </View>
+        );
+    }
 
     // Se não há itens no carrinho
     if (itens.length === 0) {
