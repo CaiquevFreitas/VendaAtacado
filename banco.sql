@@ -66,14 +66,13 @@ create table avaliacao(
 
 create table pedido(
 	idPedido int primary key auto_increment,
-	total double not null,
-    status enum('Em Processamento', 'Enviado', 'Entregue', 'Cancelado'),
+	total double default 0,
+    status enum('Em Processamento', 'Pronto', 'Entregue', 'Cancelado') default 'Em Processamento',
     fk_idCliente int not null,
     fk_idLoja int not null,
     foreign key(fk_idCliente) references cliente(idCliente),
     foreign key (fk_idLoja) references loja(idLoja)
 );
-
 
 create table itemPedido(
 	idItemPedido int primary key auto_increment,
@@ -83,6 +82,15 @@ create table itemPedido(
     fk_idPedido int not null,
     foreign key(fk_idProduto) references produto(idProduto),
 	foreign key(fk_idPedido) references pedido(idPedido)
+);
+
+create table compra(
+	idCompra int primary key auto_increment,
+    dataCompra datetime not null,
+	fk_idCliente int not null,
+     fk_idPedido int not null,
+    foreign key(fk_idCliente) references cliente(idCliente),
+    foreign key(fk_idPedido) references pedido(idPedido)
 );
 
 create table carrinho(
