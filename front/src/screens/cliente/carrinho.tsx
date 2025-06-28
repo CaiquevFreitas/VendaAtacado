@@ -16,12 +16,14 @@ import type { RootStackParamList } from '../../../types';
 import { themes } from "../../../assets/colors/themes";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { mostrarItensCarrinho, ItemCarrinho } from '../../../controllers/requests/mostrarItensCarrinho';
+import { comprarCarrinho, ItemSelecionado } from '../../../controllers/requests/comprarCarrinho';
 import API_URL from "../../../controllers/requests/api.url";
 
 export default function Carrinho() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [itens, setItens] = useState<ItemCarrinho[]>([]);
     const [loading, setLoading] = useState(true);
+    const [processandoCompra, setProcessandoCompra] = useState(false);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -106,6 +108,76 @@ export default function Carrinho() {
             .reduce((total, item) => total + (item.precoUnitario * item.quantidade), 0);
     };
 
+    const finalizarCompra = async () => {
+        const itensSelecionados = itens.filter(item => item.selecionado);
+        
+        if (itensSelecionados.length === 0) {
+            Alert.alert('Atenção', 'Selecione pelo menos um item para finalizar a compra');
+            return;
+        }
+
+        try {
+            setProcessandoCompra(true);
+
+            const clienteDataString = await AsyncStorage.getItem('clienteData');
+            if (!clienteDataString) {
+                Alert.alert('Erro', 'Dados do cliente não encontrados');
+                return;
+            }
+
+            const clienteData = JSON.parse(clienteDataString);
+            const idCliente = clienteData.id;
+
+            // Preparar dados para envio
+            const itensParaEnvio: ItemSelecionado[] = itensSelecionados.map(item => ({
+                idItemCarrinho: item.id,
+                idProduto: item.idProduto,
+                quantidade: item.quantidade,
+                precoUnitario: item.precoUnitario
+            }));
+
+            const resposta = await comprarCarrinho(idCliente, itensParaEnvio);
+
+            if (resposta.success) {
+                Alert.alert(
+                    'Pedidos Criados!',
+                    `Seus pedidos foram criados com sucesso!\n\nTotal de pedidos: ${resposta.totalPedidos}\nTotal: R$ ${calcularTotal().toFixed(2)}\n\nAguardando confirmação das lojas.`,
+                    [
+                        {
+                            text: 'OK',
+                            onPress: () => {
+                                // Recarregar itens do carrinho para remover os pedidos
+                                carregarItensCarrinho();
+                            }
+                        }
+                    ]
+                );
+            } else {
+                Alert.alert('Erro nos Pedidos', resposta.message || 'Erro ao processar os pedidos');
+            }
+
+        } catch (error: any) {
+            console.error('Erro ao finalizar compra:', error);
+            
+            // Verificar se é um erro de validação
+            if (error.message && error.message.includes('Erros de validação')) {
+                try {
+                    const errorData = JSON.parse(error.message);
+                    if (errorData.errors && errorData.errors.length > 0) {
+                        const mensagemErros = errorData.errors.join('\n• ');
+                        Alert.alert('Erros de Validação', `• ${mensagemErros}`);
+                        return;
+                    }
+                } catch (parseError) {
+                    // Se não conseguir fazer parse, continua com a mensagem padrão
+                }
+            }
+            
+            Alert.alert('Erro', 'Não foi possível criar os pedidos. Tente novamente.');
+        } finally {
+            setProcessandoCompra(false);
+        }
+    };
 
     const navegarParaProduto = (idProduto: number) => {
         navigation.navigate('PageProduto', {
@@ -250,8 +322,17 @@ export default function Carrinho() {
                         <Text style={styles.totalValor}>R$ {total.toFixed(2)}</Text>
                     </View>
                     
-                    <TouchableOpacity style={styles.finalizarBtn}>
-                        <Text style={styles.finalizarBtnTexto}>Finalizar Compra</Text>
+                    <TouchableOpacity 
+                        style={[
+                            styles.finalizarBtn,
+                            processandoCompra && styles.finalizarBtnDesabilitado
+                        ]}
+                        onPress={finalizarCompra}
+                        disabled={processandoCompra}
+                    >
+                        <Text style={styles.finalizarBtnTexto}>
+                            {processandoCompra ? 'Processando...' : 'Finalizar Compra'}
+                        </Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -384,6 +465,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         paddingVertical: 12,
         borderRadius: 8
+    },
+    finalizarBtnDesabilitado: {
+        backgroundColor: '#ccc'
     },
     finalizarBtnTexto: {
         color: '#fff',

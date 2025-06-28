@@ -33,7 +33,7 @@ router.get('/itensCarrinho/:idCliente', async (req, res) => {
         const itensFormatados = itensCarrinho.map(item => ({
             id: item.idItemCarrinho,
             idProduto: item.Produto.idProduto,
-            nome: item.Produto.nome,
+            nome: item.Produto.nomeProduto,
             imagem: item.Produto.imagem,
             precoUnitario: item.precoUnitario,
             quantidade: item.quantidade,

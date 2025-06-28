@@ -67,7 +67,7 @@ create table avaliacao(
 create table pedido(
 	idPedido int primary key auto_increment,
 	total double default 0,
-    status enum('Em Processamento', 'Pronto', 'Entregue', 'Cancelado') default 'Em Processamento',
+    status enum('Em Processamento', 'Em Preparo', 'Pronto', 'Entregue', 'Cancelado') default 'Em Processamento',
     fk_idCliente int not null,
     fk_idLoja int not null,
     foreign key(fk_idCliente) references cliente(idCliente),
