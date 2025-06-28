@@ -35,7 +35,7 @@ router.get('/showPageLoja/:idLoja', async (req, res) => {
 
         // Buscar produtos da loja
         const produtos = await Produto.findAll({
-            where: { fk_idLoja: idLoja },
+            where: { fk_idLoja: idLoja, status: true },
             attributes: ['idProduto', 'nomeProduto', 'imagem', 'preco', 'estoque']
         });
 
@@ -50,7 +50,7 @@ router.get('/showPageLoja/:idLoja', async (req, res) => {
             attributes: ['idAvaliacao', 'nota', 'comentario']
         });
 
-        // Formatar avaliações para incluir nome do cliente
+        
         const avaliacoesFormatadas = avaliacoes.map(av => ({
             id: av.idAvaliacao,
             nomeCliente: av.Cliente ? av.Cliente.nomeCliente : 'Cliente',
