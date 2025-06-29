@@ -12,6 +12,8 @@ export type RootStackParamList = {
     ConfiguracoesCliente: undefined;
     AlterarInformacoesCliente: undefined;
     AlterarFotoCliente: undefined;
+    NotificacoesCliente: undefined;
+    NotificacoesLoja: undefined;
     PageLoja: {
         idLoja: number;
     };

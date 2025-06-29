@@ -7,6 +7,7 @@ const ItemCarrinho = require('./itemCarrinho');
 const Pedido = require('./pedido');
 const ItemPedido = require('./itemPedido');
 const Compra = require('./compra');
+const Notificacao = require('./notificacao');
 
 // Definir associações
 Loja.hasMany(Avaliacao, {
@@ -132,6 +133,27 @@ Compra.belongsTo(Pedido, {
     as: 'Pedido'
 });
 
+// Associações da Notificação
+Cliente.hasMany(Notificacao, {
+    foreignKey: 'fk_idCliente',
+    as: 'Notificacoes'
+});
+
+Notificacao.belongsTo(Cliente, {
+    foreignKey: 'fk_idCliente',
+    as: 'Cliente'
+});
+
+Loja.hasMany(Notificacao, {
+    foreignKey: 'fk_idLoja',
+    as: 'Notificacoes'
+});
+
+Notificacao.belongsTo(Loja, {
+    foreignKey: 'fk_idLoja',
+    as: 'Loja'
+});
+
 module.exports = {
     Loja,
     Avaliacao,
@@ -141,5 +163,6 @@ module.exports = {
     ItemCarrinho,
     Pedido,
     ItemPedido,
-    Compra
+    Compra,
+    Notificacao
 }; 

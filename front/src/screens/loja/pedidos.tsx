@@ -203,12 +203,12 @@ export default function Pedidos() {
                         contentContainerStyle={styles.clienteInfoContent}
                     >
                         <View style={styles.clienteItem}>
-                            <Ionicons name="person" size={16} color="#666" />
+                    <Ionicons name="person" size={16} color="#666" />
                             <Text style={styles.clienteNome} numberOfLines={1}>{item.cliente.nome}</Text>
                         </View>
                         <View style={styles.clienteItem}>
-                            <Ionicons name="call" size={16} color="#666" />
-                            <Text style={styles.clienteTelefone}>{item.cliente.telefone}</Text>
+                    <Ionicons name="call" size={16} color="#666" />
+                    <Text style={styles.clienteTelefone}>{item.cliente.telefone}</Text>
                         </View>
                     </ScrollView>
                 </View>

@@ -6,6 +6,7 @@ const Pedido = require('../../models/pedido');
 const ItemPedido = require('../../models/itemPedido');
 const ItemCarrinho = require('../../models/itemCarrinho');
 const Carrinho = require('../../models/carrinho');
+const Notificacao = require('../../models/notificacao');
 
 router.post('/comprar-carrinho', async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -111,6 +112,15 @@ router.post('/comprar-carrinho', async (req, res) => {
                 transaction
             });
 
+            // Criar notificação para a loja sobre o novo pedido
+            await Notificacao.create({
+                titulo: 'Novo Pedido Recebido',
+                descricao: `Você recebeu um novo pedido #${pedido.idPedido} no valor de R$ ${totalPedido.toFixed(2)}.`,
+                tipo: 'Pedido',
+                dataNotificacao: new Date(),
+                fk_idLoja: parseInt(idLoja)
+            }, { transaction });
+
             pedidosCriados.push({
                 idPedido: pedido.idPedido,
                 idLoja: parseInt(idLoja),
@@ -131,6 +141,15 @@ router.post('/comprar-carrinho', async (req, res) => {
             where: { idItemCarrinho: idsItensCarrinho },
             transaction
         });
+
+        // Etapa 5: Criar notificação para o cliente
+        await Notificacao.create({
+            titulo: 'Pedidos Confirmados',
+            descricao: `Seus ${pedidosCriados.length} pedido(s) foram criados com sucesso e estão sendo processados pelas lojas.`,
+            tipo: 'Pedido',
+            dataNotificacao: new Date(),
+            fk_idCliente: idCliente
+        }, { transaction });
 
         await transaction.commit();
 

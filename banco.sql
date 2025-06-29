@@ -113,6 +113,7 @@ create table notificacao(
 	idNotificacao int primary key auto_increment,
     titulo varchar(100) not null,
     descricao varchar(200) not null,
+    tipo enum('Avaliação', 'Promoção', 'Pedido', 'Sistema') not null,
     dataNotificacao datetime not null,
     fk_idCliente int,
     fk_idLoja int,
