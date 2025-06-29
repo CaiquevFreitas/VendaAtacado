@@ -20,5 +20,8 @@ export type RootStackParamList = {
     PageProduto: {
         idProduto: number;
     };
+    PageCategoria: {
+        categoria: string;
+    };
 };
   

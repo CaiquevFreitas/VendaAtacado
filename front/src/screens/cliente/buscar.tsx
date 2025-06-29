@@ -148,7 +148,15 @@ export default function Buscar() {
                             <Text style={styles.sectionTitle}>Categorias</Text>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasScroll}>
                                 {categorias.map((categoria, index) => (
-                                    <TouchableOpacity key={index} style={styles.categoriaItem}>
+                                    <TouchableOpacity 
+                                        key={index} 
+                                        style={styles.categoriaItem}
+                                        onPress={() => {
+                                            navigation.navigate('PageCategoria', {
+                                                categoria: categoria.nome
+                                            });
+                                        }}
+                                    >
                                         <Text style={styles.categoriaIcon}>{categoria.icon}</Text>
                                         <Text style={styles.categoriaNome}>{categoria.nome}</Text>
                                     </TouchableOpacity>
