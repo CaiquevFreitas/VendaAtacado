@@ -15,6 +15,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { themes } from "../../../assets/colors/themes";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { mostrarPedidosLoja, Pedido } from '../../../controllers/requests/mostrarPedido';
+import { editarStatusPedido } from '../../../controllers/requests/editarStatusPedido';
 import API_URL from "../../../controllers/requests/api.url";
 
 const STATUS_OPTIONS = [
@@ -32,6 +33,7 @@ export default function Pedidos() {
     const [refreshing, setRefreshing] = useState(false);
     const [filtroStatus, setFiltroStatus] = useState('todos');
     const [idLoja, setIdLoja] = useState<number | null>(null);
+    const [editandoStatus, setEditandoStatus] = useState<number | null>(null);
 
     useFocusEffect(
         React.useCallback(() => {
@@ -79,6 +81,59 @@ export default function Pedidos() {
         setRefreshing(false);
     };
 
+    const alterarStatusPedido = async (idPedido: number, novoStatus: string, statusAtual: string) => {
+        // Verificar se o pedido pode ser alterado
+        if (statusAtual === 'Entregue' || statusAtual === 'Cancelado') {
+            Alert.alert(
+                'Status Não Alterável',
+                `Pedidos com status "${statusAtual}" não podem ser alterados.`,
+                [{ text: 'OK' }]
+            );
+            return;
+        }
+
+        // Confirmação antes de alterar
+        Alert.alert(
+            'Confirmar Alteração',
+            `Deseja alterar o status do pedido #${idPedido} para "${novoStatus}"?`,
+            [
+                { text: 'Cancelar', style: 'cancel' },
+                { 
+                    text: 'Confirmar', 
+                    onPress: async () => {
+                        try {
+                            setEditandoStatus(idPedido);
+                            const resposta = await editarStatusPedido(idPedido, novoStatus);
+                            
+                            if (resposta.success) {
+                                Alert.alert(
+                                    'Status Alterado!',
+                                    resposta.message,
+                                    [
+                                        {
+                                            text: 'OK',
+                                            onPress: () => {
+                                                // Recarregar pedidos para atualizar a lista
+                                                carregarPedidos();
+                                            }
+                                        }
+                                    ]
+                                );
+                            } else {
+                                Alert.alert('Erro', resposta.message || 'Erro ao alterar status');
+                            }
+                        } catch (error: any) {
+                            console.error('Erro ao alterar status:', error);
+                            Alert.alert('Erro', error.message || 'Não foi possível alterar o status do pedido');
+                        } finally {
+                            setEditandoStatus(null);
+                        }
+                    }
+                }
+            ]
+        );
+    };
+
     const getStatusColor = (status: string) => {
         switch (status) {
             case 'Em Processamento':
@@ -124,87 +179,92 @@ export default function Pedidos() {
         </View>
     );
 
-    const renderPedido = ({ item }: { item: Pedido }) => (
-        <View style={styles.pedidoContainer}>
-            {/* Cabeçalho do Pedido */}
-            <View style={styles.pedidoHeader}>
-                <View style={styles.pedidoInfo}>
-                    <Text style={styles.pedidoId}>Pedido #{item.idPedido}</Text>
-                    <Text style={styles.pedidoData}>{formatarData(item.dataPedido)}</Text>
+    const renderPedido = ({ item }: { item: Pedido }) => {
+        const podeAlterar = item.status !== 'Entregue' && item.status !== 'Cancelado';
+        
+        return (
+            <View style={styles.pedidoContainer}>
+                {/* Cabeçalho do Pedido */}
+                <View style={styles.pedidoHeader}>
+                    <View style={styles.pedidoInfo}>
+                        <Text style={styles.pedidoId}>Pedido #{item.idPedido}</Text>
+                        <Text style={styles.pedidoData}>{formatarData(item.dataPedido)}</Text>
+                    </View>
+                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                        <Text style={styles.statusText}>{item.status}</Text>
+                    </View>
                 </View>
-                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-                    <Text style={styles.statusText}>{item.status}</Text>
+
+                {/* Informações do Cliente */}
+                <View style={styles.clienteInfo}>
+                    <Ionicons name="person" size={16} color="#666" />
+                    <Text style={styles.clienteNome}>{item.cliente.nome}</Text>
+                    <Ionicons name="call" size={16} color="#666" />
+                    <Text style={styles.clienteTelefone}>{item.cliente.telefone}</Text>
                 </View>
-            </View>
 
-            {/* Informações do Cliente */}
-            <View style={styles.clienteInfo}>
-                <Ionicons name="person" size={16} color="#666" />
-                <Text style={styles.clienteNome}>{item.cliente.nome}</Text>
-                <Ionicons name="call" size={16} color="#666" />
-                <Text style={styles.clienteTelefone}>{item.cliente.telefone}</Text>
-            </View>
+                {/* Lista de Produtos */}
+                <View style={styles.produtosContainer}>
+                    <Text style={styles.produtosTitulo}>Produtos:</Text>
+                    <FlatList
+                        data={item.produtos}
+                        renderItem={renderProduto}
+                        keyExtractor={(produto) => produto.idProduto.toString()}
+                        scrollEnabled={false}
+                    />
+                </View>
 
-            {/* Lista de Produtos */}
-            <View style={styles.produtosContainer}>
-                <Text style={styles.produtosTitulo}>Produtos:</Text>
-                <FlatList
-                    data={item.produtos}
-                    renderItem={renderProduto}
-                    keyExtractor={(produto) => produto.idProduto.toString()}
-                    scrollEnabled={false}
-                />
-            </View>
+                {/* Total do Pedido */}
+                <View style={styles.totalContainer}>
+                    <Text style={styles.totalLabel}>Total do Pedido:</Text>
+                    <Text style={styles.totalValor}>R$ {item.total.toFixed(2)}</Text>
+                </View>
 
-            {/* Total do Pedido */}
-            <View style={styles.totalContainer}>
-                <Text style={styles.totalLabel}>Total do Pedido:</Text>
-                <Text style={styles.totalValor}>R$ {item.total.toFixed(2)}</Text>
-            </View>
-
-            {/* Controles de Status */}
-            <View style={styles.controlesContainer}>
-                <View style={styles.statusSelector}>
-                    <Text style={styles.statusLabel}>Alterar Status:</Text>
-                    <View style={styles.statusOptions}>
-                        {STATUS_OPTIONS.slice(1).map((option) => (
-                            <TouchableOpacity
-                                key={option.value}
-                                style={[
-                                    styles.statusOption,
-                                    item.status === option.value && styles.statusOptionAtivo
-                                ]}
-                                onPress={() => {
-                                    // Aqui você implementaria a lógica para atualizar o status
-                                    Alert.alert(
-                                        'Alterar Status',
-                                        `Deseja alterar o status para "${option.label}"?`,
-                                        [
-                                            { text: 'Cancelar', style: 'cancel' },
-                                            { 
-                                                text: 'Confirmar', 
-                                                onPress: () => {
-                                                    // Implementar atualização de status
-                                                    console.log(`Alterando status do pedido ${item.idPedido} para ${option.value}`);
-                                                }
-                                            }
-                                        ]
-                                    );
-                                }}
-                            >
-                                <Text style={[
-                                    styles.statusOptionText,
-                                    item.status === option.value && styles.statusOptionTextAtivo
-                                ]}>
-                                    {option.label}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+                {/* Controles de Status */}
+                <View style={styles.controlesContainer}>
+                    <View style={styles.statusSelector}>
+                        <Text style={styles.statusLabel}>
+                            {podeAlterar ? 'Alterar Status:' : 'Status Final:'}
+                        </Text>
+                        {!podeAlterar && (
+                            <Text style={styles.statusFinalText}>
+                                Este pedido não pode mais ser alterado
+                            </Text>
+                        )}
+                        <View style={styles.statusOptions}>
+                            {STATUS_OPTIONS.slice(1).map((option) => (
+                                <TouchableOpacity
+                                    key={option.value}
+                                    style={[
+                                        styles.statusOption,
+                                        item.status === option.value && styles.statusOptionAtivo,
+                                        !podeAlterar && styles.statusOptionDesabilitado
+                                    ]}
+                                    onPress={() => {
+                                        if (podeAlterar && editandoStatus !== item.idPedido) {
+                                            alterarStatusPedido(item.idPedido, option.value, item.status);
+                                        }
+                                    }}
+                                    disabled={!podeAlterar || editandoStatus === item.idPedido}
+                                >
+                                    {editandoStatus === item.idPedido && item.status === option.value && (
+                                        <Ionicons name="refresh" size={12} color="#fff" style={styles.loadingIcon} />
+                                    )}
+                                    <Text style={[
+                                        styles.statusOptionText,
+                                        item.status === option.value && styles.statusOptionTextAtivo,
+                                        !podeAlterar && styles.statusOptionTextDesabilitado
+                                    ]}>
+                                        {option.label}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
                     </View>
                 </View>
             </View>
-        </View>
-    );
+        );
+    };
 
     // Se está carregando
     if (loading) {
@@ -470,6 +530,12 @@ const styles = StyleSheet.create({
         color: '#333',
         marginBottom: 8
     },
+    statusFinalText: {
+        fontSize: 12,
+        color: '#F44336',
+        fontStyle: 'italic',
+        marginBottom: 8
+    },
     statusOptions: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -481,11 +547,18 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         backgroundColor: '#f0f0f0',
         borderWidth: 1,
-        borderColor: '#ddd'
+        borderColor: '#ddd',
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     statusOptionAtivo: {
         backgroundColor: themes.colors.primary,
         borderColor: themes.colors.primary
+    },
+    statusOptionDesabilitado: {
+        backgroundColor: '#f5f5f5',
+        borderColor: '#ddd',
+        opacity: 0.6
     },
     statusOptionText: {
         fontSize: 12,
@@ -493,5 +566,11 @@ const styles = StyleSheet.create({
     },
     statusOptionTextAtivo: {
         color: '#fff'
+    },
+    statusOptionTextDesabilitado: {
+        color: '#999'
+    },
+    loadingIcon: {
+        marginRight: 4
     }
 });

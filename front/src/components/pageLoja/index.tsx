@@ -59,7 +59,7 @@ const PageLoja: React.FC = () => {
         <Ionicons name="arrow-back" size={22} color="#222" />
       </TouchableOpacity>
       {/* Header Loja */}
-      <View style={[styles.header, { paddingTop: 50 }]}> {/* espaço para o botão */}
+      <View style={[styles.header, { paddingTop: 50 }]}>
         <Image source={{ uri: `${API_URL}${loja.logo}` }} style={styles.logo} />
         <View style={styles.headerInfo}>
           <Text style={styles.nomeLoja} numberOfLines={1} ellipsizeMode="tail">{loja.nomeLoja}</Text>

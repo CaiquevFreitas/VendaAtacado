@@ -108,3 +108,14 @@ create table itemCarrinho(
 	foreign key(fk_idProduto) references produto(idProduto),
     foreign key(fk_idCarrinho) references carrinho(idCarrinho)
 );
+
+create table notificacao(
+	idNotificacao int primary key auto_increment,
+    titulo varchar(100) not null,
+    descricao varchar(200) not null,
+    dataNotificacao datetime not null,
+    fk_idCliente int,
+    fk_idLoja int,
+    foreign key(fk_idCliente) references cliente(idCliente),
+    foreign key (fk_idLoja) references loja(idLoja)
+);

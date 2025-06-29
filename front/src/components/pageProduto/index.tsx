@@ -64,57 +64,80 @@ const PageProduto: React.FC = () => {
 
   const { produto, avaliacoes } = dados;
 
+  // Criar dados para o FlatList principal
+  const mainData = [
+    { type: 'header', data: produto },
+    { type: 'description', data: produto },
+    { type: 'reviews', data: avaliacoes }
+  ];
+
+  const renderItem = ({ item }: { item: any }) => {
+    switch (item.type) {
+      case 'header':
+        return (
+          <View>
+            {/* Imagem do produto */}
+            <Image source={{ uri: `${API_URL}${produto.imagem}` }} style={styles.imagemProduto} resizeMode="contain" />
+
+            {/* Nome, preço e vendidos */}
+            <View style={styles.infoSection}>
+              <Text style={styles.nomeProduto}>{produto.nomeProduto}</Text>
+              <View style={styles.precoRow}>
+                <Text style={styles.preco}>R${produto.preco.toFixed(2)}</Text>
+              </View>
+              <Text style={styles.vendidos}>{produto.estoque} em estoque</Text>
+            </View>
+          </View>
+        );
+      
+      case 'description':
+        return produto.descricao ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Descrição</Text>
+            <Text style={styles.descricao}>{produto.descricao}</Text>
+          </View>
+        ) : null;
+      
+      case 'reviews':
+        return (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Avaliações do produto</Text>
+            {avaliacoes.length === 0 ? (
+              <Text style={styles.semAvaliacao}>Nenhuma avaliação ainda.</Text>
+            ) : (
+              avaliacoes.map((av) => (
+                <View key={av.id} style={styles.avaliacaoCard}>
+                  <View style={styles.avaliacaoHeader}>
+                    <Ionicons name="person-circle" size={28} color="#888" />
+                    <Text style={styles.avaliadorNome}>{av.nomeCliente}</Text>
+                    <Ionicons name="star" size={16} color="#FFD700" style={{ marginLeft: 8 }} />
+                    <Text style={styles.notaText}>{av.nota.toFixed(1)}</Text>
+                  </View>
+                  <Text style={styles.comentario}>{av.comentario}</Text>
+                </View>
+              ))
+            )}
+          </View>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Botão de voltar */}
       <TouchableOpacity style={{ position: 'absolute', top: 30, left: 16, zIndex: 10, backgroundColor: '#fff', borderRadius: 20, padding: 6, elevation: 3 }} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={22} color="#222" />
       </TouchableOpacity>
-      <ScrollView style={{ flex: 1 }}>
-        {/* Imagem do produto */}
-        <Image source={{ uri: `${API_URL}${produto.imagem}` }} style={styles.imagemProduto} resizeMode="contain" />
-
-        {/* Nome, preço e vendidos */}
-        <View style={styles.infoSection}>
-          <Text style={styles.nomeProduto}>{produto.nomeProduto}</Text>
-          <View style={styles.precoRow}>
-            <Text style={styles.preco}>R${produto.preco.toFixed(2)}</Text>
-          </View>
-          <Text style={styles.vendidos}>{produto.estoque} em estoque</Text>
-        </View>
-
-        {/* Descrição do produto */}
-        {produto.descricao && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Descrição</Text>
-            <Text style={styles.descricao}>{produto.descricao}</Text>
-          </View>
-        )}
-
-        {/* Avaliações */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Avaliações do produto</Text>
-          {avaliacoes.length === 0 ? (
-            <Text style={styles.semAvaliacao}>Nenhuma avaliação ainda.</Text>
-          ) : (
-            <FlatList
-              data={avaliacoes}
-              keyExtractor={item => item.id.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.avaliacaoCard}>
-                  <View style={styles.avaliacaoHeader}>
-                    <Ionicons name="person-circle" size={28} color="#888" />
-                    <Text style={styles.avaliadorNome}>{item.nomeCliente}</Text>
-                    <Ionicons name="star" size={16} color="#FFD700" style={{ marginLeft: 8 }} />
-                    <Text style={styles.notaText}>{item.nota.toFixed(1)}</Text>
-                  </View>
-                  <Text style={styles.comentario}>{item.comentario}</Text>
-                </View>
-              )}
-            />
-          )}
-        </View>
-      </ScrollView>
+      
+      <FlatList
+        data={mainData}
+        keyExtractor={(item, index) => `${item.type}-${index}`}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+      />
 
       {/* Barra de ações */}
       <View style={styles.actionBar}>
