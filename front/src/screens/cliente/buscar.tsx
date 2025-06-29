@@ -1,13 +1,38 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image } from "react-native";
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import { themes } from "../../../assets/colors/themes";
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../types';
+import { buscarProdutosDestaque, ProdutoDestaque } from '../../../controllers/requests/buscarProdutosDestaque';
+import API_URL from '../../../controllers/requests/api.url';
 
 export default function Buscar() {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [searchText, setSearchText] = useState('');
     const [activeTab, setActiveTab] = useState('produtos');
+    const [produtosDestaque, setProdutosDestaque] = useState<ProdutoDestaque[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        carregarProdutosDestaque();
+    }, []);
+
+    const carregarProdutosDestaque = async () => {
+        try {
+            setLoading(true);
+            const produtos = await buscarProdutosDestaque();
+            setProdutosDestaque(produtos);
+        } catch (error) {
+            console.error('Erro ao carregar produtos em destaque:', error);
+            setProdutosDestaque([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const categorias = [
         { nome: 'Frutas', icon: '🍎' },
@@ -20,13 +45,6 @@ export default function Buscar() {
         { nome: 'Limpeza', icon: '🧽' },
         { nome: 'Bolos', icon: '🎂' },
         { nome: 'Salgados', icon: '🥟' }
-    ];
-
-    const produtosRecentes = [
-        { id: 1, nome: 'Maçã Gala', preco: 'R$ 4,99/kg', imagem: 'https://via.placeholder.com/80/4CAF50/FFFFFF?text=🍎' },
-        { id: 2, nome: 'Banana Prata', preco: 'R$ 3,99/kg', imagem: 'https://via.placeholder.com/80/FFC107/FFFFFF?text=🍌' },
-        { id: 3, nome: 'Tomate', preco: 'R$ 5,99/kg', imagem: 'https://via.placeholder.com/80/F44336/FFFFFF?text=🍅' },
-        { id: 4, nome: 'Alface', preco: 'R$ 2,99/un', imagem: 'https://via.placeholder.com/80/8BC34A/FFFFFF?text=🥬' }
     ];
 
     const lojasRecentes = [
@@ -49,6 +67,29 @@ export default function Buscar() {
         }
         return stars;
     };
+
+    const renderProdutoDestaque = (item: ProdutoDestaque) => (
+        <TouchableOpacity 
+            key={item.id} 
+            style={styles.produtoCard}
+            onPress={() => {
+                navigation.navigate('PageProduto', {
+                    idProduto: item.id
+                });
+            }}
+        >
+            <Image source={{ uri: `${API_URL}${item.imagem}` }} style={styles.produtoImagem} />
+            <View style={styles.produtoInfo}>
+                <Text style={styles.produtoNome} numberOfLines={2}>{item.nome}</Text>
+                <Text style={styles.produtoPreco}>R$ {item.preco.toFixed(2)}</Text>
+                <View style={styles.produtoAvaliacao}>
+                    <Ionicons name="star" size={12} color="#FFD700" />
+                    <Text style={styles.produtoNota}>{item.notaMedia}</Text>
+                    <Text style={styles.produtoAvaliacoes}>({item.totalAvaliacoes})</Text>
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
 
     return (
         <View style={styles.container}>
@@ -115,20 +156,27 @@ export default function Buscar() {
                             </ScrollView>
                         </View>
 
-                        {/* Produtos Recentes */}
+                        {/* Produtos em Destaque */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Produtos em Destaque</Text>
-                            <View style={styles.produtosGrid}>
-                                {produtosRecentes.map((produto) => (
-                                    <TouchableOpacity key={produto.id} style={styles.produtoCard}>
-                                        <Image source={{ uri: produto.imagem }} style={styles.produtoImagem} />
-                                        <View style={styles.produtoInfo}>
-                                            <Text style={styles.produtoNome} numberOfLines={2}>{produto.nome}</Text>
-                                            <Text style={styles.produtoPreco}>{produto.preco}</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                ))}
-                            </View>
+                            {loading ? (
+                                <View style={styles.loadingContainer}>
+                                    <ActivityIndicator size="large" color={themes.colors.primary} />
+                                    <Text style={styles.loadingText}>Carregando produtos...</Text>
+                                </View>
+                            ) : produtosDestaque.length > 0 ? (
+                                <View style={styles.produtosGrid}>
+                                    {produtosDestaque.map((item) => renderProdutoDestaque(item))}
+                                </View>
+                            ) : (
+                                <View style={styles.emptyContainer}>
+                                    <Ionicons name="star-outline" size={48} color="#ccc" />
+                                    <Text style={styles.emptyText}>Nenhum produto em destaque</Text>
+                                    <Text style={styles.emptySubtext}>
+                                        Não há produtos com avaliações no momento
+                                    </Text>
+                                </View>
+                            )}
                         </View>
                     </>
                 ) : (
@@ -313,6 +361,21 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: themes.colors.primary
     },
+    produtoAvaliacao: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 4
+    },
+    produtoNota: {
+        fontSize: 12,
+        color: '#666',
+        marginLeft: 5
+    },
+    produtoAvaliacoes: {
+        fontSize: 12,
+        color: '#999',
+        marginLeft: 5
+    },
     lojaCard: {
         flexDirection: 'row',
         backgroundColor: '#fff',
@@ -365,5 +428,30 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 14,
         fontWeight: '600'
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    loadingText: {
+        fontSize: 16,
+        color: '#666',
+        marginTop: 10
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    emptyText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10
+    },
+    emptySubtext: {
+        fontSize: 14,
+        color: '#666'
     }
 });

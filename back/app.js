@@ -46,6 +46,7 @@ const showPedido = require('./src/routes/read/showPedido')
 const editStatusPedido = require('./src/routes/update/editStatusPedido')
 const showNotificacoes = require('./src/routes/read/showNotificacoes')
 const deletarNotificacao = require('./src/routes/delete/deletarNotificacao')
+const showProdutosDestaque = require('./src/routes/read/showProdutosDestaque')
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
@@ -71,7 +72,7 @@ app.use('/', showPedido);
 app.use('/', editStatusPedido);
 app.use('/notificacoes', showNotificacoes);
 app.use('/notificacoes', deletarNotificacao);
-
+app.use('/', showProdutosDestaque);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);
