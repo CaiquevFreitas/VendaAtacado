@@ -13,7 +13,6 @@ import API_URL from '../../../controllers/requests/api.url';
 export default function Buscar() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [searchText, setSearchText] = useState('');
-    const [activeTab, setActiveTab] = useState('produtos');
     const [produtosDestaque, setProdutosDestaque] = useState<ProdutoDestaque[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -47,27 +46,6 @@ export default function Buscar() {
         { nome: 'Salgados', icon: '🥟' }
     ];
 
-    const lojasRecentes = [
-        { id: 1, nome: 'Hortifruti Silva', avaliacao: 4.8, distancia: '0.5km', imagem: 'https://via.placeholder.com/60/4CAF50/FFFFFF?text=🏪' },
-        { id: 2, nome: 'Mercado Central', avaliacao: 4.5, distancia: '1.2km', imagem: 'https://via.placeholder.com/60/2196F3/FFFFFF?text=🏪' },
-        { id: 3, nome: 'Feira do Bairro', avaliacao: 4.9, distancia: '0.8km', imagem: 'https://via.placeholder.com/60/FF9800/FFFFFF?text=🏪' }
-    ];
-
-    const renderStars = (rating: number) => {
-        const stars = [];
-        for (let i = 1; i <= 5; i++) {
-            stars.push(
-                <Ionicons 
-                    key={i} 
-                    name={i <= rating ? "star" : "star-outline"} 
-                    size={12} 
-                    color={i <= rating ? "#FFD700" : "#ccc"} 
-                />
-            );
-        }
-        return stars;
-    };
-
     const renderProdutoDestaque = (item: ProdutoDestaque) => (
         <TouchableOpacity 
             key={item.id} 
@@ -96,9 +74,6 @@ export default function Buscar() {
             {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.titulo}>Buscar</Text>
-                <TouchableOpacity style={styles.filterButton}>
-                    <Ionicons name="filter" size={24} color="#fff" />
-                </TouchableOpacity>
             </View>
 
             {/* Search Input */}
@@ -106,7 +81,7 @@ export default function Buscar() {
                 <View style={styles.searchInputContainer}>
                     <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
                     <TextInput
-                        placeholder="Buscar produtos, lojas..."
+                        placeholder="Buscar produtos..."
                         placeholderTextColor="#999"
                         style={styles.searchInput}
                         value={searchText}
@@ -120,97 +95,50 @@ export default function Buscar() {
                 </View>
             </View>
 
-            {/* Tabs */}
-            <View style={styles.tabContainer}>
-                <TouchableOpacity 
-                    style={[styles.tab, activeTab === 'produtos' && styles.activeTab]} 
-                    onPress={() => setActiveTab('produtos')}
-                >
-                    <Text style={[styles.tabText, activeTab === 'produtos' && styles.activeTabText]}>
-                        Produtos
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    style={[styles.tab, activeTab === 'lojas' && styles.activeTab]} 
-                    onPress={() => setActiveTab('lojas')}
-                >
-                    <Text style={[styles.tabText, activeTab === 'lojas' && styles.activeTabText]}>
-                        Lojas
-                    </Text>
-                </TouchableOpacity>
-            </View>
-
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                {activeTab === 'produtos' ? (
-                    <>
-                        {/* Categorias */}
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Categorias</Text>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasScroll}>
-                                {categorias.map((categoria, index) => (
-                                    <TouchableOpacity 
-                                        key={index} 
-                                        style={styles.categoriaItem}
-                                        onPress={() => {
-                                            navigation.navigate('PageCategoria', {
-                                                categoria: categoria.nome
-                                            });
-                                        }}
-                                    >
-                                        <Text style={styles.categoriaIcon}>{categoria.icon}</Text>
-                                        <Text style={styles.categoriaNome}>{categoria.nome}</Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </ScrollView>
-                        </View>
+                {/* Categorias */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Categorias</Text>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasScroll}>
+                        {categorias.map((categoria, index) => (
+                            <TouchableOpacity 
+                                key={index} 
+                                style={styles.categoriaItem}
+                                onPress={() => {
+                                    navigation.navigate('PageCategoria', {
+                                        categoria: categoria.nome
+                                    });
+                                }}
+                            >
+                                <Text style={styles.categoriaIcon}>{categoria.icon}</Text>
+                                <Text style={styles.categoriaNome}>{categoria.nome}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </ScrollView>
+                </View>
 
-                        {/* Produtos em Destaque */}
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Produtos em Destaque</Text>
-                            {loading ? (
-                                <View style={styles.loadingContainer}>
-                                    <ActivityIndicator size="large" color={themes.colors.primary} />
-                                    <Text style={styles.loadingText}>Carregando produtos...</Text>
-                                </View>
-                            ) : produtosDestaque.length > 0 ? (
-                                <View style={styles.produtosGrid}>
-                                    {produtosDestaque.map((item) => renderProdutoDestaque(item))}
-                                </View>
-                            ) : (
-                                <View style={styles.emptyContainer}>
-                                    <Ionicons name="star-outline" size={48} color="#ccc" />
-                                    <Text style={styles.emptyText}>Nenhum produto em destaque</Text>
-                                    <Text style={styles.emptySubtext}>
-                                        Não há produtos com avaliações no momento
-                                    </Text>
-                                </View>
-                            )}
+                {/* Produtos em Destaque */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Produtos em Destaque</Text>
+                    {loading ? (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color={themes.colors.primary} />
+                            <Text style={styles.loadingText}>Carregando produtos...</Text>
                         </View>
-                    </>
-                ) : (
-                    <>
-                        {/* Lojas Recentes */}
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Lojas Próximas</Text>
-                            {lojasRecentes.map((loja) => (
-                                <TouchableOpacity key={loja.id} style={styles.lojaCard}>
-                                    <Image source={{ uri: loja.imagem }} style={styles.lojaImagem} />
-                                    <View style={styles.lojaInfo}>
-                                        <Text style={styles.lojaNome}>{loja.nome}</Text>
-                                        <View style={styles.lojaAvaliacao}>
-                                            {renderStars(loja.avaliacao)}
-                                            <Text style={styles.lojaAvaliacaoTexto}>{loja.avaliacao}</Text>
-                                        </View>
-                                        <Text style={styles.lojaDistancia}>{loja.distancia}</Text>
-                                    </View>
-                                    <TouchableOpacity style={styles.verLojaButton}>
-                                        <Text style={styles.verLojaText}>Ver</Text>
-                                    </TouchableOpacity>
-                                </TouchableOpacity>
-                            ))}
+                    ) : produtosDestaque.length > 0 ? (
+                        <View style={styles.produtosGrid}>
+                            {produtosDestaque.map(renderProdutoDestaque)}
                         </View>
-                    </>
-                )}
+                    ) : (
+                        <View style={styles.emptyContainer}>
+                            <Ionicons name="star-outline" size={48} color="#ccc" />
+                            <Text style={styles.emptyText}>Nenhum produto em destaque</Text>
+                            <Text style={styles.emptySubtext}>
+                                Não há produtos com avaliações no momento
+                            </Text>
+                        </View>
+                    )}
+                </View>
             </ScrollView>
         </View>
     );
@@ -234,9 +162,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 24,
         fontWeight: 'bold'
-    },
-    filterButton: {
-        padding: 8
     },
     searchContainer: {
         paddingHorizontal: 20,
@@ -263,36 +188,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
         color: '#333'
-    },
-    tabContainer: {
-        flexDirection: 'row',
-        backgroundColor: '#fff',
-        marginHorizontal: 20,
-        marginTop: -10,
-        borderRadius: 12,
-        padding: 4,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4
-    },
-    tab: {
-        flex: 1,
-        paddingVertical: 12,
-        alignItems: 'center',
-        borderRadius: 8
-    },
-    activeTab: {
-        backgroundColor: themes.colors.primary
-    },
-    tabText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#666'
-    },
-    activeTabText: {
-        color: '#fff'
     },
     content: {
         flex: 1,
@@ -383,59 +278,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#999',
         marginLeft: 5
-    },
-    lojaCard: {
-        flexDirection: 'row',
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 15,
-        marginBottom: 15,
-        alignItems: 'center',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2
-    },
-    lojaImagem: {
-        width: 60,
-        height: 60,
-        borderRadius: 8,
-        marginRight: 15
-    },
-    lojaInfo: {
-        flex: 1
-    },
-    lojaNome: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 4
-    },
-    lojaAvaliacao: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 4
-    },
-    lojaAvaliacaoTexto: {
-        fontSize: 12,
-        color: '#666',
-        marginLeft: 5
-    },
-    lojaDistancia: {
-        fontSize: 12,
-        color: '#999'
-    },
-    verLojaButton: {
-        backgroundColor: themes.colors.primary,
-        paddingHorizontal: 20,
-        paddingVertical: 8,
-        borderRadius: 20
-    },
-    verLojaText: {
-        color: '#fff',
-        fontSize: 14,
-        fontWeight: '600'
     },
     loadingContainer: {
         flex: 1,
