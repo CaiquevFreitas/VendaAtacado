@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 16,
   },
+  clearButtonTextDisabled: {
+    color: '#ccc',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -83,6 +86,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    alignItems: 'center',
   },
   notificacaoIcone: {
     width: 48,
@@ -111,6 +115,10 @@ const styles = StyleSheet.create({
   notificacaoData: {
     fontSize: 12,
     color: '#999',
+  },
+  deleteButton: {
+    padding: 8,
+    marginLeft: 8,
   },
 });
 

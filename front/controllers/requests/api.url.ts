@@ -1,4 +1,4 @@
-const API_URL = "http://10.0.0.56:3000"
+const API_URL = "http://localhost:3000"
 
 // http://192.168.176.214:3000
 // http://localhost:3000

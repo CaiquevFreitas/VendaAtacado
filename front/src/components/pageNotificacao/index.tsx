@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { buscarNotificacoesCliente, buscarNotificacoesLoja, NotificacaoResponse } from '../../../controllers/requests/buscarNotificacoes';
+import { deletarNotificacao, deletarTodasNotificacoes } from '../../../controllers/requests/deletarNotificação';
 import styles from './style';
 
 interface PageNotificacaoProps {
@@ -15,6 +16,7 @@ const PageNotificacao: React.FC<PageNotificacaoProps> = ({ userType }) => {
   const [notificacoes, setNotificacoes] = useState<NotificacaoResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [deletando, setDeletando] = useState<number | null>(null);
 
   useEffect(() => {
     carregarNotificacoes();
@@ -56,6 +58,83 @@ const PageNotificacao: React.FC<PageNotificacaoProps> = ({ userType }) => {
     setRefreshing(true);
     await carregarNotificacoes();
     setRefreshing(false);
+  };
+
+  const deletarNotificacaoIndividual = async (idNotificacao: number) => {
+    Alert.alert(
+      'Deletar Notificação',
+      'Tem certeza que deseja deletar esta notificação?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Deletar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setDeletando(idNotificacao);
+              await deletarNotificacao(idNotificacao);
+              
+              // Remover da lista local
+              setNotificacoes(prev => prev.filter(n => n.idNotificacao !== idNotificacao));
+              
+              Alert.alert('Sucesso', 'Notificação deletada com sucesso!');
+            } catch (error) {
+              console.error('Erro ao deletar notificação:', error);
+              Alert.alert('Erro', 'Não foi possível deletar a notificação');
+            } finally {
+              setDeletando(null);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const limparTodasNotificacoes = async () => {
+    if (notificacoes.length === 0) {
+      Alert.alert('Aviso', 'Não há notificações para deletar');
+      return;
+    }
+
+    Alert.alert(
+      'Deletar Todas as Notificações',
+      `Tem certeza que deseja deletar todas as ${notificacoes.length} notificação(ões)?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Deletar Todas',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setLoading(true);
+              
+              // Buscar dados do usuário logado
+              const userDataKey = userType === 'cliente' ? 'clienteData' : 'lojaData';
+              const userDataString = await AsyncStorage.getItem(userDataKey);
+              
+              if (!userDataString) {
+                throw new Error('Usuário não encontrado');
+              }
+
+              const userData = JSON.parse(userDataString);
+              const userId = userData.id;
+
+              await deletarTodasNotificacoes(userType, userId);
+              
+              // Limpar lista local
+              setNotificacoes([]);
+              
+              Alert.alert('Sucesso', 'Todas as notificações foram deletadas!');
+            } catch (error) {
+              console.error('Erro ao deletar notificações:', error);
+              Alert.alert('Erro', 'Não foi possível deletar as notificações');
+            } finally {
+              setLoading(false);
+            }
+          }
+        }
+      ]
+    );
   };
 
   const getIconeTipo = (tipo: string) => {
@@ -106,6 +185,17 @@ const PageNotificacao: React.FC<PageNotificacaoProps> = ({ userType }) => {
           {formatarData(item.dataNotificacao)}
         </Text>
       </View>
+      <TouchableOpacity
+        style={styles.deleteButton}
+        onPress={() => deletarNotificacaoIndividual(item.idNotificacao)}
+        disabled={deletando === item.idNotificacao}
+      >
+        {deletando === item.idNotificacao ? (
+          <ActivityIndicator size="small" color="#FF5722" />
+        ) : (
+          <Ionicons name="trash-outline" size={20} color="#FF5722" />
+        )}
+      </TouchableOpacity>
     </View>
   );
 
@@ -125,8 +215,17 @@ const PageNotificacao: React.FC<PageNotificacaoProps> = ({ userType }) => {
           <Ionicons name="arrow-back" size={24} color="#222" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notificações</Text>
-        <TouchableOpacity style={styles.clearButton}>
-          <Text style={styles.clearButtonText}>Limpar</Text>
+        <TouchableOpacity 
+          style={styles.clearButton}
+          onPress={limparTodasNotificacoes}
+          disabled={notificacoes.length === 0}
+        >
+          <Text style={[
+            styles.clearButtonText,
+            notificacoes.length === 0 && styles.clearButtonTextDisabled
+          ]}>
+            Limpar
+          </Text>
         </TouchableOpacity>
       </View>
 

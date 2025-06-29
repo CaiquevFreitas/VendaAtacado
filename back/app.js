@@ -45,6 +45,7 @@ const comprarCarrinho = require('./src/routes/create/comprarCarrinho')
 const showPedido = require('./src/routes/read/showPedido')
 const editStatusPedido = require('./src/routes/update/editStatusPedido')
 const showNotificacoes = require('./src/routes/read/showNotificacoes')
+const deletarNotificacao = require('./src/routes/delete/deletarNotificacao')
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
@@ -69,6 +70,7 @@ app.use('/', comprarCarrinho);
 app.use('/', showPedido);
 app.use('/', editStatusPedido);
 app.use('/notificacoes', showNotificacoes);
+app.use('/notificacoes', deletarNotificacao);
 
 
 app.listen(3000, () => {
