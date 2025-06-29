@@ -3,6 +3,7 @@ const router = express.Router();
 const sequelize = require('../../models/database');
 const Pedido = require('../../models/pedido');
 const Compra = require('../../models/compra');
+const Notificacao = require('../../models/notificacao');
 
 router.put('/editar-status-pedido', async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -71,6 +72,40 @@ router.put('/editar-status-pedido', async (req, res) => {
                 }, { transaction });
             }
         }
+
+        // Criar notificação para o cliente sobre a mudança de status
+        let tituloNotificacao = '';
+        let descricaoNotificacao = '';
+
+        switch (novoStatus) {
+            case 'Em preparo':
+                tituloNotificacao = 'Pedido em Preparo';
+                descricaoNotificacao = `Seu pedido #${idPedido} está sendo preparado pela loja.`;
+                break;
+            case 'Pronto':
+                tituloNotificacao = 'Pedido Pronto';
+                descricaoNotificacao = `Seu pedido #${idPedido} está pronto para entrega!`;
+                break;
+            case 'Entregue':
+                tituloNotificacao = 'Pedido Entregue';
+                descricaoNotificacao = `Seu pedido #${idPedido} foi entregue com sucesso. Obrigado pela compra!`;
+                break;
+            case 'Cancelado':
+                tituloNotificacao = 'Pedido Cancelado';
+                descricaoNotificacao = `Seu pedido #${idPedido} foi cancelado. Entre em contato com a loja para mais informações.`;
+                break;
+            default:
+                tituloNotificacao = 'Status do Pedido Atualizado';
+                descricaoNotificacao = `O status do seu pedido #${idPedido} foi alterado para "${novoStatus}".`;
+        }
+
+        await Notificacao.create({
+            titulo: tituloNotificacao,
+            descricao: descricaoNotificacao,
+            tipo: 'Pedido',
+            dataNotificacao: new Date(),
+            fk_idCliente: pedido.fk_idCliente
+        }, { transaction });
 
         await transaction.commit();
 
