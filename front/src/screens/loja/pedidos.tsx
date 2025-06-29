@@ -197,10 +197,20 @@ export default function Pedidos() {
 
                 {/* Informações do Cliente */}
                 <View style={styles.clienteInfo}>
-                    <Ionicons name="person" size={16} color="#666" />
-                    <Text style={styles.clienteNome}>{item.cliente.nome}</Text>
-                    <Ionicons name="call" size={16} color="#666" />
-                    <Text style={styles.clienteTelefone}>{item.cliente.telefone}</Text>
+                    <ScrollView 
+                        horizontal 
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.clienteInfoContent}
+                    >
+                        <View style={styles.clienteItem}>
+                            <Ionicons name="person" size={16} color="#666" />
+                            <Text style={styles.clienteNome} numberOfLines={1}>{item.cliente.nome}</Text>
+                        </View>
+                        <View style={styles.clienteItem}>
+                            <Ionicons name="call" size={16} color="#666" />
+                            <Text style={styles.clienteTelefone}>{item.cliente.telefone}</Text>
+                        </View>
+                    </ScrollView>
                 </View>
 
                 {/* Lista de Produtos */}
@@ -437,24 +447,30 @@ const styles = StyleSheet.create({
         fontWeight: '600'
     },
     clienteInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
         backgroundColor: '#f8f8f8',
         padding: 10,
         borderRadius: 6,
         marginBottom: 15
     },
+    clienteInfoContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 15
+    },
+    clienteItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5
+    },
     clienteNome: {
         fontSize: 16,
         fontWeight: '500',
         color: '#333',
-        marginLeft: 5,
-        marginRight: 15
+        flexShrink: 1
     },
     clienteTelefone: {
         fontSize: 14,
-        color: '#666',
-        marginLeft: 5
+        color: '#666'
     },
     produtosContainer: {
         marginBottom: 15
