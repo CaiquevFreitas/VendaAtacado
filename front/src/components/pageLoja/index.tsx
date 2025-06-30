@@ -59,7 +59,7 @@ const PageLoja: React.FC = () => {
         <Ionicons name="arrow-back" size={22} color="#222" />
       </TouchableOpacity>
       {/* Header Loja */}
-      <View style={[styles.header, { paddingTop: 50 }]}> {/* espaço para o botão */}
+      <View style={[styles.header, { paddingTop: 50 }]}>
         <Image source={{ uri: `${API_URL}${loja.logo}` }} style={styles.logo} />
         <View style={styles.headerInfo}>
           <Text style={styles.nomeLoja} numberOfLines={1} ellipsizeMode="tail">{loja.nomeLoja}</Text>
@@ -90,11 +90,7 @@ const PageLoja: React.FC = () => {
           renderItem={({ item }) => (
             <TouchableOpacity style={styles.produtoCard} onPress={() => {
               navigation.navigate('PageProduto', {
-                nome: item.nomeProduto,
-                imagem: `${API_URL}${item.imagem}`,
-                preco: item.preco,
-                vendidos: 0, // Substitua pelo valor real se disponível
-                avaliacoes: [] // Substitua pelo valor real se disponível
+                idProduto: item.idProduto
               });
             }}>
               <Image source={{ uri: `${API_URL}${item.imagem}` }} style={styles.produtoImg} />

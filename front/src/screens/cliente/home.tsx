@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
+import  API_URL  from '../../../controllers/requests/api.url';
 
 export default function Home() {
     const [lojas, setLojas] = useState<Loja[]>([]);
@@ -109,7 +110,7 @@ export default function Home() {
                                 <Image 
                                     source={{ 
                                         uri: loja.logo 
-                                            ? `http://localhost:3000${loja.logo}` 
+                                            ? `${API_URL}${loja.logo}` 
                                             : 'https://via.placeholder.com/80/4CAF50/FFFFFF?text=🏪'
                                     }} 
                                     style={styles.lojaLogo} 

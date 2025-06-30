@@ -105,7 +105,7 @@ export default function PerfilLogado(){
                     <ProfileOption 
                         icon={<Ionicons name="notifications-outline" size={24} color={themes.colors.primary} />}
                         title="Notificações"
-                        onPress={() => {}}
+                        onPress={() => navigation.navigate('NotificacoesCliente')}
                     />
                     <ProfileOption 
                         icon={<MaterialIcons name="local-offer" size={24} color={themes.colors.primary} />}

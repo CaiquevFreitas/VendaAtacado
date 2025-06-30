@@ -121,7 +121,7 @@ export default function Perfil(){
                     <ProfileOption 
                         icon={<Ionicons name="notifications-outline" size={24} color={themes.colors.primary} />}
                         title="Notificações"
-                        onPress={() => {}}
+                        onPress={() => navigation.navigate('NotificacoesLoja')}
                     />
                     <ProfileOption 
                         icon={<MaterialCommunityIcons name="message-text-outline" size={24} color={themes.colors.primary} />}

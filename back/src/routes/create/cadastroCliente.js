@@ -1,5 +1,6 @@
 const express = require('express');
 const Cliente = require('../../models/cliente');
+const Carrinho = require('../../models/carrinho');
 const { Op } = require('sequelize');
 const router = express.Router();
 
@@ -31,7 +32,6 @@ router.post('/cadastroCliente', async (req, res) => {
             });
         }
 
-        
         const novoCliente = await Cliente.create({
             nomeCliente: nome,
             dataNascimento: dataFormatada,
@@ -39,6 +39,10 @@ router.post('/cadastroCliente', async (req, res) => {
             email,
             telefone,
             senha
+        });
+
+        await Carrinho.create({
+            fk_idCliente: novoCliente.idCliente
         });
 
         return res.status(201).json({

@@ -30,6 +30,7 @@ type Produto = {
     imagem: string;
     fk_idLoja: number;
     categoria: string;
+    descricao?: string;
     status?: boolean;
 };
 
@@ -61,6 +62,7 @@ export default function Estoque() {
                     imagem: produto.imagem || '',
                     fk_idLoja: produto.fk_idLoja || produto.idLoja,
                     categoria: produto.categoria || '',
+                    descricao: produto.descricao || '',
                     status: produto.status
                 }));
                 

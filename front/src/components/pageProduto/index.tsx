@@ -1,8 +1,11 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import styles from './style';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { renderPageProduto, PageProdutoResponse } from '../../../controllers/requests/renderPageProduto';
+import API_URL from '../../../controllers/requests/api.url';
+import ModalAddCarrinho from '../modalAddCarrinho';
 
 interface Avaliacao {
   id: number;
@@ -16,11 +19,111 @@ interface Avaliacao {
 const PageProduto: React.FC = () => {
   const route = useRoute<any>();
   const navigation = useNavigation();
-  const { nome, imagem, preco, precoOriginal, vendidos, avaliacoes } = route.params;
+  const { idProduto } = route.params;
 
-  // Funções mock para os botões
+  const [dados, setDados] = useState<PageProdutoResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await renderPageProduto(idProduto);
+        setDados(res);
+      } catch (e: any) {
+        setErro(e.message || 'Erro ao carregar dados');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [idProduto]);
+
   const onComprar = () => {};
-  const onAdicionarCarrinho = () => {};
+  const onAdicionarCarrinho = () => setModalVisible(true);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <ActivityIndicator size="large" color="#222" />
+        <Text style={{ marginTop: 10 }}>Carregando produto...</Text>
+      </View>
+    );
+  }
+  if (erro || !dados) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+        <Text style={{ color: 'red' }}>{erro || 'Erro ao carregar dados'}</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 20 }}>
+          <Text style={{ color: '#222', fontWeight: 'bold' }}>Voltar</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const { produto, avaliacoes } = dados;
+
+  // Criar dados para o FlatList principal
+  const mainData = [
+    { type: 'header', data: produto },
+    { type: 'description', data: produto },
+    { type: 'reviews', data: avaliacoes }
+  ];
+
+  const renderItem = ({ item }: { item: any }) => {
+    switch (item.type) {
+      case 'header':
+        return (
+          <View>
+            {/* Imagem do produto */}
+            <Image source={{ uri: `${API_URL}${produto.imagem}` }} style={styles.imagemProduto} resizeMode="contain" />
+
+            {/* Nome, preço e vendidos */}
+            <View style={styles.infoSection}>
+              <Text style={styles.nomeProduto}>{produto.nomeProduto}</Text>
+              <View style={styles.precoRow}>
+                <Text style={styles.preco}>R${produto.preco.toFixed(2)}</Text>
+              </View>
+              <Text style={styles.vendidos}>{produto.estoque} em estoque</Text>
+            </View>
+          </View>
+        );
+      
+      case 'description':
+        return produto.descricao ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Descrição</Text>
+            <Text style={styles.descricao}>{produto.descricao}</Text>
+          </View>
+        ) : null;
+      
+      case 'reviews':
+        return (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Avaliações do produto</Text>
+            {avaliacoes.length === 0 ? (
+              <Text style={styles.semAvaliacao}>Nenhuma avaliação ainda.</Text>
+            ) : (
+              avaliacoes.map((av) => (
+                <View key={av.id} style={styles.avaliacaoCard}>
+                  <View style={styles.avaliacaoHeader}>
+                    <Ionicons name="person-circle" size={28} color="#888" />
+                    <Text style={styles.avaliadorNome}>{av.nomeCliente}</Text>
+                    <Ionicons name="star" size={16} color="#FFD700" style={{ marginLeft: 8 }} />
+                    <Text style={styles.notaText}>{av.nota.toFixed(1)}</Text>
+                  </View>
+                  <Text style={styles.comentario}>{av.comentario}</Text>
+                </View>
+              ))
+            )}
+          </View>
+        );
+      
+      default:
+        return null;
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -28,57 +131,13 @@ const PageProduto: React.FC = () => {
       <TouchableOpacity style={{ position: 'absolute', top: 30, left: 16, zIndex: 10, backgroundColor: '#fff', borderRadius: 20, padding: 6, elevation: 3 }} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={22} color="#222" />
       </TouchableOpacity>
-      <ScrollView style={{ flex: 1 }}>
-        {/* Imagem do produto */}
-        <Image source={{ uri: imagem }} style={styles.imagemProduto} resizeMode="contain" />
-
-        {/* Nome, preço e vendidos */}
-        <View style={styles.infoSection}>
-          <Text style={styles.nomeProduto}>{nome}</Text>
-          <View style={styles.precoRow}>
-            <Text style={styles.preco}>R${preco.toFixed(2)}</Text>
-            {precoOriginal && (
-              <Text style={styles.precoOriginal}>R${precoOriginal.toFixed(2)}</Text>
-            )}
-            {precoOriginal && (
-              <Text style={styles.desconto}>{`-${Math.round(100 - (preco / precoOriginal) * 100)}%`}</Text>
-            )}
-          </View>
-          <Text style={styles.vendidos}>{vendidos} Vendido(s)</Text>
-        </View>
-
-        {/* Avaliações */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Avaliações do produto</Text>
-          {avaliacoes.length === 0 ? (
-            <Text style={styles.semAvaliacao}>Nenhuma avaliação ainda.</Text>
-          ) : (
-            <FlatList
-              data={avaliacoes}
-              keyExtractor={item => item.id.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.avaliacaoCard}>
-                  <View style={styles.avaliacaoHeader}>
-                    <Ionicons name="person-circle" size={28} color="#888" />
-                    <Text style={styles.avaliadorNome}>{item.nomeCliente}</Text>
-                    <Ionicons name="star" size={16} color="#FFD700" style={{ marginLeft: 8 }} />
-                    <Text style={styles.notaText}>{item.nota.toFixed(1)}</Text>
-                    {item.data && <Text style={styles.dataAvaliacao}>{item.data}</Text>}
-                  </View>
-                  <Text style={styles.comentario}>{item.comentario}</Text>
-                  {item.fotos && item.fotos.length > 0 && (
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.fotosRow}>
-                      {item.fotos.map((foto, idx) => (
-                        <Image key={idx} source={{ uri: foto }} style={styles.fotoAvaliacao} />
-                      ))}
-                    </ScrollView>
-                  )}
-                </View>
-              )}
-            />
-          )}
-        </View>
-      </ScrollView>
+      
+      <FlatList
+        data={mainData}
+        keyExtractor={(item, index) => `${item.type}-${index}`}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+      />
 
       {/* Barra de ações */}
       <View style={styles.actionBar}>
@@ -90,6 +149,17 @@ const PageProduto: React.FC = () => {
           <Text style={styles.comprarBtnText}>Compre agora</Text>
         </TouchableOpacity>
       </View>
+      <ModalAddCarrinho
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        idProduto={idProduto}
+        produto={{
+          nome: produto.nomeProduto,
+          imagem: `${API_URL}${produto.imagem}`,
+          preco: produto.preco,
+          estoque: produto.estoque
+        }}
+      />
     </View>
   );
 };

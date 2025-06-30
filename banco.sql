@@ -28,7 +28,6 @@ create table endereco(
     foreign key (fk_idLoja) references loja(idLoja)
 );
 
-
 create table cliente(
 	idCliente int primary key auto_increment,
     nomeCliente varchar(255) not null,
@@ -44,6 +43,7 @@ create table produto(
 	idProduto int primary key auto_increment,
     nomeProduto varchar(100),
     imagem varchar(100),
+    descricao varchar(300),
     status boolean default true,
     categoria enum('Frutas','Vegetais','Doces','Almoço','Bebidas','Verduras', 'Carnes','Limpeza', 'Bolos', 'Salgados'),
     preco double,
@@ -66,14 +66,13 @@ create table avaliacao(
 
 create table pedido(
 	idPedido int primary key auto_increment,
-	total double not null,
-    status enum('Em Processamento', 'Enviado', 'Entregue', 'Cancelado'),
+	total double default 0,
+    status enum('Em Processamento', 'Em Preparo', 'Pronto', 'Entregue', 'Cancelado') default 'Em Processamento',
     fk_idCliente int not null,
     fk_idLoja int not null,
     foreign key(fk_idCliente) references cliente(idCliente),
     foreign key (fk_idLoja) references loja(idLoja)
 );
-
 
 create table itemPedido(
 	idItemPedido int primary key auto_increment,
@@ -85,9 +84,17 @@ create table itemPedido(
 	foreign key(fk_idPedido) references pedido(idPedido)
 );
 
+create table compra(
+	idCompra int primary key auto_increment,
+    dataCompra datetime not null,
+	fk_idCliente int not null,
+     fk_idPedido int not null,
+    foreign key(fk_idCliente) references cliente(idCliente),
+    foreign key(fk_idPedido) references pedido(idPedido)
+);
+
 create table carrinho(
 	idCarrinho int primary key auto_increment,
-	totalCarrinho double not null,
 	fk_idCliente int not null,
 	foreign key(fk_idCliente) references cliente(idCliente)
 );
@@ -100,4 +107,16 @@ create table itemCarrinho(
     fk_idCarrinho int not null,
 	foreign key(fk_idProduto) references produto(idProduto),
     foreign key(fk_idCarrinho) references carrinho(idCarrinho)
+);
+
+create table notificacao(
+	idNotificacao int primary key auto_increment,
+    titulo varchar(100) not null,
+    descricao varchar(200) not null,
+    tipo enum('Avaliação', 'Promoção', 'Pedido', 'Sistema') not null,
+    dataNotificacao datetime not null,
+    fk_idCliente int,
+    fk_idLoja int,
+    foreign key(fk_idCliente) references cliente(idCliente),
+    foreign key (fk_idLoja) references loja(idLoja)
 );

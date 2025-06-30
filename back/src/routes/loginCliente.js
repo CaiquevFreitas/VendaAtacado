@@ -1,5 +1,6 @@
 const express = require('express');
 const Cliente = require('../models/cliente');
+const Carrinho = require('../models/carrinho');
 const router = express.Router();
 
 router.post('/loginCliente', async (req, res) => {
@@ -31,6 +32,8 @@ router.post('/loginCliente', async (req, res) => {
             });
         }
 
+        let carrinho = await Carrinho.findOne({ where: { fk_idCliente: user.idCliente } });
+
         return res.status(200).json({
             success: true,
             message: 'Login realizado com sucesso!',
@@ -40,7 +43,8 @@ router.post('/loginCliente', async (req, res) => {
                 email: user.email,
                 telefone: user.telefone,
                 dataNascimento: user.dataNascimento,
-                senha: user.senha
+                senha: user.senha,
+                idCarrinho: carrinho.idCarrinho
             }
         });
 

@@ -2,6 +2,12 @@ const Loja = require('./loja');
 const Avaliacao = require('./avaliacao');
 const Cliente = require('./cliente');
 const Produto = require('./produto');
+const Carrinho = require('./carrinho');
+const ItemCarrinho = require('./itemCarrinho');
+const Pedido = require('./pedido');
+const ItemPedido = require('./itemPedido');
+const Compra = require('./compra');
+const Notificacao = require('./notificacao');
 
 // Definir associações
 Loja.hasMany(Avaliacao, {
@@ -34,9 +40,129 @@ Avaliacao.belongsTo(Produto, {
     as: 'Produto'
 });
 
+// Associações do Carrinho
+Cliente.hasOne(Carrinho, {
+    foreignKey: 'fk_idCliente',
+    as: 'Carrinho'
+});
+
+Carrinho.belongsTo(Cliente, {
+    foreignKey: 'fk_idCliente',
+    as: 'Cliente'
+});
+
+Carrinho.hasMany(ItemCarrinho, {
+    foreignKey: 'fk_idCarrinho',
+    as: 'Itens'
+});
+
+ItemCarrinho.belongsTo(Carrinho, {
+    foreignKey: 'fk_idCarrinho',
+    as: 'Carrinho'
+});
+
+Produto.hasMany(ItemCarrinho, {
+    foreignKey: 'fk_idProduto',
+    as: 'ItensCarrinho'
+});
+
+ItemCarrinho.belongsTo(Produto, {
+    foreignKey: 'fk_idProduto',
+    as: 'Produto'
+});
+
+// Associações do Pedido
+Cliente.hasMany(Pedido, {
+    foreignKey: 'fk_idCliente',
+    as: 'Pedidos'
+});
+
+Pedido.belongsTo(Cliente, {
+    foreignKey: 'fk_idCliente',
+    as: 'Cliente'
+});
+
+Loja.hasMany(Pedido, {
+    foreignKey: 'fk_idLoja',
+    as: 'Pedidos'
+});
+
+Pedido.belongsTo(Loja, {
+    foreignKey: 'fk_idLoja',
+    as: 'Loja'
+});
+
+Pedido.hasMany(ItemPedido, {
+    foreignKey: 'fk_idPedido',
+    as: 'Itens'
+});
+
+ItemPedido.belongsTo(Pedido, {
+    foreignKey: 'fk_idPedido',
+    as: 'Pedido'
+});
+
+Produto.hasMany(ItemPedido, {
+    foreignKey: 'fk_idProduto',
+    as: 'ItensPedido'
+});
+
+ItemPedido.belongsTo(Produto, {
+    foreignKey: 'fk_idProduto',
+    as: 'Produto'
+});
+
+// Associações da Compra
+Cliente.hasMany(Compra, {
+    foreignKey: 'fk_idCliente',
+    as: 'Compras'
+});
+
+Compra.belongsTo(Cliente, {
+    foreignKey: 'fk_idCliente',
+    as: 'Cliente'
+});
+
+Pedido.hasOne(Compra, {
+    foreignKey: 'fk_idPedido',
+    as: 'Compra'
+});
+
+Compra.belongsTo(Pedido, {
+    foreignKey: 'fk_idPedido',
+    as: 'Pedido'
+});
+
+// Associações da Notificação
+Cliente.hasMany(Notificacao, {
+    foreignKey: 'fk_idCliente',
+    as: 'Notificacoes'
+});
+
+Notificacao.belongsTo(Cliente, {
+    foreignKey: 'fk_idCliente',
+    as: 'Cliente'
+});
+
+Loja.hasMany(Notificacao, {
+    foreignKey: 'fk_idLoja',
+    as: 'Notificacoes'
+});
+
+Notificacao.belongsTo(Loja, {
+    foreignKey: 'fk_idLoja',
+    as: 'Loja'
+});
+
 module.exports = {
     Loja,
     Avaliacao,
     Cliente,
-    Produto
+    Produto,
+    Carrinho,
+    ItemCarrinho,
+    Pedido,
+    ItemPedido,
+    Compra,
+    Notificacao
 }; 

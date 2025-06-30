@@ -37,7 +37,7 @@ const upload = multer({
 
 router.post('/cadastrarProduto', upload.single('imagem'), async (req, res) => {
     try {
-        const { nomeProduto, categoria, preco, quantidade, fk_idLoja } = req.body;
+        const { nomeProduto, categoria, preco, quantidade, fk_idLoja, descricao } = req.body;
         const imagem = req.file ? `/uploads/${req.file.filename}` : null
         const produtoExistente = await Produto.findOne({
             where: {
@@ -61,6 +61,7 @@ router.post('/cadastrarProduto', upload.single('imagem'), async (req, res) => {
             categoria,
             preco,
             estoque: quantidade,
+            descricao: descricao || null,
             imagem,
             fk_idLoja
         });

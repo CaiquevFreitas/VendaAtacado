@@ -30,6 +30,7 @@ type Produto = {
     imagem: string;
     categoria: string;
     status?: boolean;
+    descricao?: string;
 };
 
 interface ModalProdutoProps {
@@ -57,6 +58,7 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
     const [categoria, setCategoria] = useState(categorias[0]);
     const [preco, setPreco] = useState('');
     const [quantidade, setQuantidade] = useState('');
+    const [descricao, setDescricao] = useState('');
     const [imagem, setImagem] = useState<string | null>(null);
     const [status, setStatus] = useState(true);
 
@@ -68,6 +70,7 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
             setCategoria(produtoParaEditar.categoria);
             setPreco(String(produtoParaEditar.valor));
             setQuantidade(String(produtoParaEditar.estoque));
+            setDescricao(produtoParaEditar.descricao || '');
             setImagem(produtoParaEditar.imagem ? `${API_URL}${produtoParaEditar.imagem}` : null);
             setStatus(produtoParaEditar.status !== undefined ? produtoParaEditar.status : true);
         } else {
@@ -115,6 +118,7 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
             formData.append('categoria', categoria);
             formData.append('preco', preco);
             formData.append('estoque', quantidade);
+            formData.append('descricao', descricao);
 
             if (imagem && !imagem.startsWith('http')) {
                 const filename = imagem.split('/').pop()!;
@@ -141,6 +145,7 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
         setCategoria(categorias[0]);
         setPreco('');
         setQuantidade('');
+        setDescricao('');
         setImagem(null);
         setStatus(true);
     };
@@ -183,6 +188,18 @@ export default function ModalProduto({ visible, onSuccess, onClose, produtoParaE
                                 value={nomeProduto}
                                 onChangeText={setNomeProduto}
                                 placeholder="Digite o nome do produto"
+                            />
+                        </View>
+
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Descrição</Text>
+                            <TextInput
+                                style={[styles.input, { height: 80, textAlignVertical: 'top' }]}
+                                value={descricao}
+                                onChangeText={setDescricao}
+                                placeholder="Digite a descrição do produto"
+                                multiline
+                                numberOfLines={3}
                             />
                         </View>
 

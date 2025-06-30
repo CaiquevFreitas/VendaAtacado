@@ -38,6 +38,7 @@ router.post('/loginLoja', async (req, res) => {
                 id: loja.idLoja,
                 nomeLoja: loja.nomeLoja,
                 nomeVendedor: loja.nomeVendedor,
+                logo: loja.logo,
                 email: loja.email,
                 horarioAbertura: loja.horarioAbertura,
                 horarioFechamento: loja.horarioFechamento,

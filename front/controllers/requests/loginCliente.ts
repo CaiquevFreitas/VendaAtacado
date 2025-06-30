@@ -23,15 +23,18 @@ export async function logarCliente(email: string, senha: string): Promise<boolea
         telefone: string;
         dataNascimento: string;
         senha: string;
+        idCarrinho: number;
       } = {
         id: dados.user.id,
         nome: dados.user.nome,
         email: dados.user.email,
         telefone: dados.user.telefone,
         dataNascimento: dados.user.dataNascimento,
-        senha: dados.user.senha
+        senha: dados.user.senha,
+        idCarrinho: dados.user.idCarrinho
       };
       await AsyncStorage.setItem('clienteData', JSON.stringify(clienteData));
+      await AsyncStorage.setItem('idCarrinho', String(dados.user.idCarrinho));
       Alert.alert('Sucesso', 'Login realizado!');
       return true;
     } else {
