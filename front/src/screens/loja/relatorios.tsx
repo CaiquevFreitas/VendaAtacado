@@ -93,7 +93,7 @@ export default function Relatorios() {
     // Preparar dados para o gráfico de barras (produtos mais vendidos)
     const produtosChartData = {
       labels: produtosMaisVendidos.slice(0, 5).map((p: ProdutoVendido) => 
-        p.nomeProduto && p.nomeProduto.length > 8 ? p.nomeProduto.slice(0, 8) + '...' : p.nomeProduto || 'Produto'
+        p.nomeProduto && p.nomeProduto.length > 15 ? p.nomeProduto.slice(0, 15) + '...' : p.nomeProduto || 'Produto'
       ),
       datasets: [{
         data: produtosMaisVendidos.slice(0, 5).map((p: ProdutoVendido) => Number(p.totalVendido) || 0)
@@ -192,18 +192,26 @@ export default function Relatorios() {
             data={horariosChartData}
             width={screenWidth - 64}
             height={220}
-            yAxisLabel=""
+            yAxisLabel="R$ "
             yAxisSuffix=""
+            xLabelsOffset={-10}
+            fromZero
             chartConfig={{
               backgroundColor: '#ffffff',
               backgroundGradientFrom: '#ffffff',
               backgroundGradientTo: '#ffffff',
               decimalPlaces: 0,
               color: (opacity = 1) => `rgba(255, 193, 7, ${opacity})`,
-              style: { borderRadius: 16 }
+              style: { borderRadius: 16 },
+              labelColor: (opacity = 1) => `rgba(0,0,0,${opacity})`,
             }}
             style={styles.chart}
+            verticalLabelRotation={0}
           />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
+            <Text style={{ fontSize: 12, color: '#666' }}>Horário (h)</Text>
+            <Text style={{ fontSize: 12, color: '#666' }}>Receita (R$)</Text>
+          </View>
         </View>
       ) : <Text style={styles.semDados}>Sem dados de horários de vendas.</Text>
     );
