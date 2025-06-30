@@ -73,9 +73,14 @@ export default function Relatorios() {
     const horariosVendas = Array.isArray(dados.horariosVendas) ? dados.horariosVendas : [];
 
     // Preparar dados para o gráfico de linha (vendas por período)
+    const mesesSiglas = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     const vendasChartData = {
       labels: vendasPorPeriodo.slice(0, 6).map((v: VendaPeriodo) => {
-        if (v.mes) return v.mes.slice(-2);
+        if (v.mes) {
+          // v.mes está no formato 'YYYY-MM'
+          const mesNum = parseInt(v.mes.split('-')[1], 10);
+          return mesesSiglas[mesNum - 1] || v.mes;
+        }
         if (v.semana) return `Sem ${v.semana.slice(-2)}`;
         if (v.data) return v.data.slice(-5);
         return '';
@@ -121,6 +126,7 @@ export default function Relatorios() {
             data={vendasChartData}
             width={screenWidth - 64}
             height={220}
+            yAxisLabel="R$ "
             chartConfig={{
               backgroundColor: '#ffffff',
               backgroundGradientFrom: '#ffffff',
