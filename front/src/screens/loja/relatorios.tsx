@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, ScrollView, StyleSheet, Dimensions } fro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import { gerarRelatorios, RelatoriosResponse, VendaPeriodo, ProdutoVendido, StatusPedido, HorarioVenda } from '../../../controllers/requests/gerarRelatorios';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -10,6 +11,13 @@ export default function Relatorios() {
   const [dados, setDados] = useState<RelatoriosResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: 'vendas', title: 'Vendas por Período' },
+    { key: 'produtos', title: 'Mais Vendidos' },
+    { key: 'status', title: 'Status Pedidos' },
+    { key: 'horarios', title: 'Horários' },
+  ]);
 
   useEffect(() => {
     async function fetchRelatorios() {
@@ -104,8 +112,105 @@ export default function Relatorios() {
       }]
     };
 
+    // Scenes para cada tab
+    const VendasRoute = () => (
+      vendasPorPeriodo.length > 0 ? (
+        <View style={styles.card}>
+          <Text style={styles.titulo}>Vendas por Período</Text>
+          <LineChart
+            data={vendasChartData}
+            width={screenWidth - 64}
+            height={220}
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
+              style: { borderRadius: 16 }
+            }}
+            bezier
+            style={styles.chart}
+          />
+        </View>
+      ) : <Text style={styles.semDados}>Sem dados para o período.</Text>
+    );
+    const ProdutosRoute = () => (
+      produtosMaisVendidos.length > 0 ? (
+        <View style={styles.card}>
+          <Text style={styles.titulo}>Produtos Mais Vendidos</Text>
+          <BarChart
+            data={produtosChartData}
+            width={screenWidth - 64}
+            height={220}
+            yAxisLabel=""
+            yAxisSuffix=""
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(40, 167, 69, ${opacity})`,
+              style: { borderRadius: 16 }
+            }}
+            style={styles.chart}
+            verticalLabelRotation={30}
+          />
+        </View>
+      ) : <Text style={styles.semDados}>Sem dados de produtos vendidos.</Text>
+    );
+    const StatusRoute = () => (
+      statusPedidos.length > 0 ? (
+        <View style={styles.card}>
+          <Text style={styles.titulo}>Status dos Pedidos</Text>
+          <PieChart
+            data={statusChartData}
+            width={screenWidth - 64}
+            height={220}
+            chartConfig={{
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="population"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            style={styles.chart}
+          />
+        </View>
+      ) : <Text style={styles.semDados}>Sem dados de status de pedidos.</Text>
+    );
+    const HorariosRoute = () => (
+      horariosVendas.length > 0 ? (
+        <View style={styles.card}>
+          <Text style={styles.titulo}>Horários com Mais Vendas</Text>
+          <BarChart
+            data={horariosChartData}
+            width={screenWidth - 64}
+            height={220}
+            yAxisLabel=""
+            yAxisSuffix=""
+            chartConfig={{
+              backgroundColor: '#ffffff',
+              backgroundGradientFrom: '#ffffff',
+              backgroundGradientTo: '#ffffff',
+              decimalPlaces: 0,
+              color: (opacity = 1) => `rgba(255, 193, 7, ${opacity})`,
+              style: { borderRadius: 16 }
+            }}
+            style={styles.chart}
+          />
+        </View>
+      ) : <Text style={styles.semDados}>Sem dados de horários de vendas.</Text>
+    );
+
+    const renderScene = SceneMap({
+      vendas: VendasRoute,
+      produtos: ProdutosRoute,
+      status: StatusRoute,
+      horarios: HorariosRoute,
+    });
+
     return (
-      <ScrollView contentContainerStyle={styles.container}>
+      <View style={{ flex: 1 }}>
         {/* Resumo Geral */}
         <View style={styles.card}>
           <Text style={styles.titulo}>Resumo Geral</Text>
@@ -128,112 +233,24 @@ export default function Relatorios() {
             </View>
           </View>
         </View>
-
-        {/* Vendas por Período - Gráfico de Linha */}
-        {vendasPorPeriodo.length > 0 && (
-          <View style={styles.card}>
-            <Text style={styles.titulo}>Vendas por Período</Text>
-            <LineChart
-              data={vendasChartData}
-              width={screenWidth - 64}
-              height={220}
-              chartConfig={{
-                backgroundColor: '#ffffff',
-                backgroundGradientFrom: '#ffffff',
-                backgroundGradientTo: '#ffffff',
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(0, 123, 255, ${opacity})`,
-                style: {
-                  borderRadius: 16
-                }
-              }}
-              bezier
-              style={styles.chart}
+        {/* Tabs dos gráficos */}
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: screenWidth }}
+          renderTabBar={props => (
+            <TabBar
+              {...props}
+              indicatorStyle={{ backgroundColor: '#007bff' }}
+              style={{ backgroundColor: '#fff' }}
+              activeColor="#007bff"
+              inactiveColor="#6c757d"
             />
-          </View>
-        )}
-
-        {/* Produtos Mais Vendidos - Gráfico de Barras */}
-        {produtosMaisVendidos.length > 0 && (
-          <View style={styles.card}>
-            <Text style={styles.titulo}>Produtos Mais Vendidos</Text>
-            <BarChart
-              data={produtosChartData}
-              width={screenWidth - 64}
-              height={220}
-              yAxisLabel=""
-              yAxisSuffix=""
-              chartConfig={{
-                backgroundColor: '#ffffff',
-                backgroundGradientFrom: '#ffffff',
-                backgroundGradientTo: '#ffffff',
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(40, 167, 69, ${opacity})`,
-                style: {
-                  borderRadius: 16
-                }
-              }}
-              style={styles.chart}
-              verticalLabelRotation={30}
-            />
-          </View>
-        )}
-
-        {/* Status dos Pedidos - Gráfico de Pizza */}
-        {statusPedidos.length > 0 && (
-          <View style={styles.card}>
-            <Text style={styles.titulo}>Status dos Pedidos</Text>
-            <PieChart
-              data={statusChartData}
-              width={screenWidth - 64}
-              height={220}
-              chartConfig={{
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              }}
-              accessor="population"
-              backgroundColor="transparent"
-              paddingLeft="15"
-              style={styles.chart}
-            />
-          </View>
-        )}
-
-        {/* Horários com Mais Vendas - Gráfico de Barras */}
-        {horariosVendas.length > 0 && (
-          <View style={styles.card}>
-            <Text style={styles.titulo}>Horários com Mais Vendas</Text>
-            <BarChart
-              data={horariosChartData}
-              width={screenWidth - 64}
-              height={220}
-              yAxisLabel=""
-              yAxisSuffix=""
-              chartConfig={{
-                backgroundColor: '#ffffff',
-                backgroundGradientFrom: '#ffffff',
-                backgroundGradientTo: '#ffffff',
-                decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(255, 193, 7, ${opacity})`,
-                style: {
-                  borderRadius: 16
-                }
-              }}
-              style={styles.chart}
-            />
-          </View>
-        )}
-
-        {/* Mensagem quando não há dados */}
-        {vendasPorPeriodo.length === 0 && produtosMaisVendidos.length === 0 && 
-         statusPedidos.length === 0 && horariosVendas.length === 0 && (
-          <View style={styles.card}>
-            <Text style={styles.titulo}>Nenhum Dado Disponível</Text>
-            <Text style={{ textAlign: 'center', color: '#666' }}>
-              Ainda não há dados suficientes para gerar relatórios.
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+          )}
+          style={{ flex: 1 }}
+        />
+      </View>
     );
   } catch (error: any) {
     console.error('Erro ao renderizar relatórios:', error);
@@ -300,5 +317,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
+  },
+  semDados: {
+    textAlign: 'center',
+    color: '#666',
+    margin: 24,
+    fontSize: 16,
   },
 });
