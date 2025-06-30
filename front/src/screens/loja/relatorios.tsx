@@ -234,11 +234,11 @@ export default function Relatorios() {
               <Text style={styles.resumoLabel}>Pedidos</Text>
             </View>
             <View style={styles.resumoItem}>
-              <Text style={styles.resumoValor}>R$ {(dados.resumoGeral?.totalVendas || 0).toFixed(0)}</Text>
+              <Text style={styles.resumoValor}>R$ {(dados.resumoGeral?.totalVendas || 0).toFixed(2)}</Text>
               <Text style={styles.resumoLabel}>Vendas</Text>
             </View>
             <View style={styles.resumoItem}>
-              <Text style={styles.resumoValor}>R$ {(dados.resumoGeral?.ticketMedio || 0).toFixed(0)}</Text>
+              <Text style={styles.resumoValor}>R$ {(dados.resumoGeral?.ticketMedio || 0).toFixed(2)}</Text>
               <Text style={styles.resumoLabel}>Ticket Médio</Text>
             </View>
             <View style={styles.resumoItem}>
