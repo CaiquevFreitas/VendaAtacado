@@ -53,7 +53,7 @@ export default function PerfilLogado(){
             Alert.alert('Logout realizado', 'Você saiu da sua conta.');
             navigation.reset({
                 index: 0,
-                routes: [{ name: 'Login' }],
+                routes: [{ name: 'ClienteTabs' }],
             });
         } catch (error) {
             Alert.alert('Erro', 'Não foi possível sair da conta.');
