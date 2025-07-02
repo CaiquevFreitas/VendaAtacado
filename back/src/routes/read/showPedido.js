@@ -43,8 +43,9 @@ router.get('/pedidos-loja/:idLoja', async (req, res) => {
             order: [['idPedido', 'DESC']] // Pedidos mais recentes primeiro
         });
 
-        const pedidosFormatados = pedidos.map(pedido => ({
+        const pedidosFormatados = pedidos.map((pedido, index) => ({
             idPedido: pedido.idPedido,
+            numeroPedido: pedidos.length - index, // Número sequencial (mais antigo = 1)
             total: pedido.total,
             status: pedido.status,
             dataPedido: pedido.createdAt || new Date(),

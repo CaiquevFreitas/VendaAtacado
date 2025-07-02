@@ -8,7 +8,8 @@ import {
     Image, 
     FlatList,
     Alert,
-    RefreshControl
+    RefreshControl,
+    ActivityIndicator
 } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -38,14 +39,11 @@ export default function Pedidos() {
     useFocusEffect(
         React.useCallback(() => {
             carregarDadosLoja();
-        }, [])
+            if (idLoja) {
+                carregarPedidos();
+            }
+        }, [idLoja, filtroStatus])
     );
-
-    useEffect(() => {
-        if (idLoja) {
-            carregarPedidos();
-        }
-    }, [idLoja, filtroStatus]);
 
     const carregarDadosLoja = async () => {
         try {
@@ -95,7 +93,7 @@ export default function Pedidos() {
         // Confirmação antes de alterar
         Alert.alert(
             'Confirmar Alteração',
-            `Deseja alterar o status do pedido #${idPedido} para "${novoStatus}"?`,
+            `Deseja alterar o status do pedido #${pedidos.find(p => p.idPedido === idPedido)?.numeroPedido} para "${novoStatus}"?`,
             [
                 { text: 'Cancelar', style: 'cancel' },
                 { 
@@ -186,10 +184,10 @@ export default function Pedidos() {
             <View style={styles.pedidoContainer}>
                 {/* Cabeçalho do Pedido */}
                 <View style={styles.pedidoHeader}>
-                    <View style={styles.pedidoInfo}>
-                        <Text style={styles.pedidoId}>Pedido #{item.idPedido}</Text>
-                        <Text style={styles.pedidoData}>{formatarData(item.dataPedido)}</Text>
-                    </View>
+                                    <View style={styles.pedidoInfo}>
+                    <Text style={styles.pedidoId}>Pedido #{item.numeroPedido}</Text>
+                    <Text style={styles.pedidoData}>{formatarData(item.dataPedido)}</Text>
+                </View>
                     <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
                         <Text style={styles.statusText}>{item.status}</Text>
                     </View>
@@ -279,12 +277,9 @@ export default function Pedidos() {
     // Se está carregando
     if (loading) {
         return (
-            <View style={styles.container}>
-                <Text style={styles.titulo}>Pedidos Recebidos</Text>
-                <View style={styles.alertaContainer}>
-                    <Ionicons name="refresh" size={80} color="#fff" />
-                    <Text style={styles.alertaTexto}>Carregando pedidos...</Text>
-                </View>
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={themes.colors.primary} />
+                <Text style={styles.loadingText}>Carregando...</Text>
             </View>
         );
     }
@@ -358,6 +353,17 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: themes.colors.primary,
         padding: 20
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: themes.colors.primary
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#fff'
     },
     titulo: {
         color: '#fff',

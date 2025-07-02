@@ -7,7 +7,8 @@ import {
     TouchableOpacity, 
     Image, 
     FlatList,
-    Alert
+    Alert,
+    ActivityIndicator
 } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -260,12 +261,9 @@ export default function Carrinho() {
     // Se está carregando
     if (loading) {
         return (
-            <View style={styles.container}>
-                <Text style={styles.titulo}>Carrinho de Compras</Text>
-                <View style={styles.alertaContainer}>
-                    <Ionicons name="refresh" size={80} color="#fff" />
-                    <Text style={styles.alertaTexto}>Carregando itens...</Text>
-                </View>
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={themes.colors.primary} />
+                <Text style={styles.loadingText}>Carregando...</Text>
             </View>
         );
     }
@@ -345,6 +343,17 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: themes.colors.primary,
         padding: 20
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: themes.colors.primary
+    },
+    loadingText: {
+        marginTop: 10,
+        fontSize: 16,
+        color: '#fff'
     },
     titulo: {
         color: '#fff',

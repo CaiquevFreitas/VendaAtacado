@@ -17,6 +17,7 @@ export interface ClientePedido {
 
 export interface Pedido {
     idPedido: number;
+    numeroPedido: number;
     total: number;
     status: string;
     dataPedido: string;
