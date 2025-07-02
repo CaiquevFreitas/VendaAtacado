@@ -24,5 +24,6 @@ export type RootStackParamList = {
         categoria: string;
     };
     AvaliarCompras: undefined;
+    AvaliacoesLoja: undefined;
 };
   

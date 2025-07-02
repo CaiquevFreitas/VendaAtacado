@@ -51,6 +51,7 @@ const showPageCategoria = require('./src/routes/read/showPageCategoria')
 const showDadosGraficos = require('./src/routes/read/showDadosGraficos')
 const avaliarCompra = require('./src/routes/create/avaliarCompra')
 const showAvaliacoesPendentes = require('./src/routes/read/showAvaliacoesPendentes')
+const showAvaliacoesLoja = require('./src/routes/read/showAvaliacoesLoja')
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
@@ -81,6 +82,7 @@ app.use('/', showPageCategoria);
 app.use('/', showDadosGraficos);
 app.use('/', avaliarCompra);
 app.use('/', showAvaliacoesPendentes);
+app.use('/', showAvaliacoesLoja)
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);

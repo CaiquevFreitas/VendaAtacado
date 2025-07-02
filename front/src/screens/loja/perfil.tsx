@@ -131,7 +131,7 @@ export default function Perfil(){
                     <ProfileOption 
                         icon={<MaterialCommunityIcons name="star-outline" size={24} color={themes.colors.primary} />}
                         title="Avaliações de Clientes"
-                        onPress={() => {}}
+                        onPress={() => navigation.navigate('AvaliacoesLoja')}
                     />
                     <ProfileOption 
                         icon={<FontAwesome name="question-circle-o" size={24} color={themes.colors.primary} />}
