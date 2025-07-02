@@ -8,17 +8,16 @@ const ItemPedido = require('../../models/itemPedido');
 // POST /avaliacoes
 router.post('/avaliacoes', async (req, res) => {
     try {
-        const { fk_idCliente, fk_idLoja, fk_idProduto, nota, comentario } = req.body;
-        if (!fk_idCliente || !nota || (!fk_idLoja && !fk_idProduto)) {
+        const { fk_idCliente, fk_idLoja, fk_idProduto, nota, comentario, fk_idPedido } = req.body;
+        if (!fk_idCliente || !nota || (!fk_idLoja && !fk_idProduto) || !fk_idPedido) {
             return res.status(400).json({ success: false, message: 'Campos obrigatórios não preenchidos.' });
         }
 
-        // Verificar se é avaliação de produto ou loja
+        // Verificar se o pedido é realmente do cliente e está entregue
         let pedidoEntregue = null;
         if (fk_idProduto) {
-            // Buscar pedido entregue que contenha o produto e seja do cliente
             pedidoEntregue = await Pedido.findOne({
-                where: { status: 'Entregue', fk_idCliente },
+                where: { status: 'Entregue', fk_idCliente, idPedido: fk_idPedido },
                 include: [{
                     model: ItemPedido,
                     as: 'Itens',
@@ -26,31 +25,36 @@ router.post('/avaliacoes', async (req, res) => {
                 }]
             });
         } else if (fk_idLoja) {
-            // Buscar pedido entregue da loja e do cliente
             pedidoEntregue = await Pedido.findOne({
-                where: { status: 'Entregue', fk_idCliente, fk_idLoja }
+                where: { status: 'Entregue', fk_idCliente, fk_idLoja, idPedido: fk_idPedido }
             });
         }
         if (!pedidoEntregue) {
             return res.status(403).json({ success: false, message: 'Avaliação não permitida. Pedido não entregue ou não pertence ao cliente.' });
         }
 
-        // Evitar avaliações duplicadas
-        const avaliacaoExistente = await Avaliacao.findOne({
+        // Verificar se já existe avaliação para esse pedido
+        let avaliacaoExistente = await Avaliacao.findOne({
             where: {
                 fk_idCliente,
+                fk_idPedido,
                 ...(fk_idProduto ? { fk_idProduto } : { fk_idLoja })
             }
         });
         if (avaliacaoExistente) {
-            return res.status(409).json({ success: false, message: 'Você já avaliou este item.' });
+            // Atualizar avaliação existente
+            avaliacaoExistente.nota = nota;
+            avaliacaoExistente.comentario = comentario;
+            await avaliacaoExistente.save();
+            return res.json({ success: true, message: 'Avaliação atualizada com sucesso!' });
         }
 
-        // Criar avaliação
+        // Criar avaliação nova
         await Avaliacao.create({
             fk_idCliente,
             fk_idLoja: fk_idLoja || null,
             fk_idProduto: fk_idProduto || null,
+            fk_idPedido,
             nota,
             comentario
         });

@@ -23,20 +23,19 @@ router.get('/avaliacoes/pendentes/:idCliente', async (req, res) => {
         // Montar listas pendentes
         const pendentes = [];
         pedidos.forEach(pedido => {
-            // Loja
-            const lojaAvaliada = avaliacoes.some(a => a.fk_idLoja === pedido.fk_idLoja);
+            // Loja: só pendente se não existe avaliação para esse pedido
+            const lojaAvaliada = avaliacoes.some(a => a.fk_idLoja === pedido.fk_idLoja && a.fk_idPedido === pedido.idPedido);
             if (!lojaAvaliada) {
-                pendentes.push({ tipo: 'loja', idLoja: pedido.fk_idLoja, nomeLoja: pedido.Loja?.nomeLoja });
+                pendentes.push({ tipo: 'loja', idLoja: pedido.fk_idLoja, nomeLoja: pedido.Loja?.nomeLoja, idPedido: pedido.idPedido });
             }
-            // Produtos
+            // Produtos: só pendente se não existe avaliação para esse pedido
             pedido.Itens.forEach(item => {
-                const produtoAvaliado = avaliacoes.some(a => a.fk_idProduto === item.fk_idProduto);
+                const produtoAvaliado = avaliacoes.some(a => a.fk_idProduto === item.fk_idProduto && a.fk_idPedido === pedido.idPedido);
                 if (!produtoAvaliado) {
-                    pendentes.push({ tipo: 'produto', idProduto: item.fk_idProduto, nomeProduto: item.Produto?.nomeProduto });
+                    pendentes.push({ tipo: 'produto', idProduto: item.fk_idProduto, nomeProduto: item.Produto?.nomeProduto, idPedido: pedido.idPedido });
                 }
             });
         });
-        console.log(pendentes)
         res.json({ success: true, pendentes });
     } catch (error) {
         console.error('Erro ao buscar avaliações pendentes:', error);

@@ -16,6 +16,7 @@ export default function AvaliarCompras() {
     const [modalNome, setModalNome] = useState('');
     const [modalIdProduto, setModalIdProduto] = useState<number | undefined>(undefined);
     const [modalIdLoja, setModalIdLoja] = useState<number | undefined>(undefined);
+    const [modalIdPedido, setModalIdPedido] = useState<number | undefined>(undefined);
     const [feedback, setFeedback] = useState('');
     const [idCliente, setIdCliente] = useState<number | null>(null);
 
@@ -38,22 +39,24 @@ export default function AvaliarCompras() {
         setLoading(false);
     };
 
-    const abrirModalAvaliacao = (tipo: 'produto' | 'loja', nome: string, idProduto?: number, idLoja?: number) => {
+    const abrirModalAvaliacao = (tipo: 'produto' | 'loja', nome: string, idProduto?: number, idLoja?: number, idPedido?: number) => {
         setModalTipo(tipo);
         setModalNome(nome);
         setModalIdProduto(idProduto);
         setModalIdLoja(idLoja);
+        setModalIdPedido(idPedido);
         setFeedback('');
         setModalVisible(true);
     };
 
     const handleEnviarAvaliacao = async (nota: number, comentario: string) => {
-        if (!idCliente) return;
+        if (!idCliente || !modalIdPedido) return;
         try {
             await enviarAvaliacao({
                 fk_idCliente: idCliente,
                 fk_idProduto: modalTipo === 'produto' ? modalIdProduto : undefined,
                 fk_idLoja: modalTipo === 'loja' ? modalIdLoja : undefined,
+                fk_idPedido: modalIdPedido,
                 nota,
                 comentario
             });
@@ -96,8 +99,8 @@ export default function AvaliarCompras() {
                         style={{ backgroundColor: '#FFD700', borderRadius: 8, paddingVertical: 6, paddingHorizontal: 18 }}
                         onPress={() =>
                             item.tipo === 'loja'
-                                ? abrirModalAvaliacao('loja', item.nomeLoja || '', undefined, item.idLoja)
-                                : abrirModalAvaliacao('produto', item.nomeProduto || '', item.idProduto, undefined)
+                                ? abrirModalAvaliacao('loja', item.nomeLoja || '', undefined, item.idLoja, item.idPedido)
+                                : abrirModalAvaliacao('produto', item.nomeProduto || '', item.idProduto, undefined, item.idPedido)
                         }
                     >
                         <Text style={{ color: '#333', fontWeight: 'bold' }}>Avaliar</Text>

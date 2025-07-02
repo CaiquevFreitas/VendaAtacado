@@ -59,10 +59,13 @@ create table avaliacao(
     fk_idProduto int,
     fk_idLoja int,
     fk_idCliente int not null,
+	fk_idPedido int not null,
     foreign key(fk_idProduto) references produto(idProduto),
     foreign key(fk_idLoja) references  loja(idLoja),
-	foreign key(fk_idCliente) references cliente(idCliente)
+	foreign key(fk_idCliente) references cliente(idCliente),
+    foreign key(fk_idPedido) references pedido(idPedido)
 );
+
 
 create table pedido(
 	idPedido int primary key auto_increment,

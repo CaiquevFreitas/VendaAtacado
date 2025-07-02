@@ -4,6 +4,7 @@ export interface AvaliacaoRequest {
     fk_idCliente: number;
     fk_idLoja?: number;
     fk_idProduto?: number;
+    fk_idPedido: number;
     nota: number;
     comentario: string;
 }

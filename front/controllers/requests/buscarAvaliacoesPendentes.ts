@@ -6,6 +6,7 @@ export interface AvaliacaoPendente {
     nomeProduto?: string;
     idLoja?: number;
     nomeLoja?: string;
+    idPedido: number;
 }
 
 export interface BuscarPendentesResponse {
@@ -14,7 +15,6 @@ export interface BuscarPendentesResponse {
 }
 
 export const buscarAvaliacoesPendentes = async (idCliente: number): Promise<BuscarPendentesResponse> => {
-    console.log(idCliente)
     const resp = await fetch(`${API_URL}/avaliacoes/pendentes/${idCliente}`);
     if (!resp.ok) throw new Error('Erro ao buscar avaliações pendentes');
     return await resp.json();

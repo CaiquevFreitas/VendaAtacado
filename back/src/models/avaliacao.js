@@ -3,6 +3,7 @@ const sequelize = require('./database');
 const Produto = require('./produto');
 const Cliente = require('./cliente');
 const Loja = require('./loja');
+const Pedido = require('./pedido');
 
 
 class Avaliacao extends Model {}
@@ -13,6 +14,7 @@ Avaliacao.init({
     fk_idProduto: { type: DataTypes.INTEGER, references: { model: Produto, key: 'idProduto' } },
     fk_idCliente: { type: DataTypes.INTEGER, allowNull: false, references: { model: Cliente, key: 'idCliente' } },
     fk_idLoja: { type: DataTypes.INTEGER, references: { model: Loja, key: 'idLoja' } },
+    fk_idPedido: { type: DataTypes.INTEGER, references: { model: Pedido, key: 'idPedido' } },
 }, { sequelize, modelName: 'Avaliacao', tableName: 'avaliacao', timestamps: false });
 
 module.exports = Avaliacao;
