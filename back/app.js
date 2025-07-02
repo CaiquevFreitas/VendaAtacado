@@ -49,6 +49,8 @@ const deletarNotificacao = require('./src/routes/delete/deletarNotificacao')
 const showProdutosDestaque = require('./src/routes/read/showProdutosDestaque')
 const showPageCategoria = require('./src/routes/read/showPageCategoria')
 const showDadosGraficos = require('./src/routes/read/showDadosGraficos')
+const avaliarCompra = require('./src/routes/create/avaliarCompra')
+const showAvaliacoesPendentes = require('./src/routes/read/showAvaliacoesPendentes')
 
 app.use('/', cadastroclienteRoute);
 app.use('/', loginCliente);
@@ -77,6 +79,8 @@ app.use('/notificacoes', deletarNotificacao);
 app.use('/', showProdutosDestaque);
 app.use('/', showPageCategoria);
 app.use('/', showDadosGraficos);
+app.use('/', avaliarCompra);
+app.use('/', showAvaliacoesPendentes);
 
 app.listen(3000, () => {
     console.log(`Servidor rodando: http://localhost:${port}`);

@@ -23,5 +23,6 @@ export type RootStackParamList = {
     PageCategoria: {
         categoria: string;
     };
+    AvaliarCompras: undefined;
 };
   

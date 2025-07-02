@@ -19,6 +19,7 @@ import NotificacoesLoja from '../screens/loja/notificacoes';
 import PageLoja from '../components/pageLoja/index';
 import PageProduto from '../components/pageProduto/index';
 import PageCategoria from '../pageCategoria/index';
+import AvaliarCompras from '../screens/cliente/avaliarCompras';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -43,6 +44,7 @@ export default function MainStackNavigator({ userType }: { userType: string | nu
       <Stack.Screen name='PageLoja' component={PageLoja} />
       <Stack.Screen name='PageProduto' component={PageProduto} />
       <Stack.Screen name='PageCategoria' component={PageCategoria} />
+      <Stack.Screen name='AvaliarCompras' component={AvaliarCompras} />
     </Stack.Navigator>
   );
 }

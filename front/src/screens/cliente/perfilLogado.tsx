@@ -109,8 +109,8 @@ export default function PerfilLogado(){
                     />
                     <ProfileOption 
                         icon={<MaterialIcons name="local-offer" size={24} color={themes.colors.primary} />}
-                        title="Cupons"
-                        onPress={() => {}}
+                        title="Avaliar Compras"
+                        onPress={() => navigation.navigate('AvaliarCompras')}
                     />
                     <ProfileOption 
                         icon={<FontAwesome name="question-circle-o" size={24} color={themes.colors.primary} />}
