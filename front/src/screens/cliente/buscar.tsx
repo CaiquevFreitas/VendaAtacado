@@ -9,12 +9,17 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../../types';
 import { buscarProdutosDestaque, ProdutoDestaque } from '../../../controllers/requests/buscarProdutosDestaque';
 import API_URL from '../../../controllers/requests/api.url';
+import { buscarProdutosLojas, ProdutoBusca, LojaBusca } from '../../../controllers/requests/buscarProdutosLojas';
 
 export default function Buscar() {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [searchText, setSearchText] = useState('');
     const [produtosDestaque, setProdutosDestaque] = useState<ProdutoDestaque[]>([]);
     const [loading, setLoading] = useState(true);
+    const [resultadosProdutos, setResultadosProdutos] = useState<ProdutoBusca[]>([]);
+    const [resultadosLojas, setResultadosLojas] = useState<LojaBusca[]>([]);
+    const [buscando, setBuscando] = useState(false);
+    const debounceTimeout = React.useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         carregarProdutosDestaque();
@@ -46,6 +51,29 @@ export default function Buscar() {
         { nome: 'Salgados', icon: '🥟' }
     ];
 
+    const handleBusca = (texto: string) => {
+        setSearchText(texto);
+        if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+        if (!texto.trim()) {
+            setResultadosProdutos([]);
+            setResultadosLojas([]);
+            setBuscando(false);
+            return;
+        }
+        setBuscando(true);
+        debounceTimeout.current = setTimeout(async () => {
+            try {
+                const resp = await buscarProdutosLojas(texto);
+                setResultadosProdutos(resp.produtos);
+                setResultadosLojas(resp.lojas);
+            } catch (e) {
+                setResultadosProdutos([]);
+                setResultadosLojas([]);
+            }
+            setBuscando(false);
+        }, 300);
+    };
+
     const renderProdutoDestaque = (item: ProdutoDestaque) => (
         <TouchableOpacity 
             key={item.id} 
@@ -69,6 +97,24 @@ export default function Buscar() {
         </TouchableOpacity>
     );
 
+    const renderProdutoBusca = (item: ProdutoBusca) => (
+        <TouchableOpacity 
+            key={item.idProduto} 
+            style={styles.produtoCard}
+            onPress={() => {
+                navigation.navigate('PageProduto', {
+                    idProduto: item.idProduto
+                });
+            }}
+        >
+            <Image source={{ uri: `${API_URL}${item.imagem}` }} style={styles.produtoImagem} />
+            <View style={styles.produtoInfo}>
+                <Text style={styles.produtoNome} numberOfLines={2}>{item.nomeProduto}</Text>
+                <Text style={styles.produtoPreco}>R$ {item.preco.toFixed(2)}</Text>
+            </View>
+        </TouchableOpacity>
+    );
+
     return (
         <View style={styles.container}>
             {/* Header */}
@@ -85,7 +131,7 @@ export default function Buscar() {
                         placeholderTextColor="#999"
                         style={styles.searchInput}
                         value={searchText}
-                        onChangeText={setSearchText}
+                        onChangeText={handleBusca}
                     />
                     {searchText.length > 0 && (
                         <TouchableOpacity onPress={() => setSearchText('')}>
@@ -94,6 +140,51 @@ export default function Buscar() {
                     )}
                 </View>
             </View>
+
+            {/* Resultados de busca inteligentes */}
+            {(searchText.length > 0 && (resultadosProdutos.length > 0 || resultadosLojas.length > 0 || buscando)) && (
+                <View style={styles.resultadosDropdown}>
+                    {buscando && (
+                        <View style={{ alignItems: 'center', padding: 12 }}>
+                            <ActivityIndicator size="small" color={themes.colors.primary} />
+                        </View>
+                    )}
+                    {resultadosProdutos.length > 0 && (
+                        <View style={{ marginBottom: 10 }}>
+                            <Text style={styles.resultadosTitulo}>Produtos</Text>
+                            <View style={styles.produtosGrid}>
+                                {resultadosProdutos.map(renderProdutoBusca)}
+                            </View>
+                        </View>
+                    )}
+                    {resultadosLojas.length > 0 && (
+                        <View>
+                            <Text style={styles.resultadosTitulo}>Lojas</Text>
+                            <View style={styles.lojasContainer}>
+                                {resultadosLojas.map(loja => (
+                                    <TouchableOpacity key={loja.idLoja} style={styles.lojaCard} onPress={() => {
+                                        navigation.navigate('PageLoja', { idLoja: loja.idLoja });
+                                    }}>
+                                        <Image 
+                                            source={{ uri: loja.logo ? `${API_URL}${loja.logo}` : 'https://via.placeholder.com/80/4CAF50/FFFFFF?text=🏪' }} 
+                                            style={styles.lojaLogo} 
+                                        />
+                                        <View style={styles.lojaInfo}>
+                                            <Text style={styles.lojaNome} numberOfLines={1}>{loja.nomeLoja}</Text>
+                                        </View>
+                                        <TouchableOpacity style={styles.verLojaButton}>
+                                            <Ionicons name="arrow-forward" size={20} color={themes.colors.primary} />
+                                        </TouchableOpacity>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </View>
+                    )}
+                    {!buscando && resultadosProdutos.length === 0 && resultadosLojas.length === 0 && (
+                        <Text style={{ color: '#888', textAlign: 'center', padding: 12 }}>Nenhum resultado encontrado</Text>
+                    )}
+                </View>
+            )}
 
             <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                 {/* Categorias */}
@@ -303,5 +394,59 @@ const styles = StyleSheet.create({
     emptySubtext: {
         fontSize: 14,
         color: '#666'
+    },
+    resultadosDropdown: {
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 10,
+        marginHorizontal: 0,
+        marginTop: 5,
+        elevation: 4,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        zIndex: 10
+    },
+    resultadosTitulo: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 8
+    },
+    lojasContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between'
+    },
+    lojaCard: {
+        backgroundColor: '#fff',
+        width: '48%',
+        borderRadius: 12,
+        padding: 12,
+        marginBottom: 15,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2
+    },
+    lojaLogo: {
+        width: '100%',
+        height: 80,
+        borderRadius: 8,
+        marginBottom: 8
+    },
+    lojaInfo: {
+        flex: 1
+    },
+    lojaNome: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 4
+    },
+    verLojaButton: {
+        alignItems: 'flex-end'
     }
 });
