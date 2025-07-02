@@ -4,6 +4,8 @@ const sequelize = require('../../models/database');
 const Pedido = require('../../models/pedido');
 const Compra = require('../../models/compra');
 const Notificacao = require('../../models/notificacao');
+const ItemPedido = require('../../models/itemPedido');
+const Produto = require('../../models/produto');
 
 router.put('/editar-status-pedido', async (req, res) => {
     const transaction = await sequelize.transaction();
@@ -70,6 +72,22 @@ router.put('/editar-status-pedido', async (req, res) => {
                     fk_idCliente: pedido.fk_idCliente,
                     fk_idPedido: idPedido
                 }, { transaction });
+            }
+        }
+
+        // Se o status foi alterado para 'Cancelado', devolver estoque dos produtos
+        if (novoStatus === 'Cancelado') {
+            // Buscar todos os itens do pedido
+            const itensPedido = await ItemPedido.findAll({
+                where: { fk_idPedido: idPedido },
+                transaction
+            });
+            // Para cada item, devolver a quantidade ao estoque do produto
+            for (const item of itensPedido) {
+                await Produto.increment(
+                    { estoque: item.quantidade },
+                    { where: { idProduto: item.fk_idProduto }, transaction }
+                );
             }
         }
 
