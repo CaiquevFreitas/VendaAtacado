@@ -6,6 +6,8 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import { renderPageProduto, PageProdutoResponse } from '../../../controllers/requests/renderPageProduto';
 import API_URL from '../../../controllers/requests/api.url';
 import ModalAddCarrinho from '../modalAddCarrinho';
+import { comprarCarrinho, ItemSelecionado } from '../../../controllers/requests/comprarCarrinho';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Avaliacao {
   id: number;
@@ -25,6 +27,9 @@ const PageProduto: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [comprandoAgora, setComprandoAgora] = useState(false);
+  const [modalTipo, setModalTipo] = useState<'carrinho' | 'comprar'>('carrinho');
+  const [quantidadeComprar, setQuantidadeComprar] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,8 +45,60 @@ const PageProduto: React.FC = () => {
     fetchData();
   }, [idProduto]);
 
-  const onComprar = () => {};
-  const onAdicionarCarrinho = () => setModalVisible(true);
+  const onAdicionarCarrinho = () => {
+    setModalTipo('carrinho');
+    setModalVisible(true);
+  };
+
+  const onComprar = () => {
+    setModalTipo('comprar');
+    setModalVisible(true);
+  };
+
+  const handleConfirmarModal = async (quantidade: number) => {
+    if (modalTipo === 'carrinho') {
+      setModalVisible(false);
+      return; // ModalAddCarrinho já faz a adição ao carrinho
+    }
+    // Comprar agora
+    setComprandoAgora(true);
+    try {
+      // Buscar idCliente e idItemCarrinho fake (pois não está no carrinho)
+      const clienteDataStr = await AsyncStorage.getItem('clienteData');
+      if (!clienteDataStr) throw new Error('Cliente não logado');
+      const clienteData = JSON.parse(clienteDataStr);
+      const idCliente = clienteData.id;
+      // Montar item para compra
+      const itensParaEnvio: ItemSelecionado[] = [{
+        idItemCarrinho: 0, // 0 pois não está no carrinho
+        idProduto: produto.idProduto,
+        quantidade,
+        precoUnitario: produto.preco
+      }];
+      const resposta = await comprarCarrinho(idCliente, itensParaEnvio);
+      if (resposta.success) {
+        Alert.alert(
+          'Compra realizada!',
+          `Seu pedido foi criado com sucesso! Total: R$ ${(produto.preco * quantidade).toFixed(2)}`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                setModalVisible(false);
+                navigation.goBack();
+              }
+            }
+          ]
+        );
+      } else {
+        Alert.alert('Erro', resposta.message || 'Erro ao processar a compra');
+      }
+    } catch (error: any) {
+      Alert.alert('Erro', error.message || 'Erro ao processar a compra');
+    } finally {
+      setComprandoAgora(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -159,6 +216,7 @@ const PageProduto: React.FC = () => {
           preco: produto.preco,
           estoque: produto.estoque
         }}
+        onConfirmar={modalTipo === 'comprar' ? handleConfirmarModal : undefined}
       />
     </View>
   );

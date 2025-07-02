@@ -15,9 +15,10 @@ interface ModalAddCarrinhoProps {
     preco: number;
     estoque: number;
   };
+  onConfirmar?: (quantidade: number) => void;
 }
 
-const ModalAddCarrinho: React.FC<ModalAddCarrinhoProps> = ({ visible, onClose, idProduto, produto }) => {
+const ModalAddCarrinho: React.FC<ModalAddCarrinhoProps> = ({ visible, onClose, idProduto, produto, onConfirmar }) => {
   const [quantidade, setQuantidade] = useState(1);
 
   const aumentar = () => {
@@ -46,6 +47,13 @@ const ModalAddCarrinho: React.FC<ModalAddCarrinhoProps> = ({ visible, onClose, i
     onClose();
   };
 
+  const handleComprarAgora = () => {
+    if (onConfirmar) {
+      onConfirmar(quantidade);
+      setQuantidade(1);
+    }
+  };
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
@@ -66,9 +74,15 @@ const ModalAddCarrinho: React.FC<ModalAddCarrinhoProps> = ({ visible, onClose, i
               <Ionicons name="add-circle-outline" size={28} color={quantidade === produto.estoque ? '#ccc' : '#222'} />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.addBtn} onPress={handleAddCarrinho} disabled={produto.estoque === 0}>
-            <Text style={styles.addBtnText}>{produto.estoque === 0 ? 'Sem estoque' : 'Adicionar ao carrinho'}</Text>
-          </TouchableOpacity>
+          {onConfirmar ? (
+            <TouchableOpacity style={styles.addBtn} onPress={handleComprarAgora} disabled={produto.estoque === 0}>
+              <Text style={styles.addBtnText}>{produto.estoque === 0 ? 'Sem estoque' : 'Comprar agora'}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.addBtn} onPress={handleAddCarrinho} disabled={produto.estoque === 0}>
+              <Text style={styles.addBtnText}>{produto.estoque === 0 ? 'Sem estoque' : 'Adicionar ao carrinho'}</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </Modal>

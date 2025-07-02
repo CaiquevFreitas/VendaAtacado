@@ -127,7 +127,7 @@ export default function Buscar() {
                 <View style={styles.searchInputContainer}>
                     <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
                     <TextInput
-                        placeholder="Buscar produtos..."
+                        placeholder="Procure por produtos e lojas..."
                         placeholderTextColor="#999"
                         style={styles.searchInput}
                         value={searchText}
