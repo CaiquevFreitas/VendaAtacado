@@ -67,8 +67,11 @@ router.put('/editar-status-pedido', async (req, res) => {
             });
 
             if (!compraExistente) {
+                // Ajuste para horário de Brasília (UTC-3)
+                const dataAgora = new Date();
+                dataAgora.setHours(dataAgora.getHours() - 3);
                 await Compra.create({
-                    dataCompra: new Date(),
+                    dataCompra: dataAgora,
                     fk_idCliente: pedido.fk_idCliente,
                     fk_idPedido: idPedido
                 }, { transaction });
