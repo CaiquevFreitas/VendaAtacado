@@ -130,12 +130,9 @@ export default function Estoque() {
                 >
                     <Ionicons name="add-circle-outline" size={24} color={themes.colors.white} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Estoque</Text>
-                <TouchableOpacity 
-                    style={styles.headerButton}
-                >
-                    <Ionicons name="filter-outline" size={24} color={themes.colors.white} />
-                </TouchableOpacity>
+                <View style={styles.headerTitleContainer}>
+                    <Text style={styles.headerTitle}>Estoque</Text>
+                </View>
             </View>
 
             <ScrollView style={styles.content}>
@@ -226,13 +223,19 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
+    },
+    headerTitleContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
         color: themes.colors.white,
+        textAlign: 'center',
     },
     headerButton: {
         width: 40,

@@ -59,8 +59,8 @@ router.put('/editar-status-pedido', async (req, res) => {
             transaction
         });
 
-        // Se o status foi alterado para 'Em preparo', criar o registro de compra
-        if (novoStatus === 'Em preparo') {
+        // Se o status foi alterado para 'Entregue', criar o registro de compra
+        if (novoStatus === 'Entregue') {
             const compraExistente = await Compra.findOne({
                 where: { fk_idPedido: idPedido },
                 transaction
